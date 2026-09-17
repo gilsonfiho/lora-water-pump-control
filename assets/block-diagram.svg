@@ -1,0 +1,123 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 620" font-family="Segoe UI, Arial, sans-serif">
+  <defs>
+    <marker id="arrow" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L7,3 L0,6 Z" fill="#555"/>
+    </marker>
+    <marker id="arrowR" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L7,3 L0,6 Z" fill="#2a6cb3"/>
+    </marker>
+  </defs>
+
+  <rect x="0" y="0" width="1120" height="620" fill="#ffffff"/>
+  <text x="560" y="34" text-anchor="middle" font-size="22" font-weight="700" fill="#222">Diagrama de Blocos — Controle de Bomba d'Água LoRa</text>
+
+  <!-- ===================== PAINEL RESERVATORIO ===================== -->
+  <rect x="20" y="60" width="470" height="500" rx="10" fill="#fafafa" stroke="#cccccc" stroke-width="1.5"/>
+  <text x="255" y="86" text-anchor="middle" font-size="15" font-weight="700" fill="#333">🛢️ NÓ RESERVATÓRIO (caixa d'água) — Transmissor</text>
+
+  <!-- Boia -->
+  <rect x="45" y="110" width="140" height="58" rx="8" fill="#e2f4e2" stroke="#3a7a3a" stroke-width="1.5"/>
+  <text x="115" y="135" text-anchor="middle" font-size="13" fill="#204020">Boia de nível</text>
+  <text x="115" y="153" text-anchor="middle" font-size="11" fill="#406040">(1–2 boias, histerese)</text>
+
+  <!-- ESP32 -->
+  <rect x="185" y="250" width="130" height="64" rx="8" fill="#e8e8f8" stroke="#4a4a8a" stroke-width="1.5"/>
+  <text x="250" y="288" text-anchor="middle" font-size="14" font-weight="600" fill="#2a2a5a">ESP32-C3</text>
+
+  <!-- E220 -->
+  <rect x="350" y="250" width="120" height="64" rx="8" fill="#cfe8ff" stroke="#2a6cb3" stroke-width="1.5"/>
+  <text x="410" y="278" text-anchor="middle" font-size="13" font-weight="600" fill="#123a63">LoRa E220</text>
+  <text x="410" y="296" text-anchor="middle" font-size="10.5" fill="#2a5a8a">900T30D/T22D</text>
+
+  <!-- Energia -->
+  <rect x="45" y="360" width="160" height="58" rx="8" fill="#ffe9c7" stroke="#b37a2b" stroke-width="1.5"/>
+  <text x="125" y="384" text-anchor="middle" font-size="12.5" fill="#5a3d10">Bateria 18650</text>
+  <text x="125" y="401" text-anchor="middle" font-size="11" fill="#7a5320">+ TP4056 (carga)</text>
+
+  <rect x="45" y="440" width="160" height="52" rx="8" fill="#ffe9c7" stroke="#b37a2b" stroke-width="1.5"/>
+  <text x="125" y="471" text-anchor="middle" font-size="12.5" fill="#5a3d10">Fonte externa 5–12 V</text>
+
+  <rect x="255" y="400" width="120" height="60" rx="8" fill="#ffe9c7" stroke="#b37a2b" stroke-width="1.5"/>
+  <text x="315" y="425" text-anchor="middle" font-size="12.5" fill="#5a3d10">Failover</text>
+  <text x="315" y="442" text-anchor="middle" font-size="11" fill="#7a5320">fonte/bateria</text>
+
+  <!-- arrows reservatorio -->
+  <line x1="130" y1="168" x2="215" y2="248" stroke="#555" stroke-width="1.8" marker-end="url(#arrow)"/>
+  <line x1="315" y1="282" x2="348" y2="282" stroke="#2a6cb3" stroke-width="2" marker-end="url(#arrowR)"/>
+  <line x1="348" y1="292" x2="315" y2="292" stroke="#2a6cb3" stroke-width="2" marker-end="url(#arrowR)"/>
+  <text x="332" y="248" text-anchor="middle" font-size="10" fill="#2a6cb3">UART</text>
+  <line x1="125" y1="418" x2="125" y2="438" stroke="#b37a2b" stroke-width="1.8" marker-end="url(#arrow)"/>
+  <line x1="205" y1="388" x2="253" y2="418" stroke="#b37a2b" stroke-width="1.8" marker-end="url(#arrow)"/>
+  <line x1="205" y1="466" x2="253" y2="445" stroke="#b37a2b" stroke-width="1.8" marker-end="url(#arrow)"/>
+  <line x1="315" y1="400" x2="290" y2="318" stroke="#b37a2b" stroke-width="1.8" marker-end="url(#arrow)"/>
+  <text x="360" y="360" text-anchor="middle" font-size="9.5" fill="#7a5320">ADC/I2C</text>
+
+  <!-- ===================== ENLACE LoRa ===================== -->
+  <g>
+    <text x="560" y="250" text-anchor="middle" font-size="13" font-weight="700" fill="#2a6cb3">LoRa 900 MHz</text>
+    <text x="560" y="268" text-anchor="middle" font-size="12" fill="#2a6cb3">~5 km</text>
+    <line x1="472" y1="290" x2="648" y2="290" stroke="#2a6cb3" stroke-width="2.5" stroke-dasharray="7 5" marker-end="url(#arrowR)" marker-start="url(#arrowR)"/>
+    <text x="518" y="284" text-anchor="middle" font-size="16" fill="#2a6cb3">≈)))</text>
+    <text x="602" y="284" text-anchor="middle" font-size="16" fill="#2a6cb3">(((≈</text>
+    <text x="560" y="322" text-anchor="middle" font-size="11" fill="#555">STATUS · COMANDO</text>
+    <text x="560" y="338" text-anchor="middle" font-size="11" fill="#555">ACK · HEARTBEAT</text>
+  </g>
+
+  <!-- ===================== PAINEL BOMBA ===================== -->
+  <rect x="630" y="60" width="470" height="500" rx="10" fill="#fafafa" stroke="#cccccc" stroke-width="1.5"/>
+  <text x="865" y="86" text-anchor="middle" font-size="15" font-weight="700" fill="#333">⚙️ NÓ BOMBA (captação) — Receptor/Atuador</text>
+
+  <!-- E220 -->
+  <rect x="650" y="250" width="120" height="64" rx="8" fill="#cfe8ff" stroke="#2a6cb3" stroke-width="1.5"/>
+  <text x="710" y="278" text-anchor="middle" font-size="13" font-weight="600" fill="#123a63">LoRa E220</text>
+  <text x="710" y="296" text-anchor="middle" font-size="10.5" fill="#2a5a8a">900T30D/T22D</text>
+
+  <!-- ESP32 -->
+  <rect x="800" y="250" width="130" height="64" rx="8" fill="#e8e8f8" stroke="#4a4a8a" stroke-width="1.5"/>
+  <text x="865" y="288" text-anchor="middle" font-size="14" font-weight="600" fill="#2a2a5a">ESP32-C3</text>
+
+  <!-- Rele -->
+  <rect x="965" y="180" width="115" height="56" rx="8" fill="#e2f4e2" stroke="#3a7a3a" stroke-width="1.5"/>
+  <text x="1022" y="205" text-anchor="middle" font-size="12.5" fill="#204020">Relé /</text>
+  <text x="1022" y="222" text-anchor="middle" font-size="12.5" fill="#204020">Contator</text>
+
+  <!-- Bomba -->
+  <rect x="965" y="266" width="115" height="60" rx="8" fill="#d7efd7" stroke="#3a7a3a" stroke-width="1.8"/>
+  <text x="1022" y="292" text-anchor="middle" font-size="13" font-weight="600" fill="#1a401a">🚰 Bomba</text>
+  <text x="1022" y="309" text-anchor="middle" font-size="10.5" fill="#3a6a3a">(rede elétrica)</text>
+
+  <!-- Energia -->
+  <rect x="800" y="360" width="160" height="58" rx="8" fill="#ffe9c7" stroke="#b37a2b" stroke-width="1.5"/>
+  <text x="880" y="384" text-anchor="middle" font-size="12.5" fill="#5a3d10">Bateria 18650</text>
+  <text x="880" y="401" text-anchor="middle" font-size="11" fill="#7a5320">+ TP4056 (carga)</text>
+
+  <rect x="800" y="440" width="160" height="52" rx="8" fill="#ffe9c7" stroke="#b37a2b" stroke-width="1.5"/>
+  <text x="880" y="471" text-anchor="middle" font-size="12.5" fill="#5a3d10">Fonte externa 5–12 V</text>
+
+  <rect x="655" y="400" width="120" height="60" rx="8" fill="#ffe9c7" stroke="#b37a2b" stroke-width="1.5"/>
+  <text x="715" y="425" text-anchor="middle" font-size="12.5" fill="#5a3d10">Failover</text>
+  <text x="715" y="442" text-anchor="middle" font-size="11" fill="#7a5320">fonte/bateria</text>
+
+  <!-- arrows bomba -->
+  <line x1="772" y1="282" x2="798" y2="282" stroke="#2a6cb3" stroke-width="2" marker-end="url(#arrowR)"/>
+  <line x1="798" y1="292" x2="772" y2="292" stroke="#2a6cb3" stroke-width="2" marker-end="url(#arrowR)"/>
+  <text x="785" y="248" text-anchor="middle" font-size="10" fill="#2a6cb3">UART</text>
+  <line x1="930" y1="270" x2="963" y2="220" stroke="#555" stroke-width="1.8" marker-end="url(#arrow)"/>
+  <line x1="1022" y1="236" x2="1022" y2="264" stroke="#555" stroke-width="1.8" marker-end="url(#arrow)"/>
+  <line x1="880" y1="418" x2="880" y2="438" stroke="#b37a2b" stroke-width="1.8" marker-end="url(#arrow)"/>
+  <line x1="800" y1="388" x2="778" y2="418" stroke="#b37a2b" stroke-width="1.8" marker-end="url(#arrow)"/>
+  <line x1="800" y1="466" x2="778" y2="446" stroke="#b37a2b" stroke-width="1.8" marker-end="url(#arrow)"/>
+  <line x1="715" y1="400" x2="840" y2="318" stroke="#b37a2b" stroke-width="1.8" marker-end="url(#arrow)"/>
+
+  <!-- legenda -->
+  <g font-size="11" fill="#444">
+    <rect x="20" y="578" width="16" height="12" fill="#cfe8ff" stroke="#2a6cb3"/>
+    <text x="42" y="588">Rádio LoRa</text>
+    <rect x="130" y="578" width="16" height="12" fill="#e8e8f8" stroke="#4a4a8a"/>
+    <text x="152" y="588">MCU</text>
+    <rect x="205" y="578" width="16" height="12" fill="#e2f4e2" stroke="#3a7a3a"/>
+    <text x="227" y="588">Sensor / Atuador</text>
+    <rect x="345" y="578" width="16" height="12" fill="#ffe9c7" stroke="#b37a2b"/>
+    <text x="367" y="588">Energia (failover + carga)</text>
+  </g>
+</svg>
