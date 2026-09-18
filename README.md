@@ -8,9 +8,10 @@ LoRa, o nó da bomba na captação — com confirmação (ACK), retransmissão e
 
 ![Diagrama de blocos da solução](assets/block-diagram.svg)
 
-> **Status do projeto:** 🟡 Esqueleto funcional. Arquitetura, protocolo e
-> drivers principais implementados. Pinagem e modelo exato dos módulos ainda
-> precisam ser confirmados no hardware — procure por `TODO(hw)` no código.
+> **Status do projeto:** 🟡 `v0.0.1` (estruturação, pré-alpha) — esqueleto
+> funcional. Arquitetura, protocolo e drivers principais implementados. Pinagem
+> e modelo exato dos módulos ainda precisam ser confirmados no hardware —
+> procure por `TODO(hw)` no código. Histórico em [`CHANGELOG.md`](CHANGELOG.md).
 
 ---
 
@@ -77,6 +78,7 @@ LoRa, o nó da bomba na captação — com confirmação (ACK), retransmissão e
 lora-water-pump-control/
 ├── platformio.ini              # 2 ambientes: reservoir_node / pump_node
 ├── README.md
+├── CHANGELOG.md                # histórico de versões (SemVer)
 ├── docs/
 │   └── ARCHITECTURE.md         # decisões, camadas, protocolo, máquinas de estado
 ├── assets/
@@ -134,6 +136,7 @@ Protocolo próprio, ponto-a-ponto, com quadro de 8 bytes de cabeçalho + payload
 
 ## Documentação adicional
 
+- **Histórico de versões:** [`CHANGELOG.md`](CHANGELOG.md)
 - **Arquitetura e decisões:** [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)
 - **Diagrama de blocos:** [`assets/block-diagram.md`](assets/block-diagram.md)
 - **Esquemático elétrico:** [`assets/schematic.md`](assets/schematic.md) — energia
