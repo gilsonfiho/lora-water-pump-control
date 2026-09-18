@@ -1,0 +1,82 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1180 470" font-family="Segoe UI, Arial, sans-serif">
+  <defs>
+    <marker id="a" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L7,3 L0,6 Z" fill="#555"/>
+    </marker>
+    <marker id="o" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L7,3 L0,6 Z" fill="#b37a2b"/>
+    </marker>
+  </defs>
+  <rect x="0" y="0" width="1180" height="470" fill="#ffffff"/>
+  <text x="590" y="34" text-anchor="middle" font-size="20" font-weight="700" fill="#222">Subsistema de Energia — Failover + Carga (TP4056)</text>
+
+  <!-- fontes -->
+  <rect x="40" y="72" width="160" height="54" rx="8" fill="#ffe9c7" stroke="#b37a2b" stroke-width="1.5"/>
+  <text x="120" y="104" text-anchor="middle" font-size="12.5" fill="#5a3d10">Fonte externa 5–12 V</text>
+  <rect x="40" y="252" width="160" height="54" rx="8" fill="#ffe9c7" stroke="#b37a2b" stroke-width="1.5"/>
+  <text x="120" y="284" text-anchor="middle" font-size="12.5" fill="#5a3d10">Bateria 18650 · 3,7 V</text>
+
+  <!-- TP4056 -->
+  <rect x="250" y="250" width="150" height="68" rx="8" fill="#ffe9c7" stroke="#b37a2b" stroke-width="1.8"/>
+  <text x="325" y="278" text-anchor="middle" font-size="13" font-weight="600" fill="#5a3d10">TP4056</text>
+  <text x="325" y="296" text-anchor="middle" font-size="10.5" fill="#7a5320">carga + proteção</text>
+
+  <!-- OR de fontes -->
+  <rect x="250" y="108" width="190" height="62" rx="8" fill="#fff3e0" stroke="#b37a2b" stroke-width="1.5"/>
+  <text x="345" y="134" text-anchor="middle" font-size="12.5" fill="#5a3d10">OR de fontes</text>
+  <text x="345" y="152" text-anchor="middle" font-size="10.5" fill="#7a5320">diodos / ideal-diode</text>
+
+  <!-- RAIL -->
+  <rect x="490" y="108" width="90" height="212" rx="8" fill="#f0e6d0" stroke="#8a6a2a" stroke-width="1.8"/>
+  <text x="535" y="214" text-anchor="middle" font-size="12.5" font-weight="600" fill="#5a3d10" transform="rotate(-90 535 214)">Trilho de alimentação</text>
+
+  <!-- consumidores/monitores -->
+  <rect x="640" y="92" width="160" height="52" rx="8" fill="#e2f4e2" stroke="#3a7a3a" stroke-width="1.5"/>
+  <text x="720" y="123" text-anchor="middle" font-size="12.5" fill="#204020">Regulador 3V3</text>
+
+  <rect x="640" y="166" width="160" height="50" rx="8" fill="#eef" stroke="#4a4a8a" stroke-width="1.3"/>
+  <text x="720" y="188" text-anchor="middle" font-size="11.5" fill="#2a2a5a">Divisor R1/R2</text>
+  <text x="720" y="204" text-anchor="middle" font-size="10" fill="#4a4a8a">→ ADC (tensão)</text>
+
+  <rect x="640" y="240" width="160" height="50" rx="8" fill="#eef" stroke="#4a4a8a" stroke-width="1.3"/>
+  <text x="720" y="262" text-anchor="middle" font-size="11.5" fill="#2a2a5a">INA219 / INA226</text>
+  <text x="720" y="278" text-anchor="middle" font-size="10" fill="#4a4a8a">I2C (tensão+corrente)</text>
+
+  <rect x="640" y="314" width="160" height="48" rx="8" fill="#eef" stroke="#4a4a8a" stroke-width="1.3"/>
+  <text x="720" y="343" text-anchor="middle" font-size="11" fill="#2a2a5a">Fonte presente? (GPIO)</text>
+
+  <!-- ESP -->
+  <rect x="860" y="108" width="150" height="256" rx="10" fill="#e8e8f8" stroke="#4a4a8a" stroke-width="1.8"/>
+  <text x="935" y="240" text-anchor="middle" font-size="15" font-weight="700" fill="#2a2a5a">ESP32-C3</text>
+
+  <!-- === roteamento de energia (âmbar) === -->
+  <!-- EXT -> OR (entrada A do trilho) -->
+  <line x1="200" y1="99" x2="248" y2="135" stroke="#b37a2b" stroke-width="1.8" marker-end="url(#o)"/>
+  <!-- EXT -> TP4056 (carrega), diagonal à direita da bateria -->
+  <line x1="175" y1="126" x2="300" y2="248" stroke="#b37a2b" stroke-width="1.8" marker-end="url(#o)"/>
+  <text x="206" y="224" text-anchor="end" font-size="9.5" fill="#7a5320">5 V (carrega)</text>
+  <!-- BATT <-> TP4056 -->
+  <line x1="200" y1="279" x2="248" y2="284" stroke="#b37a2b" stroke-width="1.8" marker-end="url(#o)"/>
+  <text x="224" y="272" text-anchor="middle" font-size="9" fill="#7a5320">B+/B−</text>
+  <!-- TP4056/BATT -> OR (entrada B do trilho) -->
+  <line x1="330" y1="248" x2="342" y2="172" stroke="#b37a2b" stroke-width="1.8" marker-end="url(#o)"/>
+  <!-- OR -> RAIL -->
+  <line x1="440" y1="140" x2="488" y2="150" stroke="#b37a2b" stroke-width="1.8" marker-end="url(#o)"/>
+  <!-- RAIL -> consumidores -->
+  <line x1="580" y1="118" x2="638" y2="116" stroke="#b37a2b" stroke-width="1.8" marker-end="url(#o)"/>
+  <line x1="580" y1="190" x2="638" y2="190" stroke="#b37a2b" stroke-width="1.6" marker-end="url(#o)"/>
+  <line x1="580" y1="262" x2="638" y2="264" stroke="#b37a2b" stroke-width="1.6" marker-end="url(#o)"/>
+
+  <!-- === sinais para o ESP (cinza) === -->
+  <line x1="800" y1="116" x2="858" y2="140" stroke="#555" stroke-width="1.8" marker-end="url(#a)"/>
+  <text x="828" y="108" text-anchor="middle" font-size="9.5" fill="#333">3V3</text>
+  <line x1="800" y1="190" x2="858" y2="180" stroke="#555" stroke-width="1.6" marker-end="url(#a)"/>
+  <line x1="800" y1="264" x2="858" y2="240" stroke="#555" stroke-width="1.6" marker-end="url(#a)"/>
+  <line x1="800" y1="338" x2="858" y2="320" stroke="#555" stroke-width="1.6" marker-end="url(#a)"/>
+
+  <!-- === linha de sense: EXT -> caixa "Fonte presente?" contornando pela esquerda === -->
+  <path d="M40,99 L18,99 L18,430 L720,430 L720,364" fill="none" stroke="#b37a2b" stroke-width="1.5" stroke-dasharray="5 4" marker-end="url(#o)"/>
+  <text x="360" y="424" text-anchor="middle" font-size="10" fill="#7a5320">detecção de fonte externa (sense)</text>
+
+  <text x="590" y="456" text-anchor="middle" font-size="11" fill="#666">Fonte externa presente → alimenta o trilho e carrega a bateria; se cair, a bateria assume sem interrupção (OR pela maior tensão).</text>
+</svg>

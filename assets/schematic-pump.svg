@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 500" font-family="Segoe UI, Arial, sans-serif">
+  <defs>
+    <marker id="a" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L7,3 L0,6 Z" fill="#555"/></marker>
+    <marker id="b" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L7,3 L0,6 Z" fill="#2a6cb3"/></marker>
+    <marker id="r" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L7,3 L0,6 Z" fill="#b33"/></marker>
+  </defs>
+  <rect x="0" y="0" width="1000" height="500" fill="#ffffff"/>
+  <text x="500" y="34" text-anchor="middle" font-size="20" font-weight="700" fill="#222">Ligações — Nó da Bomba (Receptor / Atuador)</text>
+
+  <!-- E220 -->
+  <rect x="40" y="150" width="200" height="250" rx="10" fill="#cfe8ff" stroke="#2a6cb3" stroke-width="1.8"/>
+  <text x="140" y="176" text-anchor="middle" font-size="14" font-weight="700" fill="#123a63">LoRa E220</text>
+  <text x="140" y="193" text-anchor="middle" font-size="10.5" fill="#2a5a8a">900T30D / T22D</text>
+  <line x1="140" y1="400" x2="140" y2="428" stroke="#2a6cb3" stroke-width="2"/>
+  <text x="140" y="444" text-anchor="middle" font-size="11" fill="#2a6cb3">📡 Antena SMA</text>
+
+  <!-- ESP -->
+  <rect x="340" y="120" width="220" height="320" rx="10" fill="#e8e8f8" stroke="#4a4a8a" stroke-width="1.8"/>
+  <text x="450" y="150" text-anchor="middle" font-size="15" font-weight="700" fill="#2a2a5a">ESP32-C3</text>
+
+  <!-- pin labels E220 (right edge) / ESP (left edge) -->
+  <g font-size="12" fill="#123a63">
+    <text x="228" y="214" text-anchor="end">RXD</text>
+    <text x="228" y="240" text-anchor="end">TXD</text>
+    <text x="228" y="266" text-anchor="end">M0</text>
+    <text x="228" y="292" text-anchor="end">M1</text>
+    <text x="228" y="318" text-anchor="end">AUX</text>
+    <text x="228" y="344" text-anchor="end">VCC</text>
+    <text x="228" y="370" text-anchor="end">GND</text>
+  </g>
+  <g font-size="12" fill="#2a2a5a">
+    <text x="352" y="214" text-anchor="start">GPIO5 (TX)</text>
+    <text x="352" y="240" text-anchor="start">GPIO4 (RX)</text>
+    <text x="352" y="266" text-anchor="start">GPIO6</text>
+    <text x="352" y="292" text-anchor="start">GPIO7</text>
+    <text x="352" y="318" text-anchor="start">GPIO10</text>
+    <text x="352" y="344" text-anchor="start">3V3</text>
+    <text x="352" y="370" text-anchor="start">GND</text>
+  </g>
+
+  <!-- connection lines E220<->ESP -->
+  <line x1="242" y1="210" x2="338" y2="210" stroke="#2a6cb3" stroke-width="1.8" marker-end="url(#b)"/>
+  <line x1="338" y1="236" x2="242" y2="236" stroke="#2a6cb3" stroke-width="1.8" marker-end="url(#b)"/>
+  <line x1="338" y1="262" x2="242" y2="262" stroke="#2a6cb3" stroke-width="1.6" marker-end="url(#b)"/>
+  <line x1="338" y1="288" x2="242" y2="288" stroke="#2a6cb3" stroke-width="1.6" marker-end="url(#b)"/>
+  <line x1="242" y1="314" x2="338" y2="314" stroke="#2a6cb3" stroke-width="1.6" marker-end="url(#b)"/>
+  <line x1="338" y1="340" x2="242" y2="340" stroke="#b37a2b" stroke-width="1.6" marker-end="url(#a)"/>
+  <line x1="242" y1="366" x2="338" y2="366" stroke="#555" stroke-width="1.4"/>
+  <text x="290" y="160" text-anchor="middle" font-size="10" fill="#2a6cb3">UART + M0/M1 + AUX</text>
+
+  <!-- Right column: mains, relay, contator, bomba -->
+  <rect x="680" y="96" width="160" height="46" rx="8" fill="#f2d0d0" stroke="#b33" stroke-width="1.5"/>
+  <text x="760" y="124" text-anchor="middle" font-size="12.5" fill="#7a1010">⚡ Rede elétrica</text>
+
+  <rect x="680" y="170" width="160" height="56" rx="8" fill="#e2f4e2" stroke="#3a7a3a" stroke-width="1.5"/>
+  <text x="760" y="193" text-anchor="middle" font-size="12.5" fill="#204020">Módulo relé</text>
+  <text x="760" y="210" text-anchor="middle" font-size="10.5" fill="#3a6a3a">optoacoplado (GPIO3)</text>
+
+  <rect x="680" y="252" width="160" height="56" rx="8" fill="#e2f4e2" stroke="#3a7a3a" stroke-width="1.8"/>
+  <text x="760" y="285" text-anchor="middle" font-size="13" font-weight="600" fill="#204020">Contator</text>
+
+  <rect x="680" y="336" width="160" height="62" rx="8" fill="#d7efd7" stroke="#3a7a3a" stroke-width="1.8"/>
+  <text x="760" y="362" text-anchor="middle" font-size="13" font-weight="700" fill="#1a401a">🚰 Bomba</text>
+  <text x="760" y="380" text-anchor="middle" font-size="10.5" fill="#3a6a3a">carga de rede</text>
+
+  <!-- arrows right -->
+  <line x1="562" y1="245" x2="678" y2="198" stroke="#555" stroke-width="1.8" marker-end="url(#a)"/>
+  <text x="620" y="212" text-anchor="middle" font-size="10.5" fill="#333">GPIO3</text>
+  <line x1="760" y1="226" x2="760" y2="250" stroke="#3a7a3a" stroke-width="1.8" marker-end="url(#a)"/>
+  <text x="828" y="244" text-anchor="start" font-size="9.5" fill="#3a6a3a">aciona bobina</text>
+  <path d="M840,119 L880,119 L880,280 L842,280" fill="none" stroke="#b33" stroke-width="1.8" marker-end="url(#r)"/>
+  <text x="892" y="200" text-anchor="middle" font-size="10" fill="#b33" transform="rotate(90 892 200)">potência (rede)</text>
+  <line x1="760" y1="308" x2="760" y2="334" stroke="#3a7a3a" stroke-width="1.8" marker-end="url(#a)"/>
+
+  <text x="500" y="478" text-anchor="middle" font-size="11" fill="#666">Relé de placa costuma ser ATIVO EM NÍVEL BAIXO → ajuste cfg::PumpPins::kActiveHigh p/ o boot ficar DESLIGADO. Dimensione o contator + fusível/disjuntor.</text>
+</svg>

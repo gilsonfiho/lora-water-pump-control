@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 520" font-family="Segoe UI, Arial, sans-serif">
+  <defs>
+    <marker id="a" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L7,3 L0,6 Z" fill="#555"/></marker>
+    <marker id="b" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L7,3 L0,6 Z" fill="#2a6cb3"/></marker>
+  </defs>
+  <rect x="0" y="0" width="1000" height="520" fill="#ffffff"/>
+  <text x="500" y="34" text-anchor="middle" font-size="20" font-weight="700" fill="#222">Ligações — Nó do Reservatório (Transmissor)</text>
+
+  <!-- ESP -->
+  <rect x="360" y="110" width="250" height="345" rx="10" fill="#e8e8f8" stroke="#4a4a8a" stroke-width="1.8"/>
+  <text x="485" y="138" text-anchor="middle" font-size="15" font-weight="700" fill="#2a2a5a">ESP32-C3</text>
+
+  <!-- E220 -->
+  <rect x="740" y="150" width="210" height="250" rx="10" fill="#cfe8ff" stroke="#2a6cb3" stroke-width="1.8"/>
+  <text x="845" y="176" text-anchor="middle" font-size="14" font-weight="700" fill="#123a63">LoRa E220</text>
+  <text x="845" y="193" text-anchor="middle" font-size="10.5" fill="#2a5a8a">900T30D / T22D</text>
+
+  <!-- Boias -->
+  <rect x="40" y="185" width="170" height="52" rx="8" fill="#e2f4e2" stroke="#3a7a3a" stroke-width="1.5"/>
+  <text x="125" y="207" text-anchor="middle" font-size="12" fill="#204020">Boia BAIXA</text>
+  <text x="125" y="224" text-anchor="middle" font-size="10" fill="#3a6a3a">(INPUT_PULLUP → GND)</text>
+  <rect x="40" y="270" width="170" height="52" rx="8" fill="#e2f4e2" stroke="#3a7a3a" stroke-width="1.5"/>
+  <text x="125" y="292" text-anchor="middle" font-size="12" fill="#204020">Boia ALTA</text>
+  <text x="125" y="309" text-anchor="middle" font-size="10" fill="#3a6a3a">(INPUT_PULLUP → GND)</text>
+  <rect x="40" y="380" width="200" height="52" rx="8" fill="#ffe9c7" stroke="#b37a2b" stroke-width="1.5"/>
+  <text x="140" y="402" text-anchor="middle" font-size="11.5" fill="#5a3d10">Energia (GPIO0 = ADC bat.)</text>
+  <text x="140" y="419" text-anchor="middle" font-size="10" fill="#7a5320">ver schematic-power.svg</text>
+
+  <!-- ESP <-> E220 pin rows -->
+  <g font-size="12" fill="#2a2a5a">
+    <text x="600" y="172" text-anchor="end">GPIO5 (TX)</text>
+    <text x="600" y="204" text-anchor="end">GPIO4 (RX)</text>
+    <text x="600" y="236" text-anchor="end">GPIO6</text>
+    <text x="600" y="268" text-anchor="end">GPIO7</text>
+    <text x="600" y="300" text-anchor="end">GPIO10</text>
+    <text x="600" y="332" text-anchor="end">3V3</text>
+    <text x="600" y="364" text-anchor="end">GND</text>
+  </g>
+  <g font-size="12" fill="#123a63">
+    <text x="752" y="222" text-anchor="start">RXD</text>
+    <text x="752" y="246" text-anchor="start">TXD</text>
+    <text x="752" y="270" text-anchor="start">M0</text>
+    <text x="752" y="294" text-anchor="start">M1</text>
+    <text x="752" y="318" text-anchor="start">AUX</text>
+    <text x="752" y="342" text-anchor="start">VCC</text>
+    <text x="752" y="366" text-anchor="start">GND</text>
+  </g>
+
+  <!-- connection lines ESP->E220 -->
+  <line x1="612" y1="168" x2="748" y2="218" stroke="#2a6cb3" stroke-width="1.8" marker-end="url(#b)"/>
+  <line x1="748" y1="242" x2="612" y2="200" stroke="#2a6cb3" stroke-width="1.8" marker-end="url(#b)"/>
+  <line x1="612" y1="232" x2="748" y2="266" stroke="#2a6cb3" stroke-width="1.6" marker-end="url(#b)"/>
+  <line x1="612" y1="264" x2="748" y2="290" stroke="#2a6cb3" stroke-width="1.6" marker-end="url(#b)"/>
+  <line x1="748" y1="314" x2="612" y2="296" stroke="#2a6cb3" stroke-width="1.6" marker-end="url(#b)"/>
+  <line x1="612" y1="328" x2="748" y2="338" stroke="#b37a2b" stroke-width="1.6" marker-end="url(#a)"/>
+  <line x1="612" y1="360" x2="748" y2="362" stroke="#555" stroke-width="1.4"/>
+  <text x="680" y="150" text-anchor="middle" font-size="10" fill="#2a6cb3">UART + modo (M0/M1) + AUX</text>
+
+  <!-- antenna -->
+  <line x1="845" y1="400" x2="845" y2="430" stroke="#2a6cb3" stroke-width="2"/>
+  <text x="845" y="446" text-anchor="middle" font-size="11" fill="#2a6cb3">📡 Antena SMA 900 MHz</text>
+
+  <!-- boias -> ESP -->
+  <line x1="210" y1="205" x2="358" y2="200" stroke="#3a7a3a" stroke-width="1.8" marker-end="url(#a)"/>
+  <text x="285" y="192" text-anchor="middle" font-size="10.5" fill="#204020">GPIO1</text>
+  <line x1="210" y1="292" x2="358" y2="290" stroke="#3a7a3a" stroke-width="1.8" marker-end="url(#a)"/>
+  <text x="285" y="282" text-anchor="middle" font-size="10.5" fill="#204020">GPIO2</text>
+  <line x1="240" y1="400" x2="358" y2="390" stroke="#b37a2b" stroke-width="1.6" marker-end="url(#a)"/>
+
+  <text x="500" y="492" text-anchor="middle" font-size="11" fill="#666">Em MCU 5 V, adicionar pull-up 4k7–10k em TXD e AUX. Aguardar borda de subida do AUX como “pronto”.</text>
+</svg>
