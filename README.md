@@ -59,10 +59,6 @@ LoRa, o nó da bomba na captação — com confirmação (ACK), retransmissão e
   - Monitor de tensão/corrente (ADC via divisor, ou **INA219/INA226** por I2C).
 - Antenas SMA adequadas à faixa 900 MHz (ganho ~2–3 dBi).
 
-### Alimentação — failover fonte/bateria (TP4056)
-
-![Subsistema de energia](assets/schematic-power.svg)
-
 ### Ligações dos nós
 
 | Reservatório (transmissor) | Bomba (receptor/atuador) |
