@@ -30,10 +30,10 @@ LoRa, o nó da bomba na captação — com confirmação (ACK), retransmissão e
 
 ## Visão geral
 
-| Nó | Papel | Componentes | Ambiente de build |
-|----|-------|-------------|-------------------|
-| **Reservatório** | Transmissor | ESP32-C3, boia de nível, E220 | `reservoir_node` |
-| **Bomba** | Receptor / atuador | ESP32-C3, relé/contator, E220 | `pump_node` |
+| Nó | Papel | Componentes | Seleção |
+|----|-------|-------------|---------|
+| **Reservatório** | Transmissor | ESP32-C3, boia de nível, E220 | strap aberto |
+| **Bomba** | Receptor / atuador | ESP32-C3, relé/contator, E220 | strap no GND |
 
 **Lógica de controle (com histerese das boias):**
 
@@ -72,56 +72,78 @@ LoRa, o nó da bomba na captação — com confirmação (ACK), retransmissão e
 
 ```
 lora-water-pump-control/
-├── platformio.ini              # 2 ambientes: reservoir_node / pump_node
+├── CMakeLists.txt              # projeto ESP-IDF
+├── sdkconfig.defaults          # alvo esp32c3 + opções do projeto
 ├── README.md
 ├── CHANGELOG.md                # histórico de versões (SemVer)
 ├── docs/
-│   └── ARCHITECTURE.md         # decisões, camadas, protocolo, máquinas de estado
+│   ├── ARCHITECTURE.md         # decisões, camadas, protocolo, máquinas de estado
+│   ├── context/                # notas de contexto (decisões, hardware, status)
+│   └── datasheets/             # manuais dos módulos E220
 ├── assets/
 │   ├── block-diagram.md/.svg   # diagrama de blocos da solução
 │   ├── schematic.md            # esquemático elétrico (imagens + Mermaid + texto)
 │   ├── schematic-power.svg     # subsistema de energia (failover + TP4056)
 │   ├── schematic-reservoir.svg # ligações do nó do reservatório
 │   └── schematic-pump.svg      # ligações do nó da bomba
-├── lib/                        # código compartilhado, em camadas
+├── components/                 # código compartilhado, em camadas
 │   ├── config/                 # pinos, endereços, timeouts, perfil de RF
+│   ├── platform/               # relógio monotônico (isola o ESP-IDF)
 │   ├── hal/                    # abstração de hardware (interfaces + drivers)
 │   ├── protocol/               # pacote, CRC, camada de enlace (ACK/retry)
 │   ├── core/                   # máquinas de estado + Observer
 │   └── power/                  # deep sleep + failover de energia
-└── src/
-    ├── reservoir_node/main.cpp # firmware do nó do reservatório
-    └── pump_node/main.cpp      # firmware do nó da bomba
+└── main/
+    ├── main.cpp                # lê o strap e assume o papel do nó
+    ├── reservoir_app.cpp       # laço do nó do reservatório
+    └── pump_app.cpp            # laço do nó da bomba
 ```
+
+As dependências entre camadas são declaradas em `REQUIRES`, no `CMakeLists.txt`
+de cada componente — o build **impede** que `core/` ou `protocol/` alcancem um
+driver concreto.
 
 ## Como compilar e gravar
 
-Requisitos: [PlatformIO](https://platformio.org/) (CLI ou extensão do VS Code).
+Requisitos: [ESP-IDF](https://docs.espressif.com/projects/esp-idf/) v5.x (CLI ou
+a extensão do VS Code).
+
+**Um único binário serve aos dois nós.** O papel é lido no boot pelo pino
+`cfg::RolePins::kRoleStrap`:
+
+| Strap | Papel |
+|-------|-------|
+| aberto | reservatório (transmissor) |
+| ligado ao GND | bomba (receptor/atuador) |
+
+O aberto virar reservatório é proposital: é o papel que não aciona o relé, então
+um strap solto nunca faz um nó assumir o comando da bomba.
 
 ```bash
-# Compilar ambos os nós
-pio run
+idf.py set-target esp32c3
+idf.py build
 
-# Gravar o nó do reservatório (transmissor)
-pio run -e reservoir_node -t upload
-
-# Gravar o nó da bomba (receptor) e abrir o monitor serial
-pio run -e pump_node -t upload -t monitor
+# Gravar e abrir o monitor serial
+idf.py -p COM3 flash monitor
 ```
 
 ## Configuração
 
-Toda a configuração fica em [`lib/config/`](lib/config):
+Toda a configuração fica em [`components/config/include/config/`](components/config/include/config):
 
 | Arquivo | O que define |
 |---------|--------------|
-| `PinConfig.h` | Pinos físicos (UART do E220, M0/M1/AUX, boias, relé, ADC, I2C). |
+| `PinConfig.h` | Pinos físicos (strap de papel, UART do E220, M0/M1/AUX, boias, relé, ADC, I2C). |
 | `NodeConfig.h` | Endereços lógicos dos nós, timeouts, retries, deep sleep. |
 | `RadioConfig.h` | Canal, taxa aérea, potência, variante do E220 (T30D/T22D). |
 
-**Sensor de nível:** a **boia** é o padrão. Para usar o ultrassônico (opcional),
-descomente `-D USE_ULTRASONIC_SENSOR=1` no ambiente `reservoir_node` do
-`platformio.ini`.
+**Sensor de nível:** o alvo de campo é a **boia** (`FloatSwitchLevelSensor`), e o
+ultrassônico é opcional. O protótipo de bancada usa uma **chave manual**
+(`BenchSwitchLevelSensor`) — ver [`docs/context/bancada.md`](docs/context/bancada.md).
+
+> ⚠️ **A branch `feature/prototipo-bancada` está em modo bancada:** chave no
+> lugar da boia, LED no lugar do contator, bateria stubada e tempos curtos
+> (`BENCH_PROFILE` em `NodeConfig.h`). Não é a configuração de campo.
 
 ## Protocolo de comunicação
 
