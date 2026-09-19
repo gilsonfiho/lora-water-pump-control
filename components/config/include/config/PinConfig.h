@@ -1,12 +1,11 @@
 #pragma once
 // ============================================================================
-//  PinConfig.h  -  Atribuicao dos pinos fisicos dos nos ESP32-C3.
+//  PinConfig.h  -  Atribuicao dos pinos fisicos dos nós ESP32-C3.
 // ----------------------------------------------------------------------------
-//  O ESP32-C3 expoe poucos GPIOs, entao cada pino abaixo e uma escolha
-//  deliberada. Todos os valores sao PROVISORIOS: confirme com a placa final e
+// Todos os valores sao PROVISORIOS: confirme com a placa final e
 //  a fiacao antes de gravar no hardware. Procure por "TODO(hw)" para revisar.
 //
-//  ---- Pinos do ESP32-C3 que NAO podem ser usados a esmo --------------------
+//  ---- Pinos do ESP32-C3 que NAO podem ser usados --------------------
 //    GPIO 11..17  flash SPI interna -- indisponiveis.
 //    GPIO 18, 19  USB D-/D+. Usa-los como GPIO DERRUBA o USB Serial/JTAG, que
 //                 e como o devkit grava e abre o monitor. Evitar na bancada.
@@ -14,20 +13,19 @@
 //    GPIO 2, 8, 9 pinos de strap de boot. Um sinal externo segurando-os no
 //                 nivel errado no reset impede o boot. GPIO 9 e o botao BOOT.
 //
-//  Sobram, livres de ressalva: GPIO 0, 1, 3, 4, 5, 6, 7 e 10 -- exatamente os
-//  oito que o prototipo usa.
+//  Sobram, livres de ressalva: GPIO 0, 1, 3, 4, 5, 6, 7 e 10 -- 
 // ============================================================================
 
 #include <cstdint>
 
 namespace cfg {
 
-// ---- Selecao do papel do no (firmware unico) ------------------------------
-// Um so binario roda nos dois nos; o papel e lido no boot. O pino usa pull-up
+// ---- Selecao do papel do nó (firmware unico) ------------------------------
+// Um so binario roda nos dois nós; o papel é lido no boot. O pino usa pull-up
 // interno, entao DEIXAR ABERTO significa RESERVATORIO e LIGAR AO GND significa
 // BOMBA.
 //
-// A atribuicao nao e arbitraria: o reservatorio e o papel que NAO aciona rele.
+// A atribuicao não é arbitraria: o reservatorio e o papel que NAO aciona relé.
 // Assim, um no mal strapado (ou com o fio solto) nunca assume por engano o
 // papel que energiza a bomba.
 struct RolePins {
@@ -35,7 +33,7 @@ struct RolePins {
 };
 
 // ---- Modulo LoRa E220 (UART + GPIOs de modo/status) -----------------------
-// O E220 fala UART TTL. AUX e uma linha de ocupado/pronto e deve permitir
+// O E220 comunica via UART TTL. AUX e uma linha de ocupado/pronto e deve permitir
 // interrupcao, para reagirmos na borda de subida em vez de fazer polling.
 struct LoraPins {
     static constexpr int kUartRx = 4;   // RX do ESP  <- TXD do E220   TODO(hw)
@@ -47,8 +45,6 @@ struct LoraPins {
 
 // ---- Sensor de nivel (no do reservatorio) ---------------------------------
 // Duas boias dao histerese (baixo = comeca a encher, alto = para de encher).
-// Um sensor ultrassonico pode substituir as duas; ver UltrasonicLevelSensor.
-//
 // ATENCAO: kFloatHigh cai no GPIO 2, que e pino de strap de boot. Uma boia
 // fechada para o GND no momento do reset impede o ESP de subir. Ao voltar para
 // as boias, remapear este pino.  TODO(hw)
@@ -61,7 +57,7 @@ struct LevelSensorPins {
     static constexpr int kUltrasonicEcho = 2;  // TODO(hw)
 };
 
-// ---- Chave de bancada (substitui a boia no prototipo) ---------------------
+// ---- Chave de bancada (substitui a bóia no prototipo) ---------------------
 // Chave que TRAVA na posicao (gangorra/alavanca), nao botao momentaneo: ela
 // precisa manter o estado entre as leituras do ciclo. Liga o pino ao GND de um
 // lado; o pull-up interno cuida do resto.

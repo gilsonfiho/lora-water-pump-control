@@ -1,17 +1,17 @@
 #pragma once
 // ============================================================================
-//  NodeConfig.h  -  Enderecos logicos, papeis e temporizacao dos dois nos.
+//  NodeConfig.h  -  Enderecos logicos, papeis e temporizacao dos dois nós.
 // ----------------------------------------------------------------------------
 //  Estes sao valores da camada de aplicacao carregados dentro do nosso proprio
 //  cabecalho de pacote; sao independentes dos registradores de endereco do
-//  E220 (o radio roda em modo transparente e o enderecamento e feito por nos).
+//  E220 (o radio roda em modo transparente e o enderecamento e feito por nós).
 // ============================================================================
 
 #include <cstdint>
 
 namespace cfg {
 
-// Enderecos logicos dos nos (1 byte cada, 0x00 e 0xFF reservados).
+// Enderecos logicos dos nós (1 byte cada, 0x00 e 0xFF reservados).
 enum NodeAddress : uint8_t {
     kAddrReservoir = 0x01,
     kAddrPump      = 0x02,
