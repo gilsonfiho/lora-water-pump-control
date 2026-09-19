@@ -18,8 +18,9 @@ protocolo de comunicação e as máquinas de estado dos dois nós.
 
 1. **Segurança primeiro.** O estado padrão da bomba é DESLIGADA. Qualquer
    incerteza (sensor falho, enlace perdido, boot) resulta em bomba desligada.
-2. **Não bloqueante.** Nenhum `delay()` longo no caminho principal; tudo é
-   dirigido por máquinas de estado e por `poll()` no `loop()`.
+2. **Concorrência FreeRTOS explícita.** Uma task de RX dedicada no `LinkLayer`,
+   filas e semáforos entre tarefas, `esp_timer` e ISR para os eventos periódicos
+   e de nível — sem `delay()` longo bloqueando o fluxo.
 3. **Hardware abstraído.** Rádio, sensor, atuador e monitor de bateria são
    interfaces; trocar de módulo não toca na lógica.
 4. **Código expressivo.** Nomes autoexplicativos, *guard clauses* e *early

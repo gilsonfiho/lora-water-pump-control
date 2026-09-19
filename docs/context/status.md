@@ -28,6 +28,11 @@ principais implementados. Ainda não validado em hardware real.
   `RadioConfig.h` vale `kLow` (10 dBm) na bancada e `kMax` em campo. Evita
   saturar o LLCC68 com os módulos próximos. Compila sem warnings.
 
+- **Unificação FreeRTOS (2026-09-19):** o super-loop `poll()` foi trocado pela
+  arquitetura de tarefas (task de RX no `LinkLayer`, fila + semáforo de ACK,
+  `esp_timer` e ISR). Compila com ESP-IDF v6.1 (binário único, strap). Ver a
+  decisão em [`decisions.md`](decisions.md#concorrência-freertos-decidido-em-2026-09-19).
+
 ## Em andamento
 
 - Nada em aberto no build; próximo passo é a bancada.

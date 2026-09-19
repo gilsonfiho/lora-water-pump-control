@@ -26,6 +26,22 @@ criação deste arquivo foram extraídas de [`../ARCHITECTURE.md`](../ARCHITECTU
 - **SKUs:** (1) padrão E220-T22D; (2) longo alcance E22-T30D, *pin-compatible*;
   (3) repetidor, planejado.
 
+## Concorrência FreeRTOS (decidido em 2026-09-19)
+
+- **Motivo:** unificar com a linha de trabalho paralela (branch `feature/FreeRTOS`)
+  que priorizou usar os recursos do FreeRTOS. O super-loop `poll()` foi trocado
+  por: uma **task de RX** dedicada no `LinkLayer` (com **fila** de pacotes e
+  **semáforo** de ACK), **`esp_timer`** para ciclo/heartbeat/bateria e **ISR**
+  para a mudança de nível, tudo serializado por uma fila de eventos no
+  `app_main` task. Mutex protege o TX do rádio.
+- **Custo:** a interface `ILoRaRadio` deixou de ser `poll()`/`available()`/
+  `receive()` e virou bloqueante (`read()` + `send` thread-safe); os
+  controladores passaram de `loop()` para métodos orientados a evento.
+- **Trade-off aceito:** o `protocol/`/`core/` ficam mais acoplados ao FreeRTOS
+  (menos testáveis no host) em troca de um modelo de concorrência mais robusto
+  e idiomático. O `platform::Clock` foi mantido para o que sobrou de tempo.
+- Validado: compila com **ESP-IDF v6.1** para `esp32c3` (binário único, strap).
+
 ## Canal 55 (905,125 MHz) (decidido em 2026-09-19)
 
 - **Motivo:** o canal de fábrica do E220 (23 → 873,125 MHz) cai no downlink
