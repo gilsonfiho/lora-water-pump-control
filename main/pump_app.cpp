@@ -1,12 +1,16 @@
 // ============================================================================
 //  pump_app.cpp  -  No da BOMBA (captacao) / RECEPTOR / ATUADOR
 // ----------------------------------------------------------------------------
-//  Recebe comandos do reservatorio via LoRa, aciona o rele/contator e aplica o
-//  FAILSAFE: se o enlace ficar em silencio por mais de kLinkLostTimeoutMs, a
-//  bomba e DESLIGADA por seguranca ate o enlace voltar.
+//  Arquitetura FreeRTOS:
+//    * A task de RX do LinkLayer recebe/decodifica quadros e auto-ACKa.
+//    * A tarefa de controle (este app_main task) consome a fila de pacotes do
+//      LinkLayer; o TIMEOUT da fila serve de "batida" para checar o failsafe
+//      (perda de enlace -> bomba OFF).
 // ============================================================================
 
 #include <driver/uart.h>
+#include <freertos/FreeRTOS.h>
+#include <freertos/queue.h>
 #include <esp_log.h>
 
 #include "config/NodeConfig.h"
@@ -16,7 +20,6 @@
 #include "hw/E220Radio.h"
 #include "hw/RelayPumpActuator.h"
 #include "node_app.h"
-#include "platform/Clock.h"
 #include "protocol/LinkLayer.h"
 
 namespace app {
@@ -24,13 +27,8 @@ namespace app {
 namespace {
 
 constexpr char kTag[] = "bomba";
+constexpr uint32_t kFailsafeTickMs = 1000;  // periodicidade de checagem
 
-// Cadencia do laco principal. Precisa ser bem menor que a folga de 12 ms que
-// fecha um quadro no E220, e precisa ceder o processador para nao disparar o
-// watchdog de tarefa.
-constexpr uint32_t kLoopPeriodMs = 5;
-
-// Log legivel: na bancada o que importa e ler o estado de relance.
 const char* stateName(core::PumpController::State s) {
     switch (s) {
         case core::PumpController::State::kBoot:     return "BOOT";
@@ -53,35 +51,39 @@ cfg::LoraProfile makeProfile() {
 [[noreturn]] void runPump() {
     ESP_LOGI(kTag, "iniciando...");
 
-    static hw::E220Radio          radio(UART_NUM_1, makeProfile());
-    static hw::RelayPumpActuator  pump;
-    static protocol::LinkLayer     link(radio, cfg::kAddrPump);
-    static core::PumpController    controller(link, pump);
+    static hw::E220Radio         radio(UART_NUM_1, makeProfile());
+    static hw::RelayPumpActuator pump;
+    static protocol::LinkLayer   link(radio, cfg::kAddrPump);
+    static core::PumpController  controller(pump);
 
-    // Estado seguro primeiro: o controlador ja forca a bomba DESLIGADA.
+    // Estado seguro primeiro: o controlador forca a bomba DESLIGADA.
     controller.begin();
 
     if (!radio.begin()) {
-        ESP_LOGE(kTag, "FALHA ao iniciar o radio E220");
-        // Sem radio, o failsafe manda: a bomba permanece desligada.
+        ESP_LOGE(kTag, "FALHA ao iniciar o radio E220; failsafe mantem OFF");
+    }
+    if (!link.begin()) {
+        ESP_LOGE(kTag, "FALHA ao subir a camada de enlace");
     }
 
     ESP_LOGI(kTag, "pronto (bancada: LED no GPIO %d, failsafe em %lu ms)",
              cfg::PumpPins::kRelay,
              static_cast<unsigned long>(cfg::Timing::kLinkLostTimeoutMs));
 
+    QueueHandle_t q = link.dataQueue();
     core::PumpController::State last = core::PumpController::State::kBoot;
-    while (true) {
-        controller.loop();
+    for (;;) {
+        protocol::Packet pkt;
+        if (xQueueReceive(q, &pkt, pdMS_TO_TICKS(kFailsafeTickMs)) == pdTRUE) {
+            controller.handlePacket(pkt);
+        }
+        controller.checkFailsafe();  // roda mesmo sem pacotes
 
-        // Log leve de transicao de estado.
         if (controller.state() != last) {
             last = controller.state();
             ESP_LOGI(kTag, "estado -> %s (saida=%s)",
                      stateName(last), pump.isOn() ? "LIGADA" : "DESLIGADA");
         }
-
-        platform::delayMs(kLoopPeriodMs);
     }
 }
 
