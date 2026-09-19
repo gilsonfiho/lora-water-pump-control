@@ -2,10 +2,9 @@
 // ============================================================================
 //  SX127xRadio.h  -  Estrategia alternativa: Semtech SX1276/RFM95 via SPI.
 // ----------------------------------------------------------------------------
-//  ESQUELETO. O hardware principal deste projeto e o E220 (UART). Esta classe
-//  existe para provar que a arquitetura Strategy permite trocar o transporte
-//  sem tocar nas camadas protocol/ e core/. Preencha os TODOs se/quando um
-//  modulo SX127x for adotado.
+//  ESQUELETO. O hardware principal e o E220 (UART). Esta classe prova que a
+//  arquitetura Strategy permite trocar o transporte sem tocar em protocol/ e
+//  core/. Preencha os TODOs com o driver spi_master do ESP-IDF.
 // ============================================================================
 
 #include <cstdint>
@@ -14,9 +13,7 @@
 
 namespace hw {
 
-// Pinos SPI do SX127x. Distintos dos pinos UART do E220; ajuste conforme a
-// placa. Mantidos aqui (nao em PinConfig) porque sao especificos desta
-// estrategia alternativa.
+// Pinos SPI do SX127x (especificos desta estrategia; ajuste conforme a placa).
 struct Sx127xPins {
     int sck  = -1;
     int miso = -1;
@@ -28,24 +25,20 @@ struct Sx127xPins {
 
 class SX127xRadio : public ILoRaRadio {
 public:
-    SX127xRadio(const Sx127xPins& pins, uint32_t frequencyHz);
+    SX127xRadio(const Sx127xPins& pins, uint32_t frequencyHz)
+        : pins_(pins), frequencyHz_(frequencyHz) {}
 
     bool begin() override;
     bool send(const uint8_t* data, size_t length) override;
-    bool available() override;
-    size_t receive(uint8_t* buffer, size_t bufferSize) override;
-    int16_t lastRssiDbm() override;
+    int  read(uint8_t* buffer, size_t maxLen, uint32_t timeoutMs) override;
     bool isBusy() override;
-    void poll() override;
     void sleep() override;
     void wake() override;
 
 private:
     Sx127xPins pins_;
-    uint32_t frequencyHz_;
-    volatile bool rxDone_ = false;  // setado no ISR de DIO0
-    // TODO(hw): registradores SPI, mapeamento FIFO, configuracao de modem
-    // (BW/SF/CR), tratamento de IRQ DIO0. Ver AN1200.xx da Semtech.
+    uint32_t   frequencyHz_;
+    // TODO(hw): spi_device_handle_t, config de modem (BW/SF/CR), IRQ DIO0.
 };
 
 }  // namespace hw
