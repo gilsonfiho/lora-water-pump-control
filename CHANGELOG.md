@@ -15,6 +15,29 @@ e o projeto adota o [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
 ## [Não lançado]
 
+- Nada por enquanto.
+
+## [0.0.3] - 2026-09-19
+
+Unifica a concorrência sobre a 0.0.2, adotando a arquitetura **FreeRTOS** da
+linha de trabalho paralela. Compila com ESP-IDF v6.1; ainda **não validado em
+hardware**.
+
+### Alterado (incompatível)
+- **Modelo de concorrência: super-loop `poll()` → FreeRTOS.** A interface
+  `ILoRaRadio` passou a ser bloqueante (`read()` + `send` thread-safe) e os
+  controladores viraram orientados a eventos (`handlePacket`/`checkFailsafe`,
+  `evaluateAndSend`/`sendHeartbeat`/`reportBattery`).
+
+### Adicionado
+- **Arquitetura FreeRTOS:** o `LinkLayer` sobe uma **task de RX** dedicada, com
+  **fila** de pacotes, **semáforo** de ACK e retransmissão; auto-ACK na recepção.
+  O nó da bomba usa o timeout da fila como batida do failsafe; o do reservatório
+  tem uma **fila de eventos** alimentada por **ISR** (chave/boia) e **`esp_timer`**
+  (ciclo/heartbeat/bateria). Mutex protege o TX do rádio.
+
+## [0.0.2] - 2026-09-19
+
 Migração para ESP-IDF e preparação do protótipo de bancada. **Compila** com
 ESP-IDF v6.1 para o ESP32-C3, mas ainda **não foi validado em hardware**.
 
@@ -33,17 +56,8 @@ ESP-IDF v6.1 para o ESP32-C3, mas ainda **não foi validado em hardware**.
   `static_assert` impede canais fora das faixas de 902–907,5 e 915–928 MHz.
   **Os dois nós precisam ser regravados juntos.** Em canais diferentes, eles não
   se comunicam.
-- **Modelo de concorrência: super-loop `poll()` → FreeRTOS.** A interface
-  `ILoRaRadio` passou a ser bloqueante (`read()` + `send` thread-safe) e os
-  controladores viraram orientados a eventos (`handlePacket`/`checkFailsafe`,
-  `evaluateAndSend`/`sendHeartbeat`/`reportBattery`).
 
 ### Adicionado
-- **Arquitetura FreeRTOS:** o `LinkLayer` sobe uma **task de RX** dedicada, com
-  **fila** de pacotes, **semáforo** de ACK e retransmissão; auto-ACK na recepção.
-  O nó da bomba usa o timeout da fila como batida do failsafe; o do reservatório
-  tem uma **fila de eventos** alimentada por **ISR** (chave/boia) e **`esp_timer`**
-  (ciclo/heartbeat/bateria). Mutex protege o TX do rádio.
 - Componente `platform/` (`platform::millis()` / `platform::delayMs()`), que
   mantém `protocol/` e `core/` independentes do ESP-IDF.
 - Drivers reescritos sobre `esp_driver_uart`, `esp_driver_gpio` e `esp_adc`:
@@ -127,6 +141,8 @@ documentação. Compila via PlatformIO, porém ainda **não validado em hardware
 - Validação em hardware, deep sleep e wake-up por evento.
 
 <!-- Links de comparação: adicionar quando houver repositório remoto, ex.:
-[Não lançado]: https://github.com/<org>/<repo>/compare/v0.0.1...HEAD
+[Não lançado]: https://github.com/<org>/<repo>/compare/v0.0.3...HEAD
+[0.0.3]: https://github.com/<org>/<repo>/compare/v0.0.2...v0.0.3
+[0.0.2]: https://github.com/<org>/<repo>/compare/v0.0.1...v0.0.2
 [0.0.1]: https://github.com/<org>/<repo>/releases/tag/v0.0.1
 -->
