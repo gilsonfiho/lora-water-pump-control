@@ -26,6 +26,26 @@ criação deste arquivo foram extraídas de [`../ARCHITECTURE.md`](../ARCHITECTU
 - **SKUs:** (1) padrão E220-T22D; (2) longo alcance E22-T30D, *pin-compatible*;
   (3) repetidor, planejado.
 
+## Par T30D no protótipo (decidido em 2026-09-19)
+
+Substitui a decisão anterior "Par do protótipo: T22D".
+
+- **Os dois nós usam E220-900T30D.** O par T22D passa a ser a **comparação no
+  teste de campo**, que mede na prática os 8 dB de diferença e alimenta a
+  decisão do SKU padrão.
+- **Alimentação na bancada: pino 5V (VBUS) do devkit.** É um improviso aceito
+  conscientemente. A porta USB 2.0 fornece 500 mA, e o T30D puxa 620 mA de pico
+  a 30 dBm (menos em `kLow`). Exige eletrolítico de 1000 µF junto ao VCC do
+  módulo. Se houver reset ou queda da porta USB durante TX, o próximo passo é
+  uma fonte de 5 V externa com GND comum.
+- **Potência na bancada: `kLow` = 21 dBm, com os nós a ≥ 3 m.** O T30D não
+  desce abaixo de 21 dBm. O manual limita a entrada do receptor a **+10 dBm, sob
+  risco de queimar o módulo**. A 3 m chegam cerca de −15 dBm.
+- **Regulatório:** a 30 dBm, a ANATEL exige salto de frequência em ≥ 35 canais,
+  e o E220 só tem 19 canais legais. O teste de campo a 30 dBm fica **fora da
+  conformidade**, e vale como medição de engenharia, não como configuração de
+  produto (ver [`hardware.md`](hardware.md#regulatório-anatel-faixa-e-potência)).
+
 ## Canal 55 (905,125 MHz) (decidido em 2026-09-19)
 
 - **Motivo:** o canal de fábrica do E220 (23 → 873,125 MHz) cai no downlink
@@ -58,7 +78,8 @@ controle; as decisões de produto acima ficam para a versão seguinte.
 - **Toolchain: extensão ESP-IDF do VS Code**, em vez do PlatformIO.
 - **Módulos disponíveis:** 2× E220-900T22D e 2× E220-900T30D. Datasheets em
   [`../datasheets/`](../datasheets/).
-- **Par do protótipo: T22D.** Valida o SKU padrão e é viável com bateria. O par
+- ~~**Par do protótipo: T22D.**~~ *Substituído pelo par T30D (ver acima).*
+  Valida o SKU padrão e é viável com bateria. O par
   T30D fica para comparação no teste de campo, o que mede na prática o ganho dos
   8 dB a mais e alimenta a decisão do SKU longo alcance.
 - **Papéis por strap de GPIO, já no protótipo.** Um binário só para os dois nós:
@@ -72,7 +93,7 @@ controle; as decisões de produto acima ficam para a versão seguinte.
 | Build | PlatformIO + Arduino | **ESP-IDF** (migrado em 2026-09-19) |
 | MCU | ESP32-C3 | ESP32-C3 (coincide) |
 | Alcance | "até ~5 km" | 5 km (coincide) |
-| Módulo | T30D ou T22D em aberto | **Par T22D** |
+| Módulo | T30D ou T22D em aberto | **Par T30D** (T22D na comparação de campo) |
 | Papéis | Dois ambientes de build | **Binário único com strap de GPIO** |
 
 ### Escopo do protótipo de bancada (decidido em 2026-09-19)

@@ -52,7 +52,7 @@ const char* levelName(hw::LevelState s) {
 
 cfg::LoraProfile makeProfile() {
     cfg::LoraProfile p;
-    p.variant = cfg::E220Variant::kT22D;  // TODO(hw): confirmar o par do prototipo
+    p.variant = cfg::E220Variant::kT30D;  // par do prototipo (T22D: comparacao em campo)
     p.airRate = cfg::LoraAirRate::k2_4k;   // maior alcance
     return p;
 }

@@ -69,8 +69,11 @@ tempo, usam `platform::millis()` / `platform::delayMs()`.
   watchdog de tarefa dispara.
 - Decisões que dependem do hardware final levam `TODO(hw)`.
 - Estamos em **modo bancada**: chave no lugar da boia, LED no lugar do contator,
-  bateria stubada, tempos curtos e TX a 10 dBm (`cfg::kTxPower`). Tudo isso sai
-  do `BENCH_PROFILE`. Substituições vivem na `hw/`, nunca na `core/`.
+  bateria stubada, tempos curtos e TX em `kLow` (`cfg::kTxPower`). Tudo isso
+  sai do `BENCH_PROFILE`. Substituições vivem na `hw/`, nunca na `core/`.
+- **O protótipo usa o par E220-900T30D** (o T22D é só comparação de campo). O
+  mínimo do T30D é 21 dBm, e o RX queima com mais de +10 dBm na entrada: na
+  bancada, nós a ≥ 3 m. VCC em 5 V (pino VBUS do devkit), sinais em 3,3 V.
 - No ESP32-C3, evite os GPIOs 2, 8, 9 (straps), 11–17 (flash), 18–19 (USB) e
   20–21 (console). Livres: 0, 1, 3, 4, 5, 6, 7, 10.
 
