@@ -19,22 +19,22 @@
 #include <cstdint>
 
 #include "core/Observer.h"
-#include "hal/IBatteryMonitor.h"
-#include "hal/ILevelSensor.h"
+#include "hw/IBatteryMonitor.h"
+#include "hw/ILevelSensor.h"
 #include "protocol/LinkLayer.h"
 #include "protocol/Messages.h"
 
 namespace core {
 
 struct LevelChangedEvent {
-    hal::LevelState previous;
-    hal::LevelState current;
+    hw::LevelState previous;
+    hw::LevelState current;
 };
 
 class ReservoirController {
 public:
-    ReservoirController(protocol::LinkLayer& link, hal::ILevelSensor& sensor,
-                        hal::IBatteryMonitor& battery, uint8_t pumpNodeAddress)
+    ReservoirController(protocol::LinkLayer& link, hw::ILevelSensor& sensor,
+                        hw::IBatteryMonitor& battery, uint8_t pumpNodeAddress)
         : link_(link), sensor_(sensor), battery_(battery),
           pumpNodeAddress_(pumpNodeAddress) {}
 
@@ -51,16 +51,16 @@ private:
     void maybeSendCommand(bool forceResend);
     void maybeSendHeartbeat();
     void maybeReportBattery();
-    protocol::PumpCommand decide(hal::LevelState level) const;
+    protocol::PumpCommand decide(hw::LevelState level) const;
 
     protocol::LinkLayer& link_;
-    hal::ILevelSensor& sensor_;
-    hal::IBatteryMonitor& battery_;
+    hw::ILevelSensor& sensor_;
+    hw::IBatteryMonitor& battery_;
     uint8_t pumpNodeAddress_;
 
     Signal<LevelChangedEvent> levelChanged_;
 
-    hal::LevelState lastLevel_ = hal::LevelState::kUnknown;
+    hw::LevelState lastLevel_ = hw::LevelState::kUnknown;
     protocol::PumpCommand desired_ = protocol::PumpCommand::kOff;
 
     uint32_t lastCycleMs_ = 0;

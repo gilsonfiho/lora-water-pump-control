@@ -15,9 +15,9 @@
 //  Trocar por AdcBatteryMonitor quando o subsistema de energia for montado.
 // ============================================================================
 
-#include "hal/IBatteryMonitor.h"
+#include "hw/IBatteryMonitor.h"
 
-namespace hal {
+namespace hw {
 
 class StubBatteryMonitor : public IBatteryMonitor {
 public:
@@ -34,4 +34,4 @@ public:
     }
 };
 
-}  // namespace hal
+}  // namespace hw

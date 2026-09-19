@@ -3,5 +3,5 @@
 idf_component_register(
     SRCS        "PumpController.cpp" "ReservoirController.cpp"
     INCLUDE_DIRS "include"
-    REQUIRES    config protocol hal platform
+    REQUIRES    config protocol hw platform
 )

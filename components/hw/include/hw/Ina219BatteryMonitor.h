@@ -9,10 +9,10 @@
 
 #include <cstdint>
 
-#include "hal/IBatteryMonitor.h"
+#include "hw/IBatteryMonitor.h"
 #include "config/PinConfig.h"
 
-namespace hal {
+namespace hw {
 
 class Ina219BatteryMonitor : public IBatteryMonitor {
 public:
@@ -40,4 +40,4 @@ private:
     uint8_t i2cAddress_;
 };
 
-}  // namespace hal
+}  // namespace hw

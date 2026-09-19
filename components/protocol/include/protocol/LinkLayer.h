@@ -16,7 +16,7 @@
 
 #include "protocol/Packet.h"
 #include "config/NodeConfig.h"
-#include "hal/ILoRaRadio.h"
+#include "hw/ILoRaRadio.h"
 
 namespace protocol {
 
@@ -26,7 +26,7 @@ public:
 
     enum class DeliveryResult : uint8_t { kIdle, kInFlight, kAcked, kFailed };
 
-    LinkLayer(hal::ILoRaRadio& radio, uint8_t localAddress,
+    LinkLayer(hw::ILoRaRadio& radio, uint8_t localAddress,
               uint32_t ackTimeoutMs = cfg::Timing::kAckTimeoutMs,
               uint8_t maxRetries = cfg::Timing::kMaxRetries)
         : radio_(radio), localAddress_(localAddress),
@@ -52,7 +52,7 @@ private:
     void handleDecoded(const Packet& pkt);
     void transmit(const Packet& pkt);
 
-    hal::ILoRaRadio& radio_;
+    hw::ILoRaRadio& radio_;
     uint8_t localAddress_;
     uint32_t ackTimeoutMs_;
     uint8_t maxRetries_;
@@ -67,7 +67,7 @@ private:
     uint32_t lastTxMs_ = 0;
     DeliveryResult delivery_ = DeliveryResult::kIdle;
 
-    uint8_t rxScratch_[hal::kMaxRadioFrame];
+    uint8_t rxScratch_[hw::kMaxRadioFrame];
 };
 
 }  // namespace protocol

@@ -3,5 +3,5 @@
 idf_component_register(
     SRCS        "E220Radio.cpp" "SX127xRadio.cpp" "AdcBatteryMonitor.cpp"
     INCLUDE_DIRS "include"
-    REQUIRES    config platform driver esp_adc
+    REQUIRES    config platform esp_driver_uart esp_driver_gpio esp_adc
 )

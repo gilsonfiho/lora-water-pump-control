@@ -8,7 +8,7 @@
 
 #include <cstdint>
 
-namespace hal {
+namespace hw {
 
 // De onde o no esta drenando energia no momento. Guia a logica de failover e e
 // reportado nos pacotes BATERIA_STATUS.
@@ -36,4 +36,4 @@ public:
     virtual BatteryTelemetry read() = 0;
 };
 
-}  // namespace hal
+}  // namespace hw

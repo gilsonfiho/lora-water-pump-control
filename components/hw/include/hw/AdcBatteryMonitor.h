@@ -15,10 +15,10 @@
 #include <esp_adc/adc_cali.h>
 #include <esp_adc/adc_oneshot.h>
 
-#include "hal/IBatteryMonitor.h"
+#include "hw/IBatteryMonitor.h"
 #include "config/PinConfig.h"
 
-namespace hal {
+namespace hw {
 
 class AdcBatteryMonitor : public IBatteryMonitor {
 public:
@@ -42,4 +42,4 @@ private:
     bool                      ready_ = false;
 };
 
-}  // namespace hal
+}  // namespace hw

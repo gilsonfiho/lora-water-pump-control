@@ -13,8 +13,8 @@
 #include "config/PinConfig.h"
 #include "config/RadioConfig.h"
 #include "core/PumpController.h"
-#include "hal/E220Radio.h"
-#include "hal/RelayPumpActuator.h"
+#include "hw/E220Radio.h"
+#include "hw/RelayPumpActuator.h"
 #include "node_app.h"
 #include "platform/Clock.h"
 #include "protocol/LinkLayer.h"
@@ -44,7 +44,6 @@ const char* stateName(core::PumpController::State s) {
 cfg::LoraProfile makeProfile() {
     cfg::LoraProfile p;
     p.variant = cfg::E220Variant::kT22D;  // TODO(hw): confirmar o par do prototipo
-    p.power   = cfg::LoraPowerLevel::kMax;
     p.airRate = cfg::LoraAirRate::k2_4k;   // DEVE casar com o reservatorio
     return p;
 }
@@ -54,8 +53,8 @@ cfg::LoraProfile makeProfile() {
 [[noreturn]] void runPump() {
     ESP_LOGI(kTag, "iniciando...");
 
-    static hal::E220Radio          radio(UART_NUM_1, makeProfile());
-    static hal::RelayPumpActuator  pump;
+    static hw::E220Radio          radio(UART_NUM_1, makeProfile());
+    static hw::RelayPumpActuator  pump;
     static protocol::LinkLayer     link(radio, cfg::kAddrPump);
     static core::PumpController    controller(link, pump);
 

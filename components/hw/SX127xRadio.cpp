@@ -6,9 +6,9 @@
 //  pontos de extensao estao marcados com TODO(hw).
 // ============================================================================
 
-#include "hal/SX127xRadio.h"
+#include "hw/SX127xRadio.h"
 
-namespace hal {
+namespace hw {
 
 SX127xRadio::SX127xRadio(const Sx127xPins& pins, uint32_t frequencyHz)
     : pins_(pins), frequencyHz_(frequencyHz) {}
@@ -47,4 +47,4 @@ void SX127xRadio::poll() {
 void SX127xRadio::sleep() { /* TODO(hw): RegOpMode = LoRa sleep */ }
 void SX127xRadio::wake()  { /* TODO(hw): RegOpMode = LoRa standby */ }
 
-}  // namespace hal
+}  // namespace hw

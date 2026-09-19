@@ -13,7 +13,7 @@ namespace core {
 void ReservoirController::begin() {
     sensor_.begin();
     battery_.begin();
-    lastLevel_ = hal::LevelState::kUnknown;
+    lastLevel_ = hw::LevelState::kUnknown;
     desired_ = protocol::PumpCommand::kOff;
 }
 
@@ -33,7 +33,7 @@ void ReservoirController::loop() {
 }
 
 void ReservoirController::evaluateLevel() {
-    const hal::LevelState level = sensor_.read();
+    const hw::LevelState level = sensor_.read();
 
     if (level != lastLevel_) {
         levelChanged_.emit({lastLevel_, level});
@@ -47,12 +47,12 @@ void ReservoirController::evaluateLevel() {
     }
 }
 
-protocol::PumpCommand ReservoirController::decide(hal::LevelState level) const {
+protocol::PumpCommand ReservoirController::decide(hw::LevelState level) const {
     switch (level) {
-        case hal::LevelState::kLow:  return protocol::PumpCommand::kOn;
-        case hal::LevelState::kHigh: return protocol::PumpCommand::kOff;
-        case hal::LevelState::kMid:  return desired_;  // mantem (histerese)
-        case hal::LevelState::kUnknown:
+        case hw::LevelState::kLow:  return protocol::PumpCommand::kOn;
+        case hw::LevelState::kHigh: return protocol::PumpCommand::kOff;
+        case hw::LevelState::kMid:  return desired_;  // mantem (histerese)
+        case hw::LevelState::kUnknown:
         default:                     return protocol::PumpCommand::kOff;  // seguro
     }
 }
@@ -79,7 +79,7 @@ void ReservoirController::maybeReportBattery() {
     const uint32_t now = platform::millis();
     if (now - lastBatteryMs_ < cfg::Timing::kBatteryReportPeriodMs) return;
     lastBatteryMs_ = now;
-    const hal::BatteryTelemetry t = battery_.read();
+    const hw::BatteryTelemetry t = battery_.read();
     link_.sendOnce(
         protocol::makeBatteryStatus(cfg::kAddrReservoir, pumpNodeAddress_, 0, t));
 }

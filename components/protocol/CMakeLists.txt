@@ -3,5 +3,5 @@
 idf_component_register(
     SRCS        "Packet.cpp" "LinkLayer.cpp"
     INCLUDE_DIRS "include"
-    REQUIRES    config hal platform
+    REQUIRES    config hw platform
 )

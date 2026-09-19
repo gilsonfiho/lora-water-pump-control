@@ -7,7 +7,7 @@
 //  esse estado seguro antes do primeiro comando ser honrado.
 // ============================================================================
 
-namespace hal {
+namespace hw {
 
 class IPumpActuator {
 public:
@@ -26,4 +26,4 @@ public:
     virtual bool isOn() const = 0;
 };
 
-}  // namespace hal
+}  // namespace hw

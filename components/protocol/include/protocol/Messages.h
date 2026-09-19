@@ -10,8 +10,8 @@
 #include <cstdint>
 
 #include "protocol/Packet.h"
-#include "hal/ILevelSensor.h"
-#include "hal/IBatteryMonitor.h"
+#include "hw/ILevelSensor.h"
+#include "hw/IBatteryMonitor.h"
 
 namespace protocol {
 
@@ -23,13 +23,13 @@ enum class PumpCommand : uint8_t {
 
 // ---- STATUS_NIVEL ---------------------------------------------------------
 struct LevelStatusPayload {
-    hal::LevelState level = hal::LevelState::kUnknown;
+    hw::LevelState level = hw::LevelState::kUnknown;
     uint8_t percent = 0;      // 0 se desconhecido
     bool percentValid = false;
 };
 
 // ---- BATERIA_STATUS -------------------------------------------------------
-// Reaproveita hal::BatteryTelemetry como conteudo logico.
+// Reaproveita hw::BatteryTelemetry como conteudo logico.
 
 // ===== Builders (preenchem um Packet) ======================================
 
@@ -72,7 +72,7 @@ inline Packet makeLevelStatus(uint8_t src, uint8_t dst, uint8_t seq,
 }
 
 inline Packet makeBatteryStatus(uint8_t src, uint8_t dst, uint8_t seq,
-                                const hal::BatteryTelemetry& t) {
+                                const hw::BatteryTelemetry& t) {
     Packet p;
     p.src = src; p.dst = dst; p.seq = seq;
     p.type = MessageType::kBateriaStatus;
@@ -96,18 +96,18 @@ inline bool parseCommand(const Packet& p, PumpCommand& cmdOut) {
 
 inline bool parseLevelStatus(const Packet& p, LevelStatusPayload& out) {
     if (p.type != MessageType::kStatusNivel || p.payloadLen < 2) return false;
-    out.level = static_cast<hal::LevelState>(p.payload[0]);
+    out.level = static_cast<hw::LevelState>(p.payload[0]);
     out.percentValid = (p.payload[1] != 0xFF);
     out.percent = out.percentValid ? p.payload[1] : 0;
     return true;
 }
 
-inline bool parseBatteryStatus(const Packet& p, hal::BatteryTelemetry& out) {
+inline bool parseBatteryStatus(const Packet& p, hw::BatteryTelemetry& out) {
     if (p.type != MessageType::kBateriaStatus || p.payloadLen < 6) return false;
     out.milliVolts = static_cast<uint16_t>(p.payload[0] << 8) | p.payload[1];
     out.milliAmps  = static_cast<int16_t>((p.payload[2] << 8) | p.payload[3]);
     out.socPercent = p.payload[4];
-    out.source     = static_cast<hal::PowerSource>(p.payload[5]);
+    out.source     = static_cast<hw::PowerSource>(p.payload[5]);
     out.currentValid = true;
     return true;
 }

@@ -3,7 +3,7 @@
 //                    datasheet EBYTE E220-900T30D / T22D).
 // ============================================================================
 
-#include "hal/E220Radio.h"
+#include "hw/E220Radio.h"
 
 #include <cstring>
 
@@ -12,7 +12,7 @@
 
 #include "platform/Clock.h"
 
-namespace hal {
+namespace hw {
 
 namespace {
 
@@ -288,4 +288,4 @@ void E220Radio::wake() {
     waitForReady(1000);
 }
 
-}  // namespace hal
+}  // namespace hw

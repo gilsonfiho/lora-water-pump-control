@@ -11,10 +11,10 @@
 
 #include <driver/gpio.h>
 
-#include "hal/IPumpActuator.h"
+#include "hw/IPumpActuator.h"
 #include "config/PinConfig.h"
 
-namespace hal {
+namespace hw {
 
 class RelayPumpActuator : public IPumpActuator {
 public:
@@ -59,4 +59,4 @@ private:
     bool on_ = false;
 };
 
-}  // namespace hal
+}  // namespace hw

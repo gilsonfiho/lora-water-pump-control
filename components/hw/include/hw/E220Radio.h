@@ -23,11 +23,11 @@
 
 #include <driver/uart.h>
 
-#include "hal/ILoRaRadio.h"
+#include "hw/ILoRaRadio.h"
 #include "config/PinConfig.h"
 #include "config/RadioConfig.h"
 
-namespace hal {
+namespace hw {
 
 class E220Radio : public ILoRaRadio {
 public:
@@ -78,4 +78,4 @@ private:
     int16_t lastRssiDbm_ = 0;
 };
 
-}  // namespace hal
+}  // namespace hw

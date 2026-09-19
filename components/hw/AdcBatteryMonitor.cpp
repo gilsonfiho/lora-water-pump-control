@@ -2,13 +2,13 @@
 //  AdcBatteryMonitor.cpp  -  Leitura de tensao da bateria via ADC oneshot.
 // ============================================================================
 
-#include "hal/AdcBatteryMonitor.h"
+#include "hw/AdcBatteryMonitor.h"
 
 #include <driver/gpio.h>
 #include <esp_idf_version.h>
 #include <esp_log.h>
 
-namespace hal {
+namespace hw {
 
 namespace {
 
@@ -148,4 +148,4 @@ uint8_t AdcBatteryMonitor::estimateSoc(uint16_t milliVolts) {
         (kFullMv - kEmptyMv));
 }
 
-}  // namespace hal
+}  // namespace hw

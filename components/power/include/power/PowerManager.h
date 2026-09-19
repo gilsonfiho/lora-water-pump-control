@@ -13,23 +13,23 @@
 
 #include <cstdint>
 
-#include "hal/IBatteryMonitor.h"
+#include "hw/IBatteryMonitor.h"
 
 namespace power {
 
 class PowerManager {
 public:
-    explicit PowerManager(hal::IBatteryMonitor& battery) : battery_(battery) {}
+    explicit PowerManager(hw::IBatteryMonitor& battery) : battery_(battery) {}
 
     void begin() { last_ = battery_.read(); }
 
     // Atualiza a leitura de telemetria. Chamar no loop.
     void update() { last_ = battery_.read(); }
 
-    hal::PowerSource source() const { return last_.source; }
-    const hal::BatteryTelemetry& telemetry() const { return last_; }
+    hw::PowerSource source() const { return last_.source; }
+    const hw::BatteryTelemetry& telemetry() const { return last_; }
 
-    bool onBattery() const { return last_.source == hal::PowerSource::kBattery; }
+    bool onBattery() const { return last_.source == hw::PowerSource::kBattery; }
 
     // Bateria abaixo de um limiar critico -> o chamador pode reduzir a cadencia
     // de TX ou entrar em sleep mais agressivo.
@@ -43,8 +43,8 @@ public:
     void deepSleepFor(uint32_t ms);
 
 private:
-    hal::IBatteryMonitor& battery_;
-    hal::BatteryTelemetry last_;
+    hw::IBatteryMonitor& battery_;
+    hw::BatteryTelemetry last_;
 };
 
 }  // namespace power

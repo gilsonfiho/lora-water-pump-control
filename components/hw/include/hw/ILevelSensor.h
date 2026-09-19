@@ -10,7 +10,7 @@
 
 #include <cstdint>
 
-namespace hal {
+namespace hw {
 
 // Nivel discreto visto pela logica de controle. Os dois estados de "faixa"
 // guiam a decisao encher/parar com histerese embutida; kUnknown forca um
@@ -37,4 +37,4 @@ public:
     virtual bool readPercent(uint8_t& percentOut) = 0;
 };
 
-}  // namespace hal
+}  // namespace hw

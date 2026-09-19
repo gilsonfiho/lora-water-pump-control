@@ -14,7 +14,7 @@
 #include <cstddef>
 #include <cstdint>
 
-namespace hal {
+namespace hw {
 
 // Maior payload de quadro unico que o transporte carrega de uma vez. Quadros
 // maiores devem ser divididos pelo chamador (nossos pacotes sao bem menores).
@@ -57,4 +57,4 @@ public:
     virtual void wake() = 0;
 };
 
-}  // namespace hal
+}  // namespace hw

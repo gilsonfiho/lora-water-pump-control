@@ -10,9 +10,9 @@
 
 #include <cstdint>
 
-#include "hal/ILoRaRadio.h"
+#include "hw/ILoRaRadio.h"
 
-namespace hal {
+namespace hw {
 
 // Pinos SPI do SX127x. Distintos dos pinos UART do E220; ajuste conforme a
 // placa. Mantidos aqui (nao em PinConfig) porque sao especificos desta
@@ -48,4 +48,4 @@ private:
     // (BW/SF/CR), tratamento de IRQ DIO0. Ver AN1200.xx da Semtech.
 };
 
-}  // namespace hal
+}  // namespace hw

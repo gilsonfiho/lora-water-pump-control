@@ -2,5 +2,5 @@
 idf_component_register(
     SRCS        "PowerManager.cpp"
     INCLUDE_DIRS "include"
-    REQUIRES    config hal platform esp_hw_support
+    REQUIRES    config hw platform esp_hw_support
 )

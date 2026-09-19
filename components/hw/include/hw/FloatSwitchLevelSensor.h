@@ -12,10 +12,10 @@
 
 #include <driver/gpio.h>
 
-#include "hal/ILevelSensor.h"
+#include "hw/ILevelSensor.h"
 #include "config/PinConfig.h"
 
-namespace hal {
+namespace hw {
 
 class FloatSwitchLevelSensor : public ILevelSensor {
 public:
@@ -61,4 +61,4 @@ private:
     bool closedIsLow_;
 };
 
-}  // namespace hal
+}  // namespace hw

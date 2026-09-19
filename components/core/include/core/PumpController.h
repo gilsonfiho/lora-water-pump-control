@@ -15,7 +15,7 @@
 
 #include <cstdint>
 
-#include "hal/IPumpActuator.h"
+#include "hw/IPumpActuator.h"
 #include "protocol/LinkLayer.h"
 #include "protocol/Messages.h"
 
@@ -25,7 +25,7 @@ class PumpController {
 public:
     enum class State : uint8_t { kBoot, kIdle, kPumping, kLinkLost };
 
-    PumpController(protocol::LinkLayer& link, hal::IPumpActuator& pump)
+    PumpController(protocol::LinkLayer& link, hw::IPumpActuator& pump)
         : link_(link), pump_(pump) {}
 
     void begin();
@@ -39,7 +39,7 @@ private:
     void applyCommand(protocol::PumpCommand cmd);
 
     protocol::LinkLayer& link_;
-    hal::IPumpActuator& pump_;
+    hw::IPumpActuator& pump_;
     State state_ = State::kBoot;
     uint32_t lastValidRxMs_ = 0;
 };

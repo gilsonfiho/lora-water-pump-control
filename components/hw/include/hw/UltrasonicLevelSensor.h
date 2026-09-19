@@ -9,10 +9,10 @@
 
 #include <driver/gpio.h>
 
-#include "hal/ILevelSensor.h"
+#include "hw/ILevelSensor.h"
 #include "config/PinConfig.h"
 
-namespace hal {
+namespace hw {
 
 class UltrasonicLevelSensor : public ILevelSensor {
 public:
@@ -59,4 +59,4 @@ private:
     Geometry geom_;
 };
 
-}  // namespace hal
+}  // namespace hw

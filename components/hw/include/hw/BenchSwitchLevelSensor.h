@@ -22,9 +22,9 @@
 #include <driver/gpio.h>
 
 #include "config/PinConfig.h"
-#include "hal/ILevelSensor.h"
+#include "hw/ILevelSensor.h"
 
-namespace hal {
+namespace hw {
 
 class BenchSwitchLevelSensor : public ILevelSensor {
 public:
@@ -62,4 +62,4 @@ private:
     bool closedIsLow_;
 };
 
-}  // namespace hal
+}  // namespace hw

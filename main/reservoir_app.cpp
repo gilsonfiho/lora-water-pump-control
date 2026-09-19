@@ -21,10 +21,10 @@
 #include "config/PinConfig.h"
 #include "config/RadioConfig.h"
 #include "core/ReservoirController.h"
-#include "hal/BenchSwitchLevelSensor.h"
-#include "hal/E220Radio.h"
-#include "hal/ILevelSensor.h"
-#include "hal/StubBatteryMonitor.h"
+#include "hw/BenchSwitchLevelSensor.h"
+#include "hw/E220Radio.h"
+#include "hw/ILevelSensor.h"
+#include "hw/StubBatteryMonitor.h"
 #include "node_app.h"
 #include "platform/Clock.h"
 #include "power/PowerManager.h"
@@ -40,12 +40,12 @@ constexpr char kTag[] = "reservatorio";
 constexpr uint32_t kLoopPeriodMs = 5;
 
 // Log legivel: na bancada o que importa e ler o estado de relance.
-const char* levelName(hal::LevelState s) {
+const char* levelName(hw::LevelState s) {
     switch (s) {
-        case hal::LevelState::kLow:  return "BAIXA (pedindo agua)";
-        case hal::LevelState::kMid:  return "MEIO (mantem)";
-        case hal::LevelState::kHigh: return "CHEIA (para)";
-        case hal::LevelState::kUnknown:
+        case hw::LevelState::kLow:  return "BAIXA (pedindo agua)";
+        case hw::LevelState::kMid:  return "MEIO (mantem)";
+        case hw::LevelState::kHigh: return "CHEIA (para)";
+        case hw::LevelState::kUnknown:
         default:                     return "DESCONHECIDA (seguro: desliga)";
     }
 }
@@ -53,7 +53,6 @@ const char* levelName(hal::LevelState s) {
 cfg::LoraProfile makeProfile() {
     cfg::LoraProfile p;
     p.variant = cfg::E220Variant::kT22D;  // TODO(hw): confirmar o par do prototipo
-    p.power   = cfg::LoraPowerLevel::kMax;
     p.airRate = cfg::LoraAirRate::k2_4k;   // maior alcance
     return p;
 }
@@ -63,15 +62,15 @@ cfg::LoraProfile makeProfile() {
 [[noreturn]] void runReservoir() {
     ESP_LOGI(kTag, "iniciando...");
 
-    static hal::E220Radio radio(UART_NUM_1, makeProfile());
+    static hw::E220Radio radio(UART_NUM_1, makeProfile());
 
     // BANCADA: trocar por AdcBatteryMonitor battery(2.0f) quando o subsistema
     // de energia estiver montado.
-    static hal::StubBatteryMonitor battery;
+    static hw::StubBatteryMonitor battery;
 
     // BANCADA: trocar por FloatSwitchLevelSensor sensor(true) quando as boias
     // estiverem instaladas.
-    static hal::BenchSwitchLevelSensor sensor(/*closedIsLow=*/true);
+    static hw::BenchSwitchLevelSensor sensor(/*closedIsLow=*/true);
 
     static protocol::LinkLayer       link(radio, cfg::kAddrReservoir);
     static core::ReservoirController controller(link, sensor, battery, cfg::kAddrPump);
