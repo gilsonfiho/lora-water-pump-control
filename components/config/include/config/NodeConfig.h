@@ -63,6 +63,14 @@ struct Timing {
                   "janela de failsafe curta demais para a cadencia do heartbeat");
 };
 
+// ---- Tarefas FreeRTOS (stack em bytes, prioridade) ------------------------
+// A tarefa de RX do enlace tem prioridade mais alta para nao perder quadros do
+// radio; a de controle roda no proprio app_main task (ver *_app.cpp).
+struct Tasks {
+    static constexpr uint32_t kRadioRxStack = 4096;
+    static constexpr int      kRadioRxPrio  = 6;
+};
+
 // ---- Deep sleep (reservatorio, alimentado por bateria) --------------------
 struct SleepPolicy {
     // Dorme entre ciclos apenas quando em bateria. Quando 0, o no permanece

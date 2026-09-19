@@ -1,73 +1,69 @@
 #pragma once
 // ============================================================================
-//  LinkLayer.h  -  Enlace confiavel ponto-a-ponto sobre ILoRaRadio.
+//  LinkLayer.h  -  Enlace confiavel ponto-a-ponto sobre ILoRaRadio (FreeRTOS).
 // ----------------------------------------------------------------------------
-//  Responsabilidades:
-//    * Framing: encontra o byte SYNC no fluxo do radio e decodifica pacotes.
-//    * Enderecamento: descarta pacotes que nao sao para este no.
-//    * Confiabilidade: envio com ACK, retransmissao e timeout (nao bloqueante).
-//    * Auto-ACK: responde automaticamente pacotes que pedem confirmacao.
+//  Concorrencia:
+//    * Uma TASK de RX dedicada le o fluxo do radio, faz o enquadramento
+//      (framing) por SYNC + comprimento, decodifica e trata cada pacote.
+//    * ACKs recebidos liberam um SEMAFORO que destrava sendReliable().
+//    * Pacotes de dados sao entregues por uma FILA (dataQueue) consumida pela
+//      tarefa de controle do no.
+//    * Pacotes que pedem ACK sao auto-confirmados pela task de RX.
 //
-//  Modelo de uma transacao confiavel em voo por vez -- suficiente para o
-//  enlace ponto-a-ponto de 2 nos e mantem a maquina de estados simples.
+//  Modelo de uma transacao confiavel em voo por vez (suficiente p/ 2 nos).
 // ============================================================================
 
-#include <functional>
+#include <freertos/FreeRTOS.h>
+#include <freertos/queue.h>
+#include <freertos/semphr.h>
+#include <freertos/task.h>
 
-#include "protocol/Packet.h"
 #include "config/NodeConfig.h"
 #include "hw/ILoRaRadio.h"
+#include "protocol/Packet.h"
 
 namespace protocol {
 
 class LinkLayer {
 public:
-    using ReceiveHandler = std::function<void(const Packet&)>;
-
-    enum class DeliveryResult : uint8_t { kIdle, kInFlight, kAcked, kFailed };
-
     LinkLayer(hw::ILoRaRadio& radio, uint8_t localAddress,
               uint32_t ackTimeoutMs = cfg::Timing::kAckTimeoutMs,
               uint8_t maxRetries = cfg::Timing::kMaxRetries)
         : radio_(radio), localAddress_(localAddress),
           ackTimeoutMs_(ackTimeoutMs), maxRetries_(maxRetries) {}
 
-    void onReceive(ReceiveHandler handler) { handler_ = std::move(handler); }
+    // Cria filas/semaforos e sobe a task de RX. false em falha de alocacao.
+    bool begin();
 
-    // Envia exigindo ACK. Atribui o proximo SEQ, inicia o rastreamento de
-    // retransmissao. Retorna false se ja ha uma transacao confiavel em voo.
+    // Envia exigindo ACK; bloqueia ate confirmar ou esgotar as retransmissoes.
+    // Deve ser chamado a partir de uma tarefa (nao de ISR).
     bool sendReliable(Packet pkt);
 
     // Envio "dispare e esqueca" (heartbeat, status). Sem ACK.
     bool sendOnce(Packet pkt);
 
-    // Aciona radio.poll(), processa RX e cuida de timeouts/retransmissoes.
-    void poll();
-
-    bool isDelivering() const { return delivery_ == DeliveryResult::kInFlight; }
-    DeliveryResult deliveryState() const { return delivery_; }
+    // Fila de pacotes de dados recebidos (consumida pela tarefa de controle).
+    QueueHandle_t dataQueue() const { return dataQueue_; }
 
 private:
-    void processIncoming();
-    void handleDecoded(const Packet& pkt);
-    void transmit(const Packet& pkt);
+    static void rxTaskTrampoline(void* arg);
+    void   rxTaskLoop();
+    size_t readFrame(uint8_t* buffer);        // enquadra 1 pacote do radio
+    void   handleDecoded(const Packet& pkt);
+    void   transmit(const Packet& pkt);
 
     hw::ILoRaRadio& radio_;
-    uint8_t localAddress_;
+    uint8_t  localAddress_;
     uint32_t ackTimeoutMs_;
-    uint8_t maxRetries_;
+    uint8_t  maxRetries_;
 
-    ReceiveHandler handler_;
-    uint8_t nextSeq_ = 1;
+    uint8_t  nextSeq_ = 1;
+    volatile uint8_t pendingSeq_ = 0;
+    volatile bool    hasPending_ = false;
 
-    // Estado da transacao confiavel corrente.
-    Packet pending_;
-    bool hasPending_ = false;
-    uint8_t retriesLeft_ = 0;
-    uint32_t lastTxMs_ = 0;
-    DeliveryResult delivery_ = DeliveryResult::kIdle;
-
-    uint8_t rxScratch_[hw::kMaxRadioFrame];
+    SemaphoreHandle_t ackSem_    = nullptr;   // liberado quando o ACK chega
+    QueueHandle_t     dataQueue_ = nullptr;   // pacotes de dados p/ o controle
+    TaskHandle_t      rxTask_    = nullptr;
 };
 
 }  // namespace protocol
