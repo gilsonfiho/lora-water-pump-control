@@ -4,31 +4,24 @@
 
 #include "core/PumpController.h"
 
-#include "platform/Clock.h"
+#include <esp_log.h>
 
 #include "config/NodeConfig.h"
+#include "platform/Clock.h"
 
 namespace core {
 
+namespace {
+constexpr char TAG[] = "PUMP";
+}
+
 void PumpController::begin() {
     pump_.begin();  // garante DESLIGADA
-    link_.onReceive([this](const protocol::Packet& pkt) { onPacket(pkt); });
     lastValidRxMs_ = platform::millis();
     enter(State::kIdle);
 }
 
-void PumpController::loop() {
-    link_.poll();
-
-    // Failsafe: silencio prolongado -> desliga por seguranca.
-    const bool linkStale =
-        (platform::millis() - lastValidRxMs_) > cfg::Timing::kLinkLostTimeoutMs;
-    if (linkStale && state_ != State::kLinkLost) {
-        enter(State::kLinkLost);
-    }
-}
-
-void PumpController::onPacket(const protocol::Packet& pkt) {
+void PumpController::handlePacket(const protocol::Packet& pkt) {
     // Qualquer pacote valido do reservatorio conta como "enlace vivo".
     lastValidRxMs_ = platform::millis();
 
@@ -38,20 +31,23 @@ void PumpController::onPacket(const protocol::Packet& pkt) {
         return;
     }
 
-    // Heartbeat apenas revalida o enlace; se estava perdido, volta ao estado
-    // coerente com a bomba atual.
+    // Heartbeat revalida o enlace; se estava perdido, volta ao estado coerente.
     if (pkt.type == protocol::MessageType::kHeartbeat &&
         state_ == State::kLinkLost) {
         enter(pump_.isOn() ? State::kPumping : State::kIdle);
     }
 }
 
-void PumpController::applyCommand(protocol::PumpCommand cmd) {
-    if (cmd == protocol::PumpCommand::kOn) {
-        enter(State::kPumping);
-    } else {
-        enter(State::kIdle);
+void PumpController::checkFailsafe() {
+    if (state_ == State::kLinkLost) return;
+    if (platform::millis() - lastValidRxMs_ > cfg::Timing::kLinkLostTimeoutMs) {
+        ESP_LOGW(TAG, "enlace perdido -> failsafe (bomba OFF)");
+        enter(State::kLinkLost);
     }
+}
+
+void PumpController::applyCommand(protocol::PumpCommand cmd) {
+    enter(cmd == protocol::PumpCommand::kOn ? State::kPumping : State::kIdle);
 }
 
 void PumpController::enter(State next) {

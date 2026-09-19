@@ -1,14 +1,18 @@
 // ============================================================================
-//  ReservoirController.cpp  -  Logica de decisao e envio do no do reservatorio.
+//  ReservoirController.cpp  -  Decisao e envio do no do reservatorio.
 // ============================================================================
 
 #include "core/ReservoirController.h"
 
-#include "platform/Clock.h"
+#include <esp_log.h>
 
 #include "config/NodeConfig.h"
 
 namespace core {
+
+namespace {
+constexpr char TAG[] = "RES";
+}
 
 void ReservoirController::begin() {
     sensor_.begin();
@@ -17,22 +21,7 @@ void ReservoirController::begin() {
     desired_ = protocol::PumpCommand::kOff;
 }
 
-void ReservoirController::loop() {
-    link_.poll();
-
-    const uint32_t now = platform::millis();
-
-    if (now - lastCycleMs_ >= cfg::Timing::kReservoirCyclePeriodMs) {
-        lastCycleMs_ = now;
-        evaluateLevel();
-        maybeSendCommand(/*forceResend=*/true);  // reenvio periodico de robustez
-    }
-
-    maybeSendHeartbeat();
-    maybeReportBattery();
-}
-
-void ReservoirController::evaluateLevel() {
+void ReservoirController::evaluateAndSend() {
     const hw::LevelState level = sensor_.read();
 
     if (level != lastLevel_) {
@@ -40,11 +29,14 @@ void ReservoirController::evaluateLevel() {
         lastLevel_ = level;
     }
 
-    const protocol::PumpCommand next = decide(level);
-    if (next != desired_) {
-        desired_ = next;
-        maybeSendCommand(/*forceResend=*/false);  // envia ja na mudanca
-    }
+    desired_ = decide(level);
+
+    // Envio confiavel (com ACK/retry). Serve tanto para a mudanca imediata
+    // quanto para o reenvio periodico de robustez.
+    const bool ok = link_.sendReliable(
+        protocol::makeCommand(cfg::kAddrReservoir, pumpNodeAddress_, 0, desired_));
+    ESP_LOGI(TAG, "nivel=%d comando=%d ack=%s", static_cast<int>(level),
+             static_cast<int>(desired_), ok ? "sim" : "nao");
 }
 
 protocol::PumpCommand ReservoirController::decide(hw::LevelState level) const {
@@ -53,35 +45,22 @@ protocol::PumpCommand ReservoirController::decide(hw::LevelState level) const {
         case hw::LevelState::kHigh: return protocol::PumpCommand::kOff;
         case hw::LevelState::kMid:  return desired_;  // mantem (histerese)
         case hw::LevelState::kUnknown:
-        default:                     return protocol::PumpCommand::kOff;  // seguro
+        default:                    return protocol::PumpCommand::kOff;  // seguro
     }
 }
 
-void ReservoirController::maybeSendCommand(bool /*forceResend*/) {
-    // Nao empilha transacoes: se ja ha um envio confiavel em voo, espera o
-    // proximo ciclo. Vale tanto para a mudanca imediata quanto para o reenvio
-    // periodico de robustez -- ambos apenas garantem que o comando desejado
-    // chegue ao no da bomba com ACK.
-    if (link_.isDelivering()) return;
-    link_.sendReliable(
-        protocol::makeCommand(cfg::kAddrReservoir, pumpNodeAddress_, 0, desired_));
-}
-
-void ReservoirController::maybeSendHeartbeat() {
-    const uint32_t now = platform::millis();
-    if (now - lastHeartbeatMs_ < cfg::Timing::kHeartbeatPeriodMs) return;
-    lastHeartbeatMs_ = now;
+void ReservoirController::sendHeartbeat() {
     link_.sendOnce(
         protocol::makeHeartbeat(cfg::kAddrReservoir, pumpNodeAddress_, 0));
 }
 
-void ReservoirController::maybeReportBattery() {
-    const uint32_t now = platform::millis();
-    if (now - lastBatteryMs_ < cfg::Timing::kBatteryReportPeriodMs) return;
-    lastBatteryMs_ = now;
+void ReservoirController::reportBattery() {
     const hw::BatteryTelemetry t = battery_.read();
     link_.sendOnce(
         protocol::makeBatteryStatus(cfg::kAddrReservoir, pumpNodeAddress_, 0, t));
+    ESP_LOGI(TAG, "bateria: %u mV, SoC %u%%, fonte=%d",
+             static_cast<unsigned>(t.milliVolts),
+             static_cast<unsigned>(t.socPercent), static_cast<int>(t.source));
 }
 
 }  // namespace core

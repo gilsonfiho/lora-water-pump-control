@@ -1,19 +1,13 @@
 #pragma once
 // ============================================================================
-//  ReservoirController.h  -  Maquina de estados do no do reservatorio.
+//  ReservoirController.h  -  Logica do no do reservatorio (transmissor).
 // ----------------------------------------------------------------------------
-//  Le o nivel da caixa, decide (com histerese) se a bomba deve encher, e envia
-//  o comando ao no da bomba de forma confiavel (com ACK/retry). Tambem emite
-//  heartbeats para manter o enlace vivo e reporta a telemetria de bateria.
+//  Le o nivel (boia/chave), decide com histerese e envia o comando ao no da
+//  bomba de forma confiavel (ACK/retry). Tambem envia heartbeat e reporta a
+//  bateria. Metodos chamados pela tarefa de controle a partir de eventos/timers.
 //
-//  Decisao de bomba (histerese vem do proprio sensor de boias):
-//    kLow     -> LIGAR  (caixa baixa, precisa encher)
-//    kHigh    -> DESLIGAR (caixa cheia)
-//    kMid     -> mantem o comando anterior
-//    kUnknown -> DESLIGAR (falha do sensor -> seguro)
-//
-//  Emite um evento (Observer) a cada mudanca de LevelState, para acoplar
-//  facilmente log, display ou LED sem tocar na logica de controle.
+//  Decisao: kLow->LIGAR, kHigh->DESLIGAR, kMid->mantem, kUnknown->DESLIGAR.
+//  Emite evento (Observer) a cada mudanca de LevelState.
 // ============================================================================
 
 #include <cstdint>
@@ -39,33 +33,26 @@ public:
           pumpNodeAddress_(pumpNodeAddress) {}
 
     void begin();
-    void loop();
 
-    // Ponto de extensao Observer para eventos de mudanca de nivel.
+    // Le o nivel, atualiza a decisao e envia o comando (confiavel) ao no bomba.
+    void evaluateAndSend();
+    void sendHeartbeat();
+    void reportBattery();
+
     Signal<LevelChangedEvent>& onLevelChanged() { return levelChanged_; }
-
     protocol::PumpCommand desiredCommand() const { return desired_; }
 
 private:
-    void evaluateLevel();
-    void maybeSendCommand(bool forceResend);
-    void maybeSendHeartbeat();
-    void maybeReportBattery();
     protocol::PumpCommand decide(hw::LevelState level) const;
 
-    protocol::LinkLayer& link_;
-    hw::ILevelSensor& sensor_;
-    hw::IBatteryMonitor& battery_;
-    uint8_t pumpNodeAddress_;
+    protocol::LinkLayer&  link_;
+    hw::ILevelSensor&     sensor_;
+    hw::IBatteryMonitor&  battery_;
+    uint8_t               pumpNodeAddress_;
 
     Signal<LevelChangedEvent> levelChanged_;
-
-    hw::LevelState lastLevel_ = hw::LevelState::kUnknown;
-    protocol::PumpCommand desired_ = protocol::PumpCommand::kOff;
-
-    uint32_t lastCycleMs_ = 0;
-    uint32_t lastHeartbeatMs_ = 0;
-    uint32_t lastBatteryMs_ = 0;
+    hw::LevelState            lastLevel_ = hw::LevelState::kUnknown;
+    protocol::PumpCommand     desired_ = protocol::PumpCommand::kOff;
 };
 
 }  // namespace core
