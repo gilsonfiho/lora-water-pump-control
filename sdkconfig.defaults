@@ -1,0 +1,24 @@
+# ============================================================================
+#  sdkconfig.defaults  -  Base de configuracao do projeto.
+# ----------------------------------------------------------------------------
+#  Aplicado quando nao existe um sdkconfig. Para mudar algo, prefira o
+#  menuconfig e depois traga para ca o que deve valer para todos.
+# ============================================================================
+
+CONFIG_IDF_TARGET="esp32c3"
+
+# Tick de 1 kHz: platform::delayMs(1) precisa render 1 tick, e os prazos do
+# projeto sao todos em milissegundos.
+CONFIG_FREERTOS_HZ=1000
+
+# O app_main hospeda a maquina de estado inteira de um dos nos.
+CONFIG_ESP_MAIN_TASK_STACK_SIZE=8192
+
+# Sem excecoes nem RTTI: o codigo nao usa nenhum dos dois e isso reduz o binario.
+CONFIG_COMPILER_CXX_EXCEPTIONS=n
+CONFIG_COMPILER_CXX_RTTI=n
+
+# O laco principal chama vTaskDelay a cada iteracao, entao o watchdog de tarefa
+# fica ativo de proposito: se o laco travar, queremos o reset.
+CONFIG_ESP_TASK_WDT_INIT=y
+CONFIG_ESP_TASK_WDT_TIMEOUT_S=10
