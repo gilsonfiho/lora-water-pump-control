@@ -52,7 +52,10 @@ Sobram 0, 1, 3, 4, 5, 6, 7 e 10 — exatamente os oito que o protótipo usa.
 ## Tempos de bancada
 
 `BENCH_PROFILE` (ligado por padrão em `NodeConfig.h`) encurta o que o operador
-espera, e nada mais. Defina `-DBENCH_PROFILE=0` para os tempos de campo.
+espera, e nada mais. Para os tempos de campo, troque
+`#define BENCH_PROFILE 1` por `0` em `NodeConfig.h`. `idf.py build
+-DBENCH_PROFILE=0` **não** funciona: cria uma variável do CMake, não um
+`#define` do compilador.
 
 | | Bancada | Campo |
 |---|---|---|
@@ -60,9 +63,15 @@ espera, e nada mais. Defina `-DBENCH_PROFILE=0` para os tempos de campo.
 | Heartbeat | 5 s | 15 s |
 | Failsafe (perda de enlace) | 15 s | 45 s |
 | Telemetria de bateria | 15 s | 60 s |
+| Potência de TX (`cfg::kTxPower`) | `kLow` = 10 dBm | `kMax` = 22 dBm |
 
 A proporção failsafe ÷ heartbeat continua 3:1 nos dois perfis — são três
 heartbeats perdidos antes de desligar. Um `static_assert` trava isso.
+
+A potência cai na bancada porque os módulos ficam a centímetros um do outro.
+A 22 dBm e ~30 cm de distância, chegam de +1 a +5 dBm no receptor, perto do
+máximo de entrada do LLCC68 (~+10 dBm). O front-end satura e aparecem erros de
+CRC que não vêm do protocolo. Mesmo a 10 dBm, mantenha ≥ 1 m entre as antenas.
 
 O `kAckTimeoutMs` (800 ms) **não** muda: depende do tempo de ar, não da
 conveniência de quem está testando.

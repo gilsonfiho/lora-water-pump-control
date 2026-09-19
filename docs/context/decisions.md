@@ -26,6 +26,26 @@ criação deste arquivo foram extraídas de [`../ARCHITECTURE.md`](../ARCHITECTU
 - **SKUs:** (1) padrão E220-T22D; (2) longo alcance E22-T30D, *pin-compatible*;
   (3) repetidor, planejado.
 
+## Canal 55 (905,125 MHz) (decidido em 2026-09-19)
+
+- **Motivo:** o canal de fábrica do E220 (23 → 873,125 MHz) cai no downlink
+  celular de 850 MHz e não é permitido pela ANATEL. O canal 55 fica no meio da
+  faixa de 902–907,5 MHz, longe das bordas e fora da 915–928 MHz, onde operam as
+  redes LoRaWAN AU915.
+- Um `static_assert` em `RadioConfig.h` impede canal fora de CH 52–57 / 65–77.
+- **Não resolve a potência:** em canal fixo, o E220 continua no limite genérico
+  (ver [`hardware.md`](hardware.md#regulatório-anatel-faixa-e-potência)).
+
+## Camada `hal` renomeada para `hw` (decidido em 2026-09-19)
+
+- **Motivo:** o ESP-IDF tem um componente interno chamado `hal`. Um componente
+  do projeto com o mesmo nome o **substitui**, e o build quebra dentro do IDF
+  (`hal/etm_types.h`, `hal/efuse_hal.h` não encontrados).
+- Renomeados diretório, prefixo de include (`hw/...`) e namespace (`hw::`), para
+  não deixar o prefixo `hal/` ambíguo com os headers do IDF.
+- **Regra:** nenhum componente do projeto pode ter o nome de um componente do
+  ESP-IDF (conferir em `$IDF_PATH/components/`).
+
 ## Primeiro protótipo (decidido em 2026-09-19)
 
 Escopo reduzido em relação ao produto. O protótipo valida o enlace e a lógica de

@@ -107,6 +107,39 @@ Definida em `lib/config/PinConfig.h`. Preencher quando confirmada:
 | ADC da bateria | — | não |
 | I2C (INA219/226) | — | não |
 
+## Regulatório (ANATEL): faixa e potência
+
+Fonte: Ato nº 14.448/2017 (radiação restrita), cópia de 2018. O Ato foi alterado
+em 2020, 2022 e 2025 (Ato 14.158/2025); **confirmar no texto consolidado** e com
+um OCD antes de fechar o produto.
+
+- **Faixas permitidas perto de 900 MHz: 902–907,5 MHz e 915–928 MHz.** A faixa
+  907,5–915 MHz não é permitida.
+- **O canal padrão do E220 (23 → 873,125 MHz) é ilegal no Brasil.** Ele cai no
+  downlink da banda celular de 850 MHz (869–894 MHz).
+- Canais E220 legais (`freq = 850,125 + CH` MHz): **CH 52–57** (902,125–907,125)
+  e **CH 65–77** (915,125–927,125), ou seja, 19 canais no total.
+- Potência depende da técnica de modulação:
+
+| Enquadramento | Condição | Limite |
+|---|---|---|
+| Genérico (item 4.1.4 / item 20) | canal fixo | 50 mV/m a 3 m (≈ −1,2 dBm EIRP) |
+| Salto de frequência (10.2.5) | largura a 20 dB < 250 kHz: ≥ 35 canais, ≤ 0,4 s a cada 14 s | 1 W (≥ 35 canais) |
+| Salto de frequência (10.2.5) | largura a 20 dB ≥ 250 kHz (máx. 500 kHz): ≥ 17 canais, ≤ 0,4 s a cada 7 s | 0,25 W (< 35 canais) |
+| Modulação digital (10.3) | largura a 6 dB ≥ 500 kHz; ≤ 8 dBm/3 kHz | 1 W |
+| Antena > 6 dBi (10.5) | — | reduzir 1 dB de potência por dB acima de 6 dBi |
+
+- **Consequência: E220 em canal fixo a 125 kHz não se enquadra em alta
+  potência.** Não é salto de frequência nem tem 500 kHz a 6 dB. Sobra o limite
+  genérico (≈ −1 dBm EIRP), inviável para 5 km.
+- Salto de frequência com ≥ 35 canais não cabe na grade de 1 MHz do E220 (só 19
+  canais legais). A saída com o E220 seria salto em ≥ 17 canais com largura
+  ≥ 250 kHz, a 24 dBm no máximo. **A confirmar:** o E220 não expõe a largura de
+  banda LoRa, e não se sabe se alguma taxa aérea usa 250/500 kHz. Isso toca a
+  escolha do rádio e do SKU T30D (30 dBm exige ≥ 35 canais).
+- **Pendente:** verificar o certificado ANATEL do E220 (se existe e sob qual
+  enquadramento).
+
 ## Restrições conhecidas
 
 - O E220 é **UART**, não SPI.

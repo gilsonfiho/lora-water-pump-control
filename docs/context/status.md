@@ -9,16 +9,28 @@ principais implementados. Ainda não validado em hardware real.
 
 ## Feito
 
-- Estrutura em camadas: `config/`, `platform/`, `hal/`, `protocol/`, `core/`, `power/`.
+- Estrutura em camadas: `config/`, `platform/`, `hw/`, `protocol/`, `core/`, `power/`.
 - Protocolo com quadro, CRC-16, ACK e retransmissão (`LinkLayer`).
 - Máquinas de estado dos dois nós e failsafe de perda de enlace.
 - **Migração para ESP-IDF (2026-09-19):** PlatformIO/Arduino removidos, camadas
   viraram componentes do IDF, drivers reescritos sobre `driver/uart`,
   `driver/gpio` e `esp_adc`. Binário único com papel por strap de GPIO.
 
+- **Primeira compilação OK (2026-09-19)** com ESP-IDF **v6.1**, alvo esp32c3.
+  App 0x2eb00 bytes (82% livre na partição de 1 MB), sem warnings do projeto.
+  Dois ajustes foram necessários:
+  - componente `hal` renomeado para **`hw`** (dir, include `hw/` e namespace
+    `hw::`): ele sombreava o componente `hal` interno do ESP-IDF;
+  - `REQUIRES driver` trocado por `esp_driver_uart esp_driver_gpio` (no IDF 6,
+    o `driver` não reexporta mais `driver/uart.h` e `driver/gpio.h`).
+
+- **Potência de TX no `BENCH_PROFILE` (2026-09-19):** `cfg::kTxPower` em
+  `RadioConfig.h` vale `kLow` (10 dBm) na bancada e `kMax` em campo. Evita
+  saturar o LLCC68 com os módulos próximos. Compila sem warnings.
+
 ## Em andamento
 
-- Migração ESP-IDF escrita, mas **nunca compilada** — falta instalar o framework.
+- Nada em aberto no build; próximo passo é a bancada.
 
 ## Foco atual: protótipo de bancada
 
@@ -28,14 +40,10 @@ stubada e tempos curtos. Montagem e roteiro em [`bancada.md`](bancada.md).
 
 ## Próximos passos
 
-1. **Instalar o framework ESP-IDF**: a extensão 2.2.0 do VS Code está instalada,
-   mas o framework não. Rodar *ESP-IDF: Configure ESP-IDF Extension*.
-2. **Compilar pela primeira vez** (`idf.py set-target esp32c3 && idf.py build`) e
-   registrar aqui o resultado. O código migrado **ainda não foi compilado**.
-3. Montar a bancada e rodar o roteiro de [`bancada.md`](bancada.md), em especial
+1. Montar a bancada e rodar o roteiro de [`bancada.md`](bancada.md), em especial
    o teste de failsafe.
-4. Só depois: boias reais, subsistema de energia e contator.
-5. Teste de campo, comparando o par T22D com o par T30D.
+2. Só depois: boias reais, subsistema de energia e contator.
+3. Teste de campo, comparando o par T22D com o par T30D.
 
 ## Para o produto (depois do protótipo)
 
@@ -50,6 +58,12 @@ stubada e tempos curtos. Montagem e roteiro em [`bancada.md`](bancada.md).
   se for versionar, colocar em `docs/`.
 
 ## Bloqueios
+
+- **Regulatório (ANATEL):** o canal já foi para 55 (905,125 MHz), dentro da
+  faixa permitida. Mas o E220 em canal fixo só se enquadra no limite genérico
+  (≈ −1 dBm EIRP). Detalhes
+  e opções em [`hardware.md`](hardware.md#regulatório-anatel-faixa-e-potência).
+  Afeta canal, escolha do rádio e o SKU T30D.
 
 - Pinagem e modelo exato dos módulos ainda não confirmados.
 - Par de módulos do protótipo em aberto (quantidade disponível de cada modelo).
