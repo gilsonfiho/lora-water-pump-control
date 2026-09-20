@@ -66,6 +66,9 @@ cfg::LoraProfile makeProfile() {
         // Sem radio, o failsafe manda: a bomba permanece desligada.
     }
 
+    // Diagnostico do enlace: RX de outro no, CRC invalido, etc. no monitor.
+    link.onEvent([](const protocol::LinkEvent& e) { logLinkEvent(kTag, e); });
+
     ESP_LOGI(kTag, "pronto (bancada: LED no GPIO %d, failsafe em %lu ms)",
              cfg::PumpPins::kRelay,
              static_cast<unsigned long>(cfg::Timing::kLinkLostTimeoutMs));

@@ -91,6 +91,9 @@ cfg::LoraProfile makeProfile() {
                  levelName(e.previous), levelName(e.current));
     });
 
+    // Diagnostico do enlace: TX/ACK/retry/timeout aparecem no monitor.
+    link.onEvent([](const protocol::LinkEvent& e) { logLinkEvent(kTag, e); });
+
     ESP_LOGI(kTag, "pronto (bancada: chave no GPIO %d, ciclo de %lu ms)",
              cfg::BenchPins::kLevelSwitch,
              static_cast<unsigned long>(cfg::Timing::kReservoirCyclePeriodMs));
