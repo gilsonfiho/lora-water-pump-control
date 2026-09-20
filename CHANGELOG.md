@@ -35,6 +35,11 @@ ESP-IDF v6.1 para o ESP32-C3, mas ainda **não foi validado em hardware**.
   se comunicam.
 
 ### Adicionado
+- **Log de diagnóstico do enlace** (para investigar o "não comunica" na bancada):
+  - bytes crus em `E220Radio` (`TX/RX N B` + hexdump, nível `DEBUG`);
+  - eventos de protocolo no `LinkLayer` via `onEvent(std::function<...>)` —
+    `kTx`, `kAckOk` (com rtt), `kRetry`, `kTimeout`, `kCrcFail`, `kNotForMe` —
+    logados na camada de app, mantendo `protocol/` sem ESP-IDF.
 - Componente `platform/` (`platform::millis()` / `platform::delayMs()`), que
   mantém `protocol/` e `core/` independentes do ESP-IDF.
 - Drivers reescritos sobre `esp_driver_uart`, `esp_driver_gpio` e `esp_adc`:

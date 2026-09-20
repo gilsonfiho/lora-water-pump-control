@@ -1,6 +1,6 @@
 # Status
 
-Última atualização: 2026-09-19
+Última atualização: 2026-09-20
 
 ## Versão atual
 
@@ -31,9 +31,19 @@ principais implementados. Ainda não validado em hardware real.
   queima acima de +10 dBm), VCC no pino 5V do devkit com 1000 µF. O par T22D
   fica para a comparação de campo. Compila sem warnings.
 
+- **Log de diagnóstico do enlace (2026-09-20):** a comunicação não logava nada,
+  o que deixava a bancada cega. Adicionados: bytes crus (hex, `DEBUG`) no
+  `E220Radio` e eventos tipados do `LinkLayer` (`onEvent` → TX/ACK+rtt/retry/
+  timeout/crc/notforme) logados na `main/`. `protocol/`/`core/` seguem sem
+  ESP-IDF. Compila no v6.1 (0x2f980 B, 81% livre). Para ver o hex, subir o nível
+  do tag: `esp_log_level_set("e220", ESP_LOG_DEBUG)`.
+
 ## Em andamento
 
-- Nada em aberto no build; próximo passo é a bancada.
+- Diagnóstico do "não comunica" na bancada: forte suspeita de saturação do RX
+  (par T30D a curta distância, mínimo 21 dBm) e/ou brownout na TX. Confirmar
+  pelos novos logs (`ACK` com rtt vs. `TIMEOUT`; `CRC inválido` = satura).
+- Próximo passo continua sendo a bancada.
 
 ## Foco atual: protótipo de bancada
 
