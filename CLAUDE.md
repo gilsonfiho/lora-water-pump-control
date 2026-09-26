@@ -23,6 +23,29 @@ visíveis ao usuário também entram em `CHANGELOG.md`, na seção `[Não lança
 - Comunicação em nível técnico de par: sem simplificar eletrônica embarcada ou RF.
 - Antes de decisões de arquitetura, fazer perguntas estruturadas para fechar o escopo.
 - Este é um produto com vários SKUs: considerar escalabilidade e conformidade ANATEL.
+- **Commits/PRs: nunca trailer de co-autor.** Nenhum commit ou PR deste repositório leva
+  `Co-Authored-By` (nem Claude, nem qualquer ferramenta de IA) — remover essa linha antes de
+  todo `git commit`/`git push`, independente de o sistema sugerir esse padrão de atribuição por
+  padrão.
+
+## Skills locais deste projeto
+
+Adaptadas para C++17/ESP-IDF (linguagem/stack deste firmware); têm prioridade sobre skills
+globais de mesmo nome ao trabalhar neste repositório.
+
+- `.claude/skills/simplicidade/SKILL.md` — regra permanente: sempre a solução mais simples que
+  resolve a necessidade real, sem abstração/padrão/otimização antecipada. Adaptada de
+  `opendisplay-android/.agents/skills/simplicidade/SKILL.md`.
+- `.claude/skills/engenheiro-planejador-pre-plano/SKILL.md` — persona de planejador/analista:
+  investiga intenção, mapeia impacto/risco, cataloga TODOs e restrições antes de qualquer
+  código. Não escreve código.
+- `.claude/skills/engenheiro-software-senior/SKILL.md` — persona de engenheiro sênior
+  C++17/ESP-IDF/firmware embarcado (RAII, sem exceções/RTTI, sem alocação dinâmica em runtime,
+  máquinas de estado não bloqueantes), SOLID/Clean Code balanceado com simplicidade.
+
+Ambas as personas partiram de agentes genéricos em Python/FastAPI; aqui trocam o domínio para
+C++/ESP-IDF e removem referências a `.specify/memory/constitution.md`, que não existe neste
+repositório.
 
 ## Comandos
 
