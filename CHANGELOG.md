@@ -15,7 +15,49 @@ e o projeto adota o [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
 ## [Não lançado]
 
-- Nada por enquanto.
+Migração para ESP-IDF e preparação do protótipo de bancada. **Compila** com
+ESP-IDF v6.1 para o ESP32-C3, mas ainda **não foi validado em hardware**.
+
+### Alterado (incompatível)
+- **Build migrado de PlatformIO/Arduino para ESP-IDF** (v6.1, alvo `esp32c3`).
+  As camadas viraram componentes do IDF (`components/<camada>/include/<camada>/`),
+  com as dependências declaradas em `REQUIRES`. `platformio.ini` e `src/` foram
+  removidos.
+- **Firmware único para os dois nós.** O papel vem do strap no GPIO 3 (aberto =
+  reservatório, GND = bomba). Os dois ambientes de build deixaram de existir.
+- **Camada `hal` renomeada para `hw`** (diretório, `#include "hw/..."` e
+  namespace `hw::`). Com o nome `hal`, o componente substituía o `hal` interno do
+  ESP-IDF e quebrava o build do framework.
+- **Canal de RF: 23 (873,125 MHz) → 55 (905,125 MHz).** O canal de fábrica do
+  E220 cai no downlink celular de 850 MHz e não é permitido pela ANATEL. Um
+  `static_assert` impede canais fora das faixas de 902–907,5 e 915–928 MHz.
+  **Os dois nós precisam ser regravados juntos.** Em canais diferentes, eles não
+  se comunicam.
+
+### Adicionado
+- Componente `platform/` (`platform::millis()` / `platform::delayMs()`), que
+  mantém `protocol/` e `core/` independentes do ESP-IDF.
+- Drivers reescritos sobre `esp_driver_uart`, `esp_driver_gpio` e `esp_adc`:
+  `E220Radio`, `RelayPumpActuator`, `FloatSwitchLevelSensor`, `AdcBatteryMonitor`.
+- **Perfil de bancada (`BENCH_PROFILE`, ligado por padrão):**
+  - `BenchSwitchLevelSensor`: uma chave que trava no lugar das boias;
+  - `StubBatteryMonitor`: bateria fixa em fonte externa, 100%;
+  - tempos curtos: ciclo de 2 s, heartbeat de 5 s, failsafe de 15 s. A proporção
+    failsafe ÷ heartbeat de 3:1 é garantida por `static_assert`;
+  - potência de TX `kLow` (10 dBm no T22D), via `cfg::kTxPower`. Evita saturar o
+    LLCC68 com os módulos próximos. Em campo volta a `kMax`.
+- `sdkconfig.defaults` do projeto.
+- Documentação: `docs/context/` (status, decisões, hardware, protocolo e
+  bancada), datasheets do E220 em `docs/datasheets/` e a análise regulatória da
+  ANATEL (Ato 14.448/2017) em `docs/context/hardware.md`.
+
+### Pendências conhecidas
+- **Regulatório:** em canal fixo de 125 kHz, o E220 só se enquadra no limite
+  genérico da ANATEL (≈ −1 dBm EIRP). Alta potência exige salto de frequência,
+  e isso afeta a escolha do rádio e o SKU T30D.
+- `kFloatHigh` (GPIO 2, strap) e `kExternalPresent` (GPIO 18, USB D−) precisam
+  de outros pinos antes de voltar às boias e ao monitor de bateria real.
+- Roteiro de bancada (`docs/context/bancada.md`) ainda não executado.
 
 ## [0.0.1] - 2026-09-17
 

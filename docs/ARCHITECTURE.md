@@ -114,7 +114,7 @@ abstração permite trocar o rádio — é um esqueleto com `TODO(hw)`.
 
 | Parâmetro | Valor padrão | Registrador |
 |-----------|--------------|-------------|
-| Canal | 23 → **873,125 MHz** | REG2 (`freq = 850,125 + canal`) |
+| Canal | 55 → **905,125 MHz** (faixa ANATEL) | REG2 (`freq = 850,125 + canal`) |
 | Taxa aérea | **2,4 kbps** (maior alcance) | REG0[2:0] |
 | Potência | Máx (T30D: 30 dBm / T22D: 22 dBm) | REG1[1:0] |
 | LBT | habilitado | REG3[4] |
