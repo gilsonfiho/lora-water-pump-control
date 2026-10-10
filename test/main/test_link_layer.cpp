@@ -348,6 +348,85 @@ TEST_CASE("enlace cortado no loopback: entrega falha apos as retransmissoes",
     FakeClock::uninstall();
 }
 
+// ---- Regressao: o relogio do ACK pertence a transacao pendente -------------
+// transmit() nao pode atualizar lastTxMs_, senao qualquer outro TX (heartbeat
+// por sendOnce, auto-ACK de um pacote recebido) adia a retransmissao do
+// comando em voo -- no limite, indefinidamente.
+
+TEST_CASE("heartbeat em voo nao adia a retransmissao do comando", "[protocol]")
+{
+    FakeClock::install();
+    FakeRadio radio;
+    LinkLayer link(radio, kMe);
+
+    link.sendReliable(makeCommand(0, kPeer, 0, PumpCommand::kOn));
+    const size_t afterCommand = radio.sent.size();
+
+    // Quase no fim da janela de ACK, o no manda um heartbeat qualquer.
+    FakeClock::advance(cfg::Timing::kAckTimeoutMs - 50);
+    link.sendOnce(makeHeartbeat(0, kPeer, 0));
+    TEST_ASSERT_EQUAL_UINT32(afterCommand + 1, radio.sent.size());
+
+    // Passada a janela, a retransmissao tem de sair na hora.
+    FakeClock::advance(50);
+    link.poll();
+
+    TEST_ASSERT_EQUAL_UINT32(afterCommand + 2, radio.sent.size());
+    TEST_ASSERT_EQUAL_UINT8(static_cast<uint8_t>(MessageType::kComandoBomba),
+                            static_cast<uint8_t>(lastSent(radio).type));
+    FakeClock::uninstall();
+}
+
+TEST_CASE("auto-ACK nao adia a retransmissao do comando", "[protocol]")
+{
+    FakeClock::install();
+    FakeRadio radio;
+    LinkLayer link(radio, kMe);
+
+    link.sendReliable(makeCommand(0, kPeer, 0, PumpCommand::kOn));
+    const uint8_t seq = lastSent(radio).seq;
+
+    // Chega um pacote que pede ACK: o auto-ACK vai ao ar no meio da espera.
+    FakeClock::advance(cfg::Timing::kAckTimeoutMs - 50);
+    injectPacket(radio, makeCommand(kPeer, kMe, 77, PumpCommand::kOff));
+    link.poll();
+    TEST_ASSERT_TRUE(lastSent(radio).isAck());
+
+    // O prazo do comando pendente continua contando desde o envio dele.
+    FakeClock::advance(50);
+    link.poll();
+
+    TEST_ASSERT_EQUAL_UINT8(seq, lastSent(radio).seq);  // a retransmissao saiu
+    TEST_ASSERT_EQUAL_UINT8(static_cast<uint8_t>(MessageType::kComandoBomba),
+                            static_cast<uint8_t>(lastSent(radio).type));
+    FakeClock::uninstall();
+}
+
+TEST_CASE("trafego constante nao impede o timeout de falhar", "[protocol]")
+{
+    FakeClock::install();
+    FakeRadio radio;
+    LinkLayer link(radio, kMe);
+
+    std::vector<LinkEvent> events;
+    link.onEvent([&](const LinkEvent& e) { events.push_back(e); });
+
+    link.sendReliable(makeCommand(0, kPeer, 0, PumpCommand::kOn));
+
+    // Heartbeats a cada 100 ms, sem nunca chegar o ACK: a entrega tem de
+    // falhar depois das retransmissoes, nao ficar presa para sempre.
+    for (uint32_t t = 0; t < cfg::Timing::kAckTimeoutMs *
+                                 (cfg::Timing::kMaxRetries + 2); t += 100) {
+        FakeClock::advance(100);
+        link.sendOnce(makeHeartbeat(0, kPeer, 0));
+        link.poll();
+    }
+
+    TEST_ASSERT_EQUAL_UINT8(static_cast<uint8_t>(LinkLayer::DeliveryResult::kFailed),
+                            static_cast<uint8_t>(link.deliveryState()));
+    FakeClock::uninstall();
+}
+
 TEST_CASE("radio ocupado nao aceita o quadro", "[protocol]")
 {
     FakeClock::install();

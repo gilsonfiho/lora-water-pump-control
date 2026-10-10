@@ -23,6 +23,7 @@ bool LinkLayer::sendReliable(Packet pkt) {
     retriesLeft_ = maxRetries_;
     delivery_ = DeliveryResult::kInFlight;
     transmit(pending_);
+    lastTxMs_ = platform::millis();  // marca o inicio da espera pelo ACK
 
     LinkEvent ev{};
     ev.type = LinkEvent::Type::kTx;
@@ -48,7 +49,11 @@ void LinkLayer::transmit(const Packet& pkt) {
     const size_t n = encodePacket(pkt, buffer, sizeof(buffer));
     if (n == 0) return;
     radio_.send(buffer, n);
-    lastTxMs_ = platform::millis();
+
+    // NAO toca em lastTxMs_: esse relogio pertence a transacao confiavel em
+    // voo. Quem o atualiza e sendReliable() e a retransmissao em poll(). Se
+    // qualquer TX o atualizasse, um heartbeat (sendOnce) ou um auto-ACK
+    // adiaria a retransmissao do comando pendente -- no limite, indefinidamente.
 }
 
 void LinkLayer::poll() {
@@ -68,6 +73,7 @@ void LinkLayer::poll() {
         }
         --retriesLeft_;
         transmit(pending_);  // reenvia com o MESMO SEQ
+        lastTxMs_ = platform::millis();
         LinkEvent ev{};
         ev.type = LinkEvent::Type::kRetry;
         ev.seq = pending_.seq;

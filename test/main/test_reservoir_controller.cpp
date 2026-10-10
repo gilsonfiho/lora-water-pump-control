@@ -232,24 +232,37 @@ TEST_CASE("BOMBA_STATUS recebido vira evento no reservatorio",
     TEST_ASSERT_EQUAL_UINT16(61, seen[0].runSeconds);
 }
 
-TEST_CASE("nao empilha transacoes confiaveis", "[core][reservoir]")
+TEST_CASE("nao empilha transacoes: cada SEQ vive uma rodada de retentativas",
+          "[core][reservoir]")
 {
     ReservoirFixture f;
     f.sensor.level = hw::LevelState::kLow;
 
-    // Varios ciclos sem ACK: o enlace segura uma transacao, e as retransmissoes
-    // reusam o mesmo SEQ -- nao devem virar comandos novos.
+    // Varios ciclos sem nenhum ACK. Dentro de uma transacao, as retransmissoes
+    // reusam o mesmo SEQ. Esgotadas as retentativas, a entrega falha e o
+    // reservatorio tem o direito de abrir uma transacao nova (SEQ novo) --
+    // o que nao pode e haver duas em voo ao mesmo tempo.
     f.tick(cfg::Timing::kReservoirCyclePeriodMs * 3);
 
-    uint8_t distinctSeqs[8] = {0};
+    // Conta quantos quadros cada SEQ de comando gerou.
+    uint8_t seqs[16] = {0};
+    int counts[16] = {0};
     size_t distinct = 0;
     for (const std::vector<uint8_t>& fr : f.radio.sent) {
         protocol::Packet p;
         if (!protocol::decodePacket(fr.data(), fr.size(), p)) continue;
         if (p.type != protocol::MessageType::kComandoBomba) continue;
-        bool known = false;
-        for (size_t i = 0; i < distinct; ++i) known |= (distinctSeqs[i] == p.seq);
-        if (!known && distinct < 8) distinctSeqs[distinct++] = p.seq;
+        size_t idx = distinct;
+        for (size_t i = 0; i < distinct; ++i) {
+            if (seqs[i] == p.seq) { idx = i; break; }
+        }
+        if (idx == distinct && distinct < 16) seqs[distinct++] = p.seq;
+        if (idx < 16) ++counts[idx];
     }
-    TEST_ASSERT_EQUAL_UINT32(1, distinct);
+
+    TEST_ASSERT_GREATER_OR_EQUAL_UINT32(1, distinct);
+    for (size_t i = 0; i < distinct; ++i) {
+        // 1 envio + no maximo kMaxRetries retransmissoes por transacao.
+        TEST_ASSERT_LESS_OR_EQUAL_INT(1 + cfg::Timing::kMaxRetries, counts[i]);
+    }
 }
