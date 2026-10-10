@@ -35,6 +35,11 @@ ESP-IDF v6.1 para o ESP32-C3, mas ainda **não foi validado em hardware**.
   se comunicam.
 
 ### Adicionado
+- **Log de diagnóstico do enlace** (para investigar o "não comunica" na bancada):
+  - bytes crus em `E220Radio` (`TX/RX N B` + hexdump, nível `DEBUG`);
+  - eventos de protocolo no `LinkLayer` via `onEvent(std::function<...>)` —
+    `kTx`, `kAckOk` (com rtt), `kRetry`, `kTimeout`, `kCrcFail`, `kNotForMe` —
+    logados na camada de app, mantendo `protocol/` sem ESP-IDF.
 - Componente `platform/` (`platform::millis()` / `platform::delayMs()`), que
   mantém `protocol/` e `core/` independentes do ESP-IDF.
 - Drivers reescritos sobre `esp_driver_uart`, `esp_driver_gpio` e `esp_adc`:
@@ -44,8 +49,12 @@ ESP-IDF v6.1 para o ESP32-C3, mas ainda **não foi validado em hardware**.
   - `StubBatteryMonitor`: bateria fixa em fonte externa, 100%;
   - tempos curtos: ciclo de 2 s, heartbeat de 5 s, failsafe de 15 s. A proporção
     failsafe ÷ heartbeat de 3:1 é garantida por `static_assert`;
-  - potência de TX `kLow` (10 dBm no T22D), via `cfg::kTxPower`. Evita saturar o
-    LLCC68 com os módulos próximos. Em campo volta a `kMax`.
+  - potência de TX `kLow` via `cfg::kTxPower`: 21 dBm no T30D, que é o mínimo
+    do módulo. Em campo volta a `kMax`.
+- **Par E220-900T30D no protótipo** (`makeProfile()` dos dois nós). Na bancada:
+  nós a ≥ 3 m, porque o receptor queima com mais de +10 dBm na entrada, e VCC
+  do módulo no pino 5V do devkit com 1000 µF. O par T22D fica para a comparação
+  de campo.
 - `sdkconfig.defaults` do projeto.
 - Documentação: `docs/context/` (status, decisões, hardware, protocolo e
   bancada), datasheets do E220 em `docs/datasheets/` e a análise regulatória da

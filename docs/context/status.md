@@ -1,6 +1,6 @@
 # Status
 
-Última atualização: 2026-09-19
+Última atualização: 2026-09-20
 
 ## Versão atual
 
@@ -25,16 +25,29 @@ principais implementados. Ainda não validado em hardware real.
     o `driver` não reexporta mais `driver/uart.h` e `driver/gpio.h`).
 
 - **Potência de TX no `BENCH_PROFILE` (2026-09-19):** `cfg::kTxPower` em
-  `RadioConfig.h` vale `kLow` (10 dBm) na bancada e `kMax` em campo. Evita
-  saturar o LLCC68 com os módulos próximos. Compila sem warnings.
+  `RadioConfig.h` vale `kLow` na bancada e `kMax` em campo.
+- **Par T30D no protótipo (2026-09-19):** `makeProfile()` dos dois nós usa
+  `kT30D`. Na bancada: `kLow` = 21 dBm (mínimo do T30D), nós a ≥ 3 m (o RX
+  queima acima de +10 dBm), VCC no pino 5V do devkit com 1000 µF. O par T22D
+  fica para a comparação de campo. Compila sem warnings.
+
+- **Log de diagnóstico do enlace (2026-09-20):** a comunicação não logava nada,
+  o que deixava a bancada cega. Adicionados: bytes crus (hex, `DEBUG`) no
+  `E220Radio` e eventos tipados do `LinkLayer` (`onEvent` → TX/ACK+rtt/retry/
+  timeout/crc/notforme) logados na `main/`. `protocol/`/`core/` seguem sem
+  ESP-IDF. Compila no v6.1 (0x2f980 B, 81% livre). Para ver o hex, subir o nível
+  do tag: `esp_log_level_set("e220", ESP_LOG_DEBUG)`.
 
 ## Em andamento
 
-- Nada em aberto no build; próximo passo é a bancada.
+- Diagnóstico do "não comunica" na bancada: forte suspeita de saturação do RX
+  (par T30D a curta distância, mínimo 21 dBm) e/ou brownout na TX. Confirmar
+  pelos novos logs (`ACK` com rtt vs. `TIMEOUT`; `CRC inválido` = satura).
+- Próximo passo continua sendo a bancada.
 
 ## Foco atual: protótipo de bancada
 
-Branch `feature/prototipo-bancada`. ESP32-C3, ESP-IDF, par T22D. Sem água, sem
+Branch `feature/prototipo-bancada`. ESP32-C3, ESP-IDF, par T30D. Sem água, sem
 bomba e sem carga AC: chave no lugar da boia, LED no lugar do contator, bateria
 stubada e tempos curtos. Montagem e roteiro em [`bancada.md`](bancada.md).
 
@@ -43,7 +56,9 @@ stubada e tempos curtos. Montagem e roteiro em [`bancada.md`](bancada.md).
 1. Montar a bancada e rodar o roteiro de [`bancada.md`](bancada.md), em especial
    o teste de failsafe.
 2. Só depois: boias reais, subsistema de energia e contator.
-3. Teste de campo, comparando o par T22D com o par T30D.
+3. Teste de campo com o par T30D, usando o par T22D como comparação. A 30 dBm
+   com o E220 em canal fixo, o teste fica fora da conformidade ANATEL: vale
+   como medição de engenharia.
 
 ## Para o produto (depois do protótipo)
 
@@ -65,5 +80,6 @@ stubada e tempos curtos. Montagem e roteiro em [`bancada.md`](bancada.md).
   e opções em [`hardware.md`](hardware.md#regulatório-anatel-faixa-e-potência).
   Afeta canal, escolha do rádio e o SKU T30D.
 
-- Pinagem e modelo exato dos módulos ainda não confirmados.
-- Par de módulos do protótipo em aberto (quantidade disponível de cada modelo).
+- Pinagem ainda não confirmada no hardware.
+- Alimentação do T30D pelo VBUS do devkit ainda não testada: pode exigir fonte
+  de 5 V externa.

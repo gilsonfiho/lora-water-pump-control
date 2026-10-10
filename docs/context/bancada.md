@@ -28,6 +28,8 @@ Os dois nós gravam **o mesmo binário**; o papel vem do strap.
 | E220 `M0` | 6 | |
 | E220 `M1` | 7 | |
 | E220 `AUX` | 10 | |
+| E220 `VCC` | pino **5V** (VBUS) | 1000 µF + 100 nF junto ao módulo |
+| E220 `GND` | GND | |
 | Chave de nível (só reservatório) | 1 | outro lado no GND |
 | LED (só bomba) | 0 | LED + 330 Ω para o GND |
 
@@ -63,27 +65,47 @@ espera, e nada mais. Para os tempos de campo, troque
 | Heartbeat | 5 s | 15 s |
 | Failsafe (perda de enlace) | 15 s | 45 s |
 | Telemetria de bateria | 15 s | 60 s |
-| Potência de TX (`cfg::kTxPower`) | `kLow` = 10 dBm | `kMax` = 22 dBm |
+| Potência de TX (`cfg::kTxPower`, T30D) | `kLow` = 21 dBm | `kMax` = 30 dBm |
 
 A proporção failsafe ÷ heartbeat continua 3:1 nos dois perfis — são três
 heartbeats perdidos antes de desligar. Um `static_assert` trava isso.
 
-A potência cai na bancada porque os módulos ficam a centímetros um do outro.
-A 22 dBm e ~30 cm de distância, chegam de +1 a +5 dBm no receptor, perto do
-máximo de entrada do LLCC68 (~+10 dBm). O front-end satura e aparecem erros de
-CRC que não vêm do protocolo. Mesmo a 10 dBm, mantenha ≥ 1 m entre as antenas.
+### T30D: potência, distância e alimentação
+
+O protótipo usa o **par E220-900T30D**. Três cuidados que o T22D não exigia:
+
+- **Nós a ≥ 3 m um do outro, obrigatoriamente.** O T30D não desce abaixo de
+  21 dBm (`kLow`), e o manual limita a entrada do receptor a **+10 dBm, sob
+  risco de queimar o módulo**. Com antenas de ~2 dBi:
+
+  | Distância | Chega no receptor (21 dBm) | |
+  |---|---|---|
+  | 10 cm | ~+13 dBm | **dano** |
+  | 30 cm | ~+4 dBm | satura, CRC falha |
+  | 3 m | ~−15 dBm | seguro |
+
+  Pontas opostas da sala ou salas diferentes. Nunca as duas placas lado a lado
+  na mesma protoboard ou mesa.
+- **VCC do E220 no pino 5V (VBUS) do devkit.** O T30D precisa de ≥ 5 V para a
+  potência nominal e puxa até 620 mA de pico (a 30 dBm; menos em `kLow`). A
+  USB 2.0 fornece 500 mA, então é um improviso: 1000 µF + 100 nF junto ao VCC
+  do módulo e fios curtos. **Se o ESP resetar ou a porta USB cair a cada
+  transmissão**, troque por uma fonte de 5 V externa (≥ 1 A) com GND comum.
+- **Os sinais continuam em 3,3 V.** UART, M0, M1 e AUX vão direto ao ESP32-C3.
+  O manual avisa que TTL de 5 V pode queimar o módulo.
 
 O `kAckTimeoutMs` (800 ms) **não** muda: depende do tempo de ar, não da
 conveniência de quem está testando.
 
 ## Roteiro de validação
 
-Grave o mesmo binário nas duas placas e mude só o strap.
+Grave o mesmo binário nas duas placas e mude só o strap. Antes de energizar,
+confira que **cada E220 tem a sua antena** e que os nós estão **a ≥ 3 m**.
 
 1. **Boot.** Cada nó deve logar o papel que assumiu. Se os dois disserem
    "RESERVATORIO", o strap da bomba não está no GND.
 2. **Rádio.** Nenhum nó pode logar `FALHA ao iniciar o radio E220`. Se logar,
-   confira alimentação do módulo, o par TX/RX cruzado e o `AUX`.
+   confira alimentação do módulo (5 V no VCC), o par TX/RX cruzado e o `AUX`.
 3. **Liga.** Feche a chave. Em até ~2 s o LED da bomba acende e o receptor loga
    `estado -> BOMBEANDO`.
 4. **Desliga.** Abra a chave. O LED apaga e o log vai para `OCIOSO`.

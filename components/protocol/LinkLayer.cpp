@@ -23,6 +23,14 @@ bool LinkLayer::sendReliable(Packet pkt) {
     retriesLeft_ = maxRetries_;
     delivery_ = DeliveryResult::kInFlight;
     transmit(pending_);
+
+    LinkEvent ev{};
+    ev.type = LinkEvent::Type::kTx;
+    ev.seq = pending_.seq;
+    ev.dst = pending_.dst;
+    ev.bytes = static_cast<uint8_t>(kHeaderSize + pending_.payloadLen + kCrcSize);
+    ev.retriesLeft = retriesLeft_;
+    emitEvent(ev);
     return true;
 }
 
@@ -52,10 +60,19 @@ void LinkLayer::poll() {
         if (retriesLeft_ == 0) {
             hasPending_ = false;
             delivery_ = DeliveryResult::kFailed;
+            LinkEvent ev{};
+            ev.type = LinkEvent::Type::kTimeout;
+            ev.seq = pending_.seq;
+            emitEvent(ev);
             return;
         }
         --retriesLeft_;
         transmit(pending_);  // reenvia com o MESMO SEQ
+        LinkEvent ev{};
+        ev.type = LinkEvent::Type::kRetry;
+        ev.seq = pending_.seq;
+        ev.retriesLeft = retriesLeft_;
+        emitEvent(ev);
     }
 }
 
@@ -66,25 +83,47 @@ void LinkLayer::processIncoming() {
     if (n < kHeaderSize + kCrcSize) return;
 
     // Procura o SYNC e tenta decodificar a partir dele (ressincronizacao).
+    bool sawSync = false;
     for (size_t i = 0; i + kHeaderSize + kCrcSize <= n; ++i) {
         if (rxScratch_[i] != kSyncByte) continue;
+        sawSync = true;
         Packet pkt;
         if (decodePacket(rxScratch_ + i, n - i, pkt)) {
             handleDecoded(pkt);
             return;
         }
     }
+
+    // Chegou algo com SYNC mas nada decodificou: CRC ruim ou quadro truncado
+    // (tipico de saturacao do RX ou colisao), nao apenas ruido sem sincronismo.
+    if (sawSync) {
+        LinkEvent ev{};
+        ev.type = LinkEvent::Type::kCrcFail;
+        emitEvent(ev);
+    }
 }
 
 void LinkLayer::handleDecoded(const Packet& pkt) {
     // Ignora o que nao e para este no (aceita broadcast).
-    if (pkt.dst != localAddress_ && pkt.dst != cfg::kAddrBroadcast) return;
+    if (pkt.dst != localAddress_ && pkt.dst != cfg::kAddrBroadcast) {
+        LinkEvent ev{};
+        ev.type = LinkEvent::Type::kNotForMe;
+        ev.seq = pkt.seq;
+        ev.dst = pkt.dst;
+        emitEvent(ev);
+        return;
+    }
 
     // Um ACK conclui a transacao pendente se o SEQ casar.
     if (pkt.isAck()) {
         if (hasPending_ && pkt.seq == pending_.seq) {
             hasPending_ = false;
             delivery_ = DeliveryResult::kAcked;
+            LinkEvent ev{};
+            ev.type = LinkEvent::Type::kAckOk;
+            ev.seq = pkt.seq;
+            ev.rttMs = platform::millis() - lastTxMs_;
+            emitEvent(ev);
         }
         return;
     }

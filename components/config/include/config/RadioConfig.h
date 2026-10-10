@@ -61,15 +61,18 @@ enum class LoraPowerLevel : uint8_t {
     kLow  = 0b11,
 };
 
-// Potencia usada pelos dois nos. Na BANCADA os modulos ficam a centimetros um
-// do outro: a 22 dBm e ~30 cm de antena a antena (FSPL ~21 dB a 900 MHz)
-// chegam de +1 a +5 dBm no receptor, perto do maximo de entrada do LLCC68
-// (~+10 dBm). O front-end satura e aparecem erros de CRC e perdas que nao vem
-// do protocolo. 10 dBm (T22D kLow) resolve isso. Em campo volta ao maximo.
+// Potencia usada pelos dois nos. O prototipo usa o par T30D, cujo minimo e
+// 21 dBm (kLow). O manual limita a entrada do receptor a +10 dBm ("blocking
+// power"), e acima disso o modulo pode QUEIMAR. Com antenas de ~2 dBi:
+//   21 dBm a 10 cm -> ~+13 dBm   (dano)
+//   21 dBm a 30 cm -> ~+4 dBm    (satura, CRC falha)
+//   21 dBm a 3 m   -> ~-15 dBm   (seguro)   <- bancada: nos a >= 3 m
+//   30 dBm exige >= ~1,3 m so para ficar abaixo do limite de dano.
+// Por isso a bancada usa kLow, e em campo volta ao maximo.
 #if BENCH_PROFILE
-inline constexpr LoraPowerLevel kTxPower = LoraPowerLevel::kLow;  // T22D: 10 dBm
+inline constexpr LoraPowerLevel kTxPower = LoraPowerLevel::kLow;  // T30D: 21 dBm (T22D: 10)
 #else
-inline constexpr LoraPowerLevel kTxPower = LoraPowerLevel::kMax;  // T22D: 22 dBm
+inline constexpr LoraPowerLevel kTxPower = LoraPowerLevel::kMax;  // T30D: 30 dBm (T22D: 22)
 #endif
 
 // Qual modulo fisico esta instalado; afeta apenas a documentacao da tabela de

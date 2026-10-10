@@ -43,7 +43,7 @@ const char* stateName(core::PumpController::State s) {
 
 cfg::LoraProfile makeProfile() {
     cfg::LoraProfile p;
-    p.variant = cfg::E220Variant::kT22D;  // TODO(hw): confirmar o par do prototipo
+    p.variant = cfg::E220Variant::kT30D;  // par do prototipo (T22D: comparacao em campo)
     p.airRate = cfg::LoraAirRate::k2_4k;   // DEVE casar com o reservatorio
     return p;
 }
@@ -65,6 +65,9 @@ cfg::LoraProfile makeProfile() {
         ESP_LOGE(kTag, "FALHA ao iniciar o radio E220");
         // Sem radio, o failsafe manda: a bomba permanece desligada.
     }
+
+    // Diagnostico do enlace: RX de outro no, CRC invalido, etc. no monitor.
+    link.onEvent([](const protocol::LinkEvent& e) { logLinkEvent(kTag, e); });
 
     ESP_LOGI(kTag, "pronto (bancada: LED no GPIO %d, failsafe em %lu ms)",
              cfg::PumpPins::kRelay,

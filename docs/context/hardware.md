@@ -17,7 +17,7 @@ estiver em aberto, o código mantém o `TODO(hw)` correspondente.
 |------|----------|------------|
 | MCU (protótipo) | **ESP32-C3** | Placa exata a confirmar (`platformio.ini` usa `esp32-c3-devkitm-1` como palpite). |
 | MCU (produto) | ESP32-C6-WROOM-1 | Só depois do protótipo. |
-| Módulo LoRa (protótipo) | **E220-900T22D** e **E220-900T30D** em mãos | Definir qual vai em cada nó. Datasheets em `docs/datasheets/`. |
+| Módulo LoRa (protótipo) | **Par E220-900T30D** | Decidido em 2026-09-19. O par T22D fica para a comparação de campo. Datasheets em `docs/datasheets/`. |
 | Módulo LoRa (produto, SKU padrão) | E220-900T22D (LLCC68, 22 dBm, UART) | Decidido. |
 | Módulo LoRa (produto, longo alcance) | **E22-T30D** (30 dBm) | Família diferente do E220. Ver observação abaixo. |
 | Confirmação da bomba (produto) | **SCT-013** (sensor de corrente) | **Fora do protótipo.** Detecta que a bomba realmente ligou, não só o comando ao contator. |
@@ -58,7 +58,9 @@ Lido dos manuais em [`../datasheets/`](../datasheets/) (T22D v1.2, T30D v1.0).
 | Potência máxima | 22 dBm | 30 dBm |
 | Tabela `REG1[1:0]` | 22 / 17 / 13 / 10 dBm | 30 / 27 / 24 / 21 dBm |
 | Corrente de TX (pico) | **110 mA** | **620 mA** |
-| Tensão para potência plena | ≥ 3,3 V (opera de 2,3 V) | **≥ 5,0 V** (opera de 3,0 V) |
+| Tensão para potência plena | ≥ 3,3 V (opera de 2,3 V) | **≥ 5,0 V** (opera de 3,0 a 5,5 V) |
+| Nível lógico da UART | 3,3 V | **3,3 V** (manual: "5 V TTL may burn") |
+| Entrada máxima no RX (*blocking power*) | — | **+10 dBm**, acima disso pode queimar |
 | Distância de referência | 5 km | 10 km |
 | Tamanho | 21 × 36 mm | 24 × 43 mm |
 
@@ -76,16 +78,23 @@ Consequências de projeto:
 - O EIRP da ANATEL limita potência do módulo **mais** ganho de antena. Com o
   T30D, uma antena de ganho alto pode estourar o limite.
 
-### Módulo por nó (protótipo) — a decidir
+### Módulo por nó (protótipo): par T30D
 
-Recomendação: **o mesmo modelo nos dois nós**. O enlace é limitado pela direção
-mais fraca, e um par misto (22 dBm de um lado, 30 dBm do outro) dá um resultado
-de campo que não se aplica a nenhum SKU.
+Decidido em 2026-09-19: **par T30D** nos dois nós (ver
+[`decisions.md`](decisions.md)). O mesmo modelo nos dois lados, porque o enlace
+é limitado pela direção mais fraca e um par misto não representa nenhum SKU. O
+par T22D entra no teste de campo como comparação.
 
-- **Par T22D:** valida o SKU padrão do produto e é viável com bateria.
-- **Par T30D:** margem maior, mas exige 5 V e ~620 mA de pico nos dois lados.
+Na bancada:
 
-Falta saber **quantas unidades de cada modelo** estão disponíveis.
+- **VCC pelo pino 5V (VBUS) do devkit**, com eletrolítico de 1000 µF + 100 nF
+  junto ao VCC do módulo e fios curtos. A USB 2.0 fornece 500 mA; o pico do
+  T30D é 620 mA a 30 dBm (menos em `kLow`). Reset ou queda da porta durante TX
+  indicam que é hora de uma fonte de 5 V externa com GND comum.
+- **UART, M0, M1 e AUX ficam direto no ESP32-C3** (3,3 V), mesmo com o módulo
+  alimentado a 5 V.
+- **`kLow` = 21 dBm e nós a ≥ 3 m.** Com antenas de ~2 dBi, a 10 cm chegam
+  ~+13 dBm ao receptor, acima do limite de dano de +10 dBm.
 
 ## Pendente no esquemático de referência
 
