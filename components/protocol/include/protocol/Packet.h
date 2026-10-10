@@ -35,6 +35,7 @@ enum class MessageType : uint8_t {
     kAck            = 0x03,  // confirmacao de um SEQ recebido
     kHeartbeat      = 0x04,  // mantem o enlace vivo / detecta perda
     kBateriaStatus  = 0x05,  // telemetria de energia
+    kBombaStatus    = 0x06,  // bomba -> reservatorio: estado do atuador
 };
 
 // Flags do cabecalho.
