@@ -9,8 +9,20 @@
 #include <freertos/task.h>
 
 namespace platform {
+namespace {
+
+// Nullptr em producao: millis() cai direto no esp_timer. Ver setTimeSource().
+TimeSourceMs g_timeSource = nullptr;
+
+}  // namespace
+
+void setTimeSource(TimeSourceMs source) {
+    g_timeSource = source;
+}
 
 uint32_t millis() {
+    if (g_timeSource) return g_timeSource();
+
     // esp_timer_get_time() e o tempo em microssegundos desde o boot (int64).
     // O truncamento para 32 bits e intencional: ver a nota no header.
     return static_cast<uint32_t>(esp_timer_get_time() / 1000);
