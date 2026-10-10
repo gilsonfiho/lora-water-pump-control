@@ -46,10 +46,16 @@ principais implementados. Ainda não validado em hardware real.
   reservatório, só para log. Compila no v6.1 (0x2f7a0 B, 81% livre).
   **Não validado em hardware**: roteiro no README.
 
-- **Testes automatizados (2026-10-10):** 55 casos Unity rodando **no QEMU, sem
+- **Testes automatizados (2026-10-10):** 58 casos Unity rodando **no QEMU, sem
   placa** (`.\test\run-tests.ps1`), cobrindo `protocol/` e `core/`. Relógio
   substituível (`platform::setTimeSource`) permite verificar prazos longos sem
-  esperar. Todos passando.
+  esperar. Todos passando. Acharam um bug real no `LinkLayer` (ver abaixo).
+- **Correção no `LinkLayer` (2026-10-10):** `transmit()` atualizava o
+  `lastTxMs_`, que é o relógio da transação confiável em voo. Assim, qualquer
+  heartbeat (`sendOnce`) ou auto-ACK adiava a retransmissão do comando
+  pendente — na cadência de bancada, indefinidamente. Agora só
+  `sendReliable()` e a retransmissão tocam esse relógio. Três testes de
+  regressão cobrem os dois caminhos.
 
 ## Em andamento
 

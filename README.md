@@ -283,7 +283,7 @@ loga `estado -> BOMBEANDO (saida=LIGADA)` e o LED acende. A partir daí, siga o
 
 ## Testes automatizados
 
-A suíte roda **no QEMU, sem placa nenhuma**, em poucos segundos. São 55 casos
+A suíte roda **no QEMU, sem placa nenhuma**, em poucos segundos. São 58 casos
 (Unity) sobre `protocol/` e `core/`, com rádio, atuador, sensor e bateria
 falsos, e um **relógio controlado pelo teste** — por isso um failsafe de 45 s ou
 um bloqueio de 30 min são verificados sem esperar nada.
@@ -306,7 +306,7 @@ Para rodar na placa em vez do QEMU: `idf.py -C test -p COMx flash monitor`.
 |---------|-------|
 | [`test/main/test_packet.cpp`](test/main/test_packet.cpp) | CRC-16 (vetor conhecido), ida e volta do quadro, CRC corrompido, truncamento, SYNC/versão inválidos, payload máximo |
 | [`test/main/test_messages.cpp`](test/main/test_messages.cpp) | Builders e parsers de cada tipo, incluindo `BOMBA_STATUS` |
-| [`test/main/test_link_layer.cpp`](test/main/test_link_layer.cpp) | ACK, retransmissão com o mesmo SEQ, timeout, auto-ACK, filtro de endereço, broadcast, ressincronização por SYNC, par de nós em loopback |
+| [`test/main/test_link_layer.cpp`](test/main/test_link_layer.cpp) | ACK, retransmissão com o mesmo SEQ, timeout, auto-ACK, filtro de endereço, broadcast, ressincronização por SYNC, par de nós em loopback, e a regressão do relógio de retransmissão |
 | [`test/main/test_pump_controller.cpp`](test/main/test_pump_controller.cpp) | Os dois failsafes, e o latch da issue #9 (inclusive sobrevivendo à queda do enlace) |
 | [`test/main/test_reservoir_controller.cpp`](test/main/test_reservoir_controller.cpp) | Decisão de nível com histerese, sensor falho, heartbeat, telemetria |
 

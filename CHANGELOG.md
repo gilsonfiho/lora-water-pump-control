@@ -28,8 +28,17 @@ ESP-IDF v6.1 para o ESP32-C3, mas ainda **não foi validado em hardware**.
   rearma com um `DESLIGAR` do reservatório. Limita o dano de um comando forjado,
   mas não substitui autenticação (#5, #6, #7).
 
+### Corrigido
+- **`LinkLayer`: heartbeat e auto-ACK adiavam a retransmissão do comando.**
+  `transmit()` atualizava o `lastTxMs_`, que é o relógio da transação confiável
+  em voo, e não de qualquer TX. Com isso, um `sendOnce()` (heartbeat,
+  telemetria) ou o auto-ACK de um pacote recebido reiniciavam a espera do ACK —
+  na cadência da bancada, o comando podia nunca ser retransmitido nem falhar.
+  Agora só `sendReliable()` e a retransmissão mexem nesse relógio. Achado pelos
+  testes novos.
+
 ### Adicionado (testes)
-- **Suíte de 55 testes (Unity) rodando no QEMU, sem hardware**, em `test/`.
+- **Suíte de 58 testes (Unity) rodando no QEMU, sem hardware**, em `test/`.
   Cobre `protocol/` (CRC, quadro, mensagens, ACK/retry/timeout do `LinkLayer`,
   par de nós em loopback) e `core/` (os dois failsafes da bomba, o latch da
   issue #9 e a histerese do reservatório). Dublês em `test/main/fakes.h`.
