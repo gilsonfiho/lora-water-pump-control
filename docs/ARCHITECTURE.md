@@ -151,6 +151,7 @@ Protocolo próprio, ponto-a-ponto, extensível para múltiplos nós (endereço d
 | `ACK` | 0x03 | ambos | — (usa SEQ) |
 | `HEARTBEAT` | 0x04 | reservatório → bomba | — |
 | `BATERIA_STATUS` | 0x05 | reservatório → (informativo) | mV, mA, SoC%, fonte |
+| `BOMBA_STATUS` | 0x06 | bomba → reservatório (informativo) | estado, bloqueio, saída, segundos ligada |
 
 ### Confirmação, retransmissão e timeout
 
@@ -198,12 +199,25 @@ stateDiagram-v2
     kPumping --> kLinkLost: silencio > timeout
     kLinkLost --> kIdle: trafego valido (bomba OFF)
     kLinkLost --> kPumping: trafego valido (bomba ON)
+    kPumping --> kOverrun: ligada > kMaxPumpRunMs
+    kOverrun --> kIdle: COMANDO_BOMBA = desligar
+    kLinkLost --> kOverrun: trafego valido com bloqueio travado
     note right of kLinkLost
         FAILSAFE: rele OFF.
         Qualquer estado nao-bombeante
         desenergiza a bomba.
     end note
+    note right of kOverrun
+        FAILSAFE LOCAL (tempo maximo).
+        LIGAR e ignorado enquanto
+        o latch estiver travado.
+    end note
 ```
+
+O `kOverrun` tem um detalhe que o diagrama não mostra: o bloqueio é um **latch**
+em `overrunLatched_`, e não apenas o estado. Ele sobrevive a `kLinkLost`, porque
+se fosse só estado bastaria um silêncio de rádio para limpá-lo, e o `LIGAR`
+seguinte religaria a bomba. Só um `COMANDO_BOMBA = desligar` rearma.
 
 ### Nó do reservatório (transmissor)
 
@@ -240,6 +254,11 @@ Detalhes do circuito (TP4056, chaveamento, INA219): ver
 
 ## Failsafe de segurança
 
+São **dois**, independentes. O primeiro depende do reservatório falar; o segundo
+age mesmo quando ele fala demais.
+
+### 1. Perda de enlace
+
 > **Se o enlace cair, a bomba desliga.**
 
 O nó da bomba considera o enlace "vivo" a cada pacote válido (comando **ou**
@@ -247,3 +266,24 @@ heartbeat). Sem tráfego válido por `kLinkLostTimeoutMs` (45 s), ele entra em
 `kLinkLost` e **desliga** a bomba, evitando que ela fique bombeando
 indefinidamente por falha de rádio, queda do reservatório ou trava de boia. Só
 retorna à operação normal quando volta a receber tráfego válido.
+
+### 2. Tempo máximo de bombeamento (local)
+
+> **Se a bomba ficar ligada demais, ela desliga sozinha, mesmo com o enlace
+> perfeito.**
+
+O failsafe de enlace tem um ponto cego: ele só age quando o rádio cala. Se a
+boia travar fechada, se um bug prender o comando `LIGAR`, ou se alguém forjar
+tráfego, o enlace segue "vivo" e a bomba bombeia sem limite — com risco de dano
+ao motor por operação a seco.
+
+Por isso o nó da bomba mede, por conta própria, quanto tempo está ligada sem
+interrupção. Passando de `kMaxPumpRunMs` (60 s na bancada, 30 min em campo), ele
+desliga e **trava**: os reenvios de `LIGAR` do reservatório são ignorados até
+chegar um `DESLIGAR`, que na prática só vem quando a caixa enche ou a boia é
+consertada.
+
+Esta é a defesa em profundidade pedida pela
+[issue #9](https://github.com/gilsonfiho/lora-water-pump-control/issues/9). Ela
+**limita o dano** de um comando forjado, mas não resolve a falta de
+autenticação: isso depende das issues #5, #6 e #7.

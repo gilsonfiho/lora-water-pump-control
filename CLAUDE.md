@@ -36,6 +36,10 @@ idf.py build
 idf.py -p COM3 flash monitor     # sair do monitor: Ctrl+]
 ```
 
+Testes (Unity no QEMU, sem placa): `.\test\run-tests.ps1`. Rodar depois de
+mexer em `protocol/` ou `core/`. Projeto em `test/`, dublês em
+`test/main/fakes.h`, e o relógio é substituído por `platform::setTimeSource`.
+
 - `idf.py reconfigure`: depois de criar, renomear ou apagar componente, ou de
   mexer em `REQUIRES`.
 - `idf.py set-target esp32c3`: só se o `sdkconfig` for apagado (ele o recria).

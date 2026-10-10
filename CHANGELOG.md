@@ -18,6 +18,32 @@ e o projeto adota o [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 Migração para ESP-IDF e preparação do protótipo de bancada. **Compila** com
 ESP-IDF v6.1 para o ESP32-C3, mas ainda **não foi validado em hardware**.
 
+### Segurança
+- **Failsafe de tempo máximo de bombeamento no nó da bomba**
+  ([#9](https://github.com/gilsonfiho/lora-water-pump-control/issues/9)). A bomba
+  desliga sozinha ao passar de `kMaxPumpRunMs` ligada de forma contínua (60 s na
+  bancada, 30 min em campo), **mesmo com o enlace perfeito e o reservatório
+  insistindo em LIGAR**. Cobre boia travada, comando `ON` preso por bug e
+  comando forjado. O bloqueio é um latch: sobrevive à perda de enlace e só
+  rearma com um `DESLIGAR` do reservatório. Limita o dano de um comando forjado,
+  mas não substitui autenticação (#5, #6, #7).
+
+### Adicionado (testes)
+- **Suíte de 55 testes (Unity) rodando no QEMU, sem hardware**, em `test/`.
+  Cobre `protocol/` (CRC, quadro, mensagens, ACK/retry/timeout do `LinkLayer`,
+  par de nós em loopback) e `core/` (os dois failsafes da bomba, o latch da
+  issue #9 e a histerese do reservatório). Dublês em `test/main/fakes.h`.
+  Rodar com `.\test\run-tests.ps1`.
+- **`platform::setTimeSource()`**: troca a fonte de tempo de `platform::millis()`.
+  Existe para os testes verificarem prazos de minutos sem esperar; em produção
+  `millis()` continua no `esp_timer`.
+
+### Adicionado (protocolo)
+- **`BOMBA_STATUS` (0x06), bomba → reservatório:** estado do nó, bloqueio por
+  tempo máximo, estado da saída e segundos ligada. Informativo, sem ACK. O
+  formato do quadro não mudou, então `VER` segue em `0x01`. Hoje o reservatório
+  apenas loga esse status.
+
 ### Alterado (incompatível)
 - **Build migrado de PlatformIO/Arduino para ESP-IDF** (v6.1, alvo `esp32c3`).
   As camadas viraram componentes do IDF (`components/<camada>/include/<camada>/`),
