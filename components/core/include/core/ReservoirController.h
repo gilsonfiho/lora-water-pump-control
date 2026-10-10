@@ -44,9 +44,15 @@ public:
     // Ponto de extensao Observer para eventos de mudanca de nivel.
     Signal<LevelChangedEvent>& onLevelChanged() { return levelChanged_; }
 
+    // Status reportado pelo no da bomba (BOMBA_STATUS). Hoje so alimenta log:
+    // a decisao de bombear continua vindo do nivel. Deixar o reservatorio
+    // reagir a um bloqueio da bomba e uma decisao a parte.
+    Signal<protocol::PumpStatusPayload>& onPumpStatus() { return pumpStatus_; }
+
     protocol::PumpCommand desiredCommand() const { return desired_; }
 
 private:
+    void onPacket(const protocol::Packet& pkt);
     void evaluateLevel();
     void maybeSendCommand(bool forceResend);
     void maybeSendHeartbeat();
@@ -59,6 +65,7 @@ private:
     uint8_t pumpNodeAddress_;
 
     Signal<LevelChangedEvent> levelChanged_;
+    Signal<protocol::PumpStatusPayload> pumpStatus_;
 
     hw::LevelState lastLevel_ = hw::LevelState::kUnknown;
     protocol::PumpCommand desired_ = protocol::PumpCommand::kOff;
