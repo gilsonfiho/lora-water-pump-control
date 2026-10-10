@@ -283,7 +283,7 @@ loga `estado -> BOMBEANDO (saida=LIGADA)` e o LED acende. A partir daí, siga o
 
 ## Testes automatizados
 
-A suíte roda **no QEMU, sem placa nenhuma**, em poucos segundos. São 58 casos
+A suíte roda **no QEMU, sem placa nenhuma**, em poucos segundos. São 60 casos
 (Unity) sobre `protocol/` e `core/`, com rádio, atuador, sensor e bateria
 falsos, e um **relógio controlado pelo teste** — por isso um failsafe de 45 s ou
 um bloqueio de 30 min são verificados sem esperar nada.

@@ -108,6 +108,34 @@ TEST_CASE("no boot a bomba fica DESLIGADA e em OCIOSO", "[core][pump]")
     TEST_ASSERT_FALSE(f.controller.overrunLatched());
 }
 
+TEST_CASE("begin() nao transmite nada", "[core][pump]")
+{
+    PumpFixture f;
+    // A app chama begin() ANTES de radio.begin(). Se o boot reportasse status,
+    // a escrita cairia numa UART nao instalada e o driver logaria
+    // "uart driver error" em todo boot -- ruido justamente em quem depura
+    // enlace pelo log.
+    TEST_ASSERT_EQUAL_UINT32(0, f.radio.sent.size());
+}
+
+TEST_CASE("o src do BOMBA_STATUS vem do LinkLayer", "[core][pump]")
+{
+    PumpFixture f;
+    f.sendCommand(protocol::PumpCommand::kOn);
+
+    bool found = false;
+    for (size_t i = f.radio.sent.size(); i > 0 && !found; --i) {
+        protocol::Packet p;
+        const std::vector<uint8_t>& fr = f.radio.sent[i - 1];
+        if (!protocol::decodePacket(fr.data(), fr.size(), p)) continue;
+        if (p.type != protocol::MessageType::kBombaStatus) continue;
+        found = true;
+        TEST_ASSERT_EQUAL_HEX8(kPumpAddr, p.src);
+        TEST_ASSERT_EQUAL_HEX8(kResAddr, p.dst);
+    }
+    TEST_ASSERT_TRUE(found);
+}
+
 TEST_CASE("LIGAR liga a bomba; DESLIGAR desliga", "[core][pump]")
 {
     PumpFixture f;
@@ -311,4 +339,9 @@ TEST_CASE("o bloqueio e reportado em BOMBA_STATUS", "[core][pump][issue9]")
                             static_cast<uint8_t>(status.state));
     TEST_ASSERT_TRUE(status.overrunLatched);
     TEST_ASSERT_FALSE(status.outputOn);
+
+    // O status do bloqueio diz quanto tempo a bomba ficou ligada antes dele.
+    const uint16_t limitSeconds = cfg::Timing::kMaxPumpRunMs / 1000;
+    TEST_ASSERT_GREATER_OR_EQUAL_UINT16(limitSeconds, status.runSeconds);
+    TEST_ASSERT_LESS_OR_EQUAL_UINT16(limitSeconds + 5, status.runSeconds);
 }

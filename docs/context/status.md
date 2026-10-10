@@ -46,7 +46,7 @@ principais implementados. Ainda não validado em hardware real.
   reservatório, só para log. Compila no v6.1 (0x2f7a0 B, 81% livre).
   **Não validado em hardware**: roteiro no README.
 
-- **Testes automatizados (2026-10-10):** 58 casos Unity rodando **no QEMU, sem
+- **Testes automatizados (2026-10-10):** 60 casos Unity rodando **no QEMU, sem
   placa** (`.\test\run-tests.ps1`), cobrindo `protocol/` e `core/`. Relógio
   substituível (`platform::setTimeSource`) permite verificar prazos longos sem
   esperar. Todos passando. Acharam um bug real no `LinkLayer` (ver abaixo).
@@ -56,6 +56,10 @@ principais implementados. Ainda não validado em hardware real.
   pendente — na cadência de bancada, indefinidamente. Agora só
   `sendReliable()` e a retransmissão tocam esse relógio. Três testes de
   regressão cobrem os dois caminhos.
+- **Ajustes no nó da bomba (2026-10-10):** `begin()` não transmite mais (a app o
+  chama antes de `radio.begin()`, e o status ia por uma UART não instalada, com
+  `uart driver error` em todo boot); o `src` do `BOMBA_STATUS` passa a vir do
+  `LinkLayer`; e o tempo ligada também é reportado em `kOverrun`.
 
 ## Em andamento
 

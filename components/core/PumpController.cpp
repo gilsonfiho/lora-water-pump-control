@@ -14,7 +14,13 @@ void PumpController::begin() {
     pump_.begin();  // garante DESLIGADA
     link_.onReceive([this](const protocol::Packet& pkt) { onPacket(pkt); });
     lastValidRxMs_ = platform::millis();
-    enter(State::kIdle);
+
+    // Estado inicial direto, SEM passar por enter(): a app chama begin() antes
+    // de radio.begin() (o rele tem de ir para o estado seguro antes de
+    // qualquer espera de hardware), e enter() reportaria status por uma UART
+    // ainda nao instalada -- o que faz o driver logar "uart driver error" em
+    // todo boot. O primeiro BOMBA_STATUS sai na primeira transicao real.
+    state_ = State::kIdle;
 }
 
 void PumpController::loop() {
@@ -107,15 +113,18 @@ void PumpController::reportStatus() const {
     }
     s.overrunLatched = overrunLatched_;
     s.outputOn       = pump_.isOn();
-    s.runSeconds     = (state_ == State::kPumping)
-                           ? static_cast<uint16_t>(
-                                 (platform::millis() - pumpingSinceMs_) / 1000)
-                           : 0;
+
+    // Tambem em kOverrun: e justamente ali que saber quanto tempo a bomba
+    // ficou ligada antes de bloquear tem valor para quem le a telemetria.
+    s.runSeconds = (state_ == State::kPumping || state_ == State::kOverrun)
+                       ? static_cast<uint16_t>(
+                             (platform::millis() - pumpingSinceMs_) / 1000)
+                       : 0;
 
     // sendOnce: informativo e sem ACK. O laco do atuador nao pode ficar preso
-    // esperando confirmacao, e perder um status nao afeta a seguranca.
-    link_.sendOnce(protocol::makePumpStatus(cfg::kAddrPump, reservoirNodeAddress_,
-                                            0, s));
+    // esperando confirmacao, e perder um status nao afeta a seguranca. O src
+    // fica em 0: o LinkLayer preenche com o endereco local do no.
+    link_.sendOnce(protocol::makePumpStatus(0, reservoirNodeAddress_, 0, s));
 }
 
 }  // namespace core

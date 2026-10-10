@@ -36,9 +36,18 @@ ESP-IDF v6.1 para o ESP32-C3, mas ainda **não foi validado em hardware**.
   na cadência da bancada, o comando podia nunca ser retransmitido nem falhar.
   Agora só `sendReliable()` e a retransmissão mexem nesse relógio. Achado pelos
   testes novos.
+- **`PumpController::begin()` transmitia status antes de o rádio existir.** A app
+  chama `begin()` antes de `radio.begin()`, porque o relé tem de ir ao estado
+  seguro antes de qualquer espera de hardware. O `begin()` passava por `enter()`,
+  que reportava `BOMBA_STATUS` por uma UART ainda não instalada, e o driver
+  logava `uart driver error` em todo boot — ruído em quem depura enlace pelo log.
+  O estado inicial agora é definido direto, e o primeiro status sai na primeira
+  transição real.
+- **`BOMBA_STATUS` reporta o tempo ligada também no bloqueio** (antes ia zerado
+  em `kOverrun`, justamente onde o número importa).
 
 ### Adicionado (testes)
-- **Suíte de 58 testes (Unity) rodando no QEMU, sem hardware**, em `test/`.
+- **Suíte de 60 testes (Unity) rodando no QEMU, sem hardware**, em `test/`.
   Cobre `protocol/` (CRC, quadro, mensagens, ACK/retry/timeout do `LinkLayer`,
   par de nós em loopback) e `core/` (os dois failsafes da bomba, o latch da
   issue #9 e a histerese do reservatório). Dublês em `test/main/fakes.h`.
