@@ -1,11 +1,14 @@
 # Status
 
-Última atualização: 2026-09-20
+Última atualização: 2026-10-11
 
 ## Versão atual
 
-`v0.0.1` (pré-alpha). Esqueleto funcional: arquitetura, protocolo e drivers
-principais implementados. Ainda não validado em hardware real.
+`v0.0.5` (pré-alpha). Fase `0.0.x` de estruturação: arquitetura, protocolo (com
+autenticação e anti-replay), drivers e os dois failsafes implementados e
+cobertos por testes no QEMU. Ainda **não validado em hardware real** — o próximo
+marco é a `0.1.0` (comunicação validada em bancada). Histórico completo das
+versões no [`CHANGELOG.md`](../../CHANGELOG.md).
 
 ## Feito
 
@@ -60,6 +63,19 @@ principais implementados. Ainda não validado em hardware real.
   chama antes de `radio.begin()`, e o status ia por uma UART não instalada, com
   `uart driver error` em todo boot); o `src` do `BOMBA_STATUS` passa a vir do
   `LinkLayer`; e o tempo ligada também é reportado em `kOverrun`.
+
+- **Autenticação + anti-replay no enlace (2026-10-11, issues #5 e #7):** quadro
+  `VER 0x02` com **MAC de 8 B** (SipHash-2-4, chave pré-compartilhada de 128 b em
+  `config/SecurityConfig.h`) e **contador monotônico de 4 B**. O receptor só
+  aceita se o MAC confere e o contador avança para aquele `src`; `decodePacket()`
+  devolve o motivo da recusa (`DecodeError`). O contador é por **transmissão
+  física** (`platform::nextNonce()`), então retransmissão legítima não vira
+  replay; no app ele é persistido em NVS (`main/nonce_store`) com salto de
+  reserva por boot. `PumpController` passou a descartar `src` diferente do
+  reservatório. Branch `feature/auth-replay`, a partir da `develop`. Testes:
+  68/68 no QEMU (SipHash com vetores oficiais, MAC, chave errada, replay,
+  retransmissão, `src` errado). Firmware compila no v6.1 (0x35f10 B, 79% livre).
+  **Não validado em hardware.**
 
 ## Em andamento
 

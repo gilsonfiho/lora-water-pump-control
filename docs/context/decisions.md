@@ -26,6 +26,43 @@ criação deste arquivo foram extraídas de [`../ARCHITECTURE.md`](../ARCHITECTU
 - **SKUs:** (1) padrão E220-T22D; (2) longo alcance E22-T30D, *pin-compatible*;
   (3) repetidor, planejado.
 
+## Autenticação e anti-replay no enlace (decidido em 2026-10-11)
+
+Resposta às [issue #5](https://github.com/gilsonfiho/lora-water-pump-control/issues/5)
+(autenticar o comando) e [issue #7](https://github.com/gilsonfiho/lora-water-pump-control/issues/7)
+(impedir replay). O failsafe #9 só **limitava** o dano de tráfego forjado; aqui
+ele passa a ser **rejeitado**.
+
+- **MAC por quadro, não cifra.** O conteúdo (liga/desliga) não é segredo; o que
+  importa é **autenticidade** e **integridade**. Um MAC resolve isso com uma
+  fração do custo de cifrar, e mantém o quadro legível no log de diagnóstico.
+- **SipHash-2-4, implementado à mão em `protocol/SipHash.h`.** PRF com chave,
+  saída de 64 bits, rápido em MCU de 32 bits e sem dependência externa —
+  `protocol/` não pode depender de mbedTLS nem do ESP-IDF. HMAC-SHA256 seria
+  grande demais no ar (2,4 kbps) e no código para o que o enlace precisa.
+  Truncado para **8 bytes** no quadro: suficiente para este volume de tráfego.
+- **Chave pré-compartilhada de 128 bits** em `config/SecurityConfig.h`, igual
+  nos dois nós. Placeholder com `TODO(hw)`: a chave real é injetada fora do
+  controle de versão (provisão de fábrica por SKU). Rotação/derivação de chave
+  é a issue #6, deixada para depois.
+- **Anti-replay por contador monotônico de 32 bits, por `src`.** O receptor
+  guarda o último contador visto de cada origem e exige avanço estrito. Escolhido
+  em vez de *timestamp* (não há relógio sincronizado) ou *challenge-response*
+  (custa um ida-e-volta a 2,4 kbps e trava o caminho do comando).
+- **Contador por transmissão física, não por transação.** Atribuído em
+  `LinkLayer::transmit()` via `platform::nextNonce()`. Assim a **retransmissão**
+  de um `COMANDO_BOMBA` (mesmo SEQ) carrega um contador **novo** e não é
+  confundida com replay — os comandos são idempotentes, então reaplicar não tem
+  efeito colateral. O ACK casa pelo SEQ, que não mudou.
+- **Persistência do contador em NVS, estilo *frame counter* do LoRaWAN**
+  (`main/nonce_store`). A cada boot salta um bloco de reserva e persiste antes de
+  usar, para **nunca reusar** um valor após reset/brownout. Só a `main/` toca
+  NVS; `platform::nextNonce()` default é um contador em RAM (para os testes).
+- **Validação de `src` no `PumpController`.** Além do MAC, a bomba descarta
+  qualquer pacote cujo `src` não seja o reservatório esperado — defesa em
+  profundidade e parte da issue #5.
+- **Não cobre #6** (gestão/rotação de chave): a chave é única e estática por ora.
+
 ## Failsafe de tempo máximo de bombeamento (decidido em 2026-10-10)
 
 Resposta à [issue #9](https://github.com/gilsonfiho/lora-water-pump-control/issues/9).
