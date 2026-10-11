@@ -44,6 +44,12 @@ void PumpController::loop() {
 }
 
 void PumpController::onPacket(const protocol::Packet& pkt) {
+    // #5: so aceita trafego DO proprio reservatorio. O MAC (LinkLayer) ja prova
+    // que `src` nao foi forjado; aqui recusamos qualquer outra origem -- antes
+    // mesmo de renovar o "enlace vivo", senao um terceiro manteria o failsafe
+    // adormecido com heartbeats.
+    if (pkt.src != reservoirNodeAddress_) return;
+
     // Qualquer pacote valido do reservatorio conta como "enlace vivo".
     lastValidRxMs_ = platform::millis();
 
