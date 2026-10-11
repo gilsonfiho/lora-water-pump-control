@@ -24,6 +24,7 @@ LoRa, o nó da bomba na captação — com confirmação (ACK), retransmissão e
 - [Hardware necessário](#hardware-necessário)
 - [Estrutura do repositório](#estrutura-do-repositório)
 - [Como compilar e gravar](#como-compilar-e-gravar)
+- [Testes automatizados](#testes-automatizados)
 - [Protótipo de bancada](#protótipo-de-bancada)
 - [Configuração](#configuração)
 - [Protocolo de comunicação](#protocolo-de-comunicação)
@@ -280,6 +281,62 @@ loga `estado -> BOMBEANDO (saida=LIGADA)` e o LED acende. A partir daí, siga o
 > configurações diferentes elas não se comunicam, e o sintoma é o mesmo de um
 > enlace caído.
 
+## Testes automatizados
+
+A suíte roda **no QEMU, sem placa nenhuma**, em poucos segundos. São 60 casos
+(Unity) sobre `protocol/` e `core/`, com rádio, atuador, sensor e bateria
+falsos, e um **relógio controlado pelo teste** — por isso um failsafe de 45 s ou
+um bloqueio de 30 min são verificados sem esperar nada.
+
+```powershell
+# Uma vez por máquina:
+python $env:IDF_PATH\tools\idf_tools.py install qemu-riscv32
+
+# A cada rodada, da raiz do repositório:
+.\test\run-tests.ps1            # saída completa (inclui o boot do IDF)
+.\test\run-tests.ps1 -Quiet     # só os casos e o resumo
+```
+
+Uma rodada leva cerca de 12 s. A saída sai **ao vivo**, caso por caso:
+
+```text
+== compilando os testes...
+== rodando no QEMU...
+./main/test_packet.cpp:29:CRC-16/CCITT-FALSE confere com o vetor conhecido:PASS
+...
+60 Tests 0 Failures 0 Ignored
+==== FIM DOS TESTES: 0 falha(s) ====
+== todos os testes passaram
+```
+
+Falha aparece em vermelho, com arquivo, linha, nome do caso e o que era
+esperado:
+
+```text
+./main/test_pump_controller.cpp:186:nao bloqueia pouco antes do limite:FAIL: Expected 2 Was 3
+```
+
+**O script devolve código de saída** (0 se tudo passou, 1 se houve falha ou
+travamento), então serve para CI ou para um hook de pre-commit. Ele também
+cuida de três armadilhas do ambiente: acrescenta o QEMU ao PATH (o perfil do
+EIM é gerado antes de o QEMU existir), encerra o emulador junto com o processo
+pai (senão sobra um `qemu-system-riscv32` órfão segurando a porta 5555, e a
+rodada seguinte não sobe) e, em caso de falha, imprime as últimas linhas do log
+e onde ele está.
+
+Para rodar na placa em vez do QEMU: `idf.py -C test -p COMx flash monitor`.
+
+| Arquivo | Cobre |
+|---------|-------|
+| [`test/main/test_packet.cpp`](test/main/test_packet.cpp) | CRC-16 (vetor conhecido), ida e volta do quadro, CRC corrompido, truncamento, SYNC/versão inválidos, payload máximo |
+| [`test/main/test_messages.cpp`](test/main/test_messages.cpp) | Builders e parsers de cada tipo, incluindo `BOMBA_STATUS` |
+| [`test/main/test_link_layer.cpp`](test/main/test_link_layer.cpp) | ACK, retransmissão com o mesmo SEQ, timeout, auto-ACK, filtro de endereço, broadcast, ressincronização por SYNC, par de nós em loopback, e a regressão do relógio de retransmissão |
+| [`test/main/test_pump_controller.cpp`](test/main/test_pump_controller.cpp) | Os dois failsafes, e o latch da issue #9 (inclusive sobrevivendo à queda do enlace) |
+| [`test/main/test_reservoir_controller.cpp`](test/main/test_reservoir_controller.cpp) | Decisão de nível com histerese, sensor falho, heartbeat, telemetria |
+
+Os testes **não substituem a bancada**: nada aqui exercita o E220, os GPIOs, a
+alimentação ou o alcance. Eles cobrem a lógica; o hardware é a bancada.
+
 ## Protótipo de bancada
 
 Primeira etapa de validação: **enlace, protocolo e failsafe na mesa, sem água,
@@ -367,6 +424,39 @@ As duas placas recebem **o mesmo binário**; só o strap muda.
 5. **Failsafe:** com o LED aceso, desligue o reservatório. Em ~15 s o LED deve
    apagar sozinho (`ENLACE PERDIDO (failsafe)`). **É o teste que mais importa.**
 6. **Recuperação:** religue o reservatório; o enlace volta e o LED reacende.
+
+### Roteiro de validação do tempo máximo de bombeamento
+
+Este failsafe é **local do nó da bomba** e independe do reservatório: vale mesmo
+com o enlace perfeito e com o reservatório insistindo em LIGAR. É a defesa
+contra boia travada, comando `ON` preso por bug e comando forjado
+([issue #9](https://github.com/gilsonfiho/lora-water-pump-control/issues/9)).
+
+Na bancada o limite é de **60 s** (`kMaxPumpRunMs`); em campo, 30 min.
+
+1. **Dispara.** Feche a chave. O LED acende. Agora **não toque em nada** por
+   60 s. O LED deve apagar **sozinho**, e a bomba deve logar:
+
+   ```text
+   W (…) bomba: BLOQUEIO por tempo maximo (60000 ms ligada): LIGAR sera ignorado ate chegar um DESLIGAR
+   I (…) bomba: estado -> BLOQUEADA POR TEMPO MAXIMO (saida=DESLIGADA)
+   ```
+
+   No monitor do reservatório aparece `bomba BLOQUEADA por tempo maximo`, que
+   chega pela mensagem `BOMBA_STATUS`.
+2. **Não religa sozinha.** Com a chave **ainda fechada**, espere mais um minuto.
+   O LED não pode acender. O reservatório continua reenviando LIGAR a cada
+   ciclo, e a bomba tem de ignorar.
+3. **Rearma.** Abra a chave. O log mostra `bloqueio rearmado por DESLIGAR` e o
+   estado vai para `OCIOSO`.
+4. **Volta a funcionar.** Feche a chave de novo: o LED acende e o cronômetro
+   começa do zero.
+5. **O bloqueio sobrevive à queda do enlace.** Este é o teste mais importante
+   dos cinco. Repita o passo 1 e, com a bomba já bloqueada e a chave fechada,
+   **desligue o reservatório** e espere o `ENLACE PERDIDO (failsafe)`. Religue o
+   reservatório: o enlace volta, mas **o LED não pode acender**. Se acender, o
+   bloqueio virou apenas um estado, e um silêncio de rádio passou a ser um jeito
+   de burlar o limite.
 
 ### O que a bancada não prova
 

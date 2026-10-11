@@ -38,6 +38,29 @@ principais implementados. Ainda não validado em hardware real.
   ESP-IDF. Compila no v6.1 (0x2f980 B, 81% livre). Para ver o hex, subir o nível
   do tag: `esp_log_level_set("e220", ESP_LOG_DEBUG)`.
 
+- **Failsafe de tempo máximo de bombeamento (2026-10-10, issue #9):** o nó da
+  bomba desliga sozinho ao passar de `kMaxPumpRunMs` ligada (60 s na bancada,
+  30 min em campo com `TODO(hw)`), mesmo com o enlace perfeito. Novo estado
+  `kOverrun` e latch `overrunLatched_`, que sobrevive à queda do enlace e só
+  rearma com um `DESLIGAR`. Mensagem nova `BOMBA_STATUS` (0x06), bomba →
+  reservatório, só para log. Compila no v6.1 (0x2f7a0 B, 81% livre).
+  **Não validado em hardware**: roteiro no README.
+
+- **Testes automatizados (2026-10-10):** 60 casos Unity rodando **no QEMU, sem
+  placa** (`.\test\run-tests.ps1`), cobrindo `protocol/` e `core/`. Relógio
+  substituível (`platform::setTimeSource`) permite verificar prazos longos sem
+  esperar. Todos passando. Acharam um bug real no `LinkLayer` (ver abaixo).
+- **Correção no `LinkLayer` (2026-10-10):** `transmit()` atualizava o
+  `lastTxMs_`, que é o relógio da transação confiável em voo. Assim, qualquer
+  heartbeat (`sendOnce`) ou auto-ACK adiava a retransmissão do comando
+  pendente — na cadência de bancada, indefinidamente. Agora só
+  `sendReliable()` e a retransmissão tocam esse relógio. Três testes de
+  regressão cobrem os dois caminhos.
+- **Ajustes no nó da bomba (2026-10-10):** `begin()` não transmite mais (a app o
+  chama antes de `radio.begin()`, e o status ia por uma UART não instalada, com
+  `uart driver error` em todo boot); o `src` do `BOMBA_STATUS` passa a vir do
+  `LinkLayer`; e o tempo ligada também é reportado em `kOverrun`.
+
 ## Em andamento
 
 - Diagnóstico do "não comunica" na bancada: forte suspeita de saturação do RX
@@ -53,8 +76,8 @@ stubada e tempos curtos. Montagem e roteiro em [`bancada.md`](bancada.md).
 
 ## Próximos passos
 
-1. Montar a bancada e rodar o roteiro de [`bancada.md`](bancada.md), em especial
-   o teste de failsafe.
+1. Montar a bancada e rodar o roteiro de [`bancada.md`](bancada.md): o teste de
+   failsafe de enlace e o do tempo máximo de bombeamento (passos 7 a 10).
 2. Só depois: boias reais, subsistema de energia e contator.
 3. Teste de campo com o par T30D, usando o par T22D como comparação. A 30 dBm
    com o E220 em canal fixo, o teste fica fora da conformidade ANATEL: vale

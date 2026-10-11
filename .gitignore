@@ -21,3 +21,8 @@ dependencies.lock
 .DS_Store
 Thumbs.db
 *.swp
+
+# Projeto de testes (mesmos artefatos do build principal)
+test/build/
+test/sdkconfig
+test/sdkconfig.old

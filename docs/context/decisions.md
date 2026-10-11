@@ -26,6 +26,31 @@ criação deste arquivo foram extraídas de [`../ARCHITECTURE.md`](../ARCHITECTU
 - **SKUs:** (1) padrão E220-T22D; (2) longo alcance E22-T30D, *pin-compatible*;
   (3) repetidor, planejado.
 
+## Failsafe de tempo máximo de bombeamento (decidido em 2026-10-10)
+
+Resposta à [issue #9](https://github.com/gilsonfiho/lora-water-pump-control/issues/9).
+O failsafe de enlace só age quando o rádio cala; boia travada, comando preso ou
+tráfego forjado mantêm a bomba ligada sem limite.
+
+- **O nó da bomba mede o tempo ligada por conta própria** e desliga ao passar de
+  `kMaxPumpRunMs`. Independe do reservatório — é o ponto da defesa em
+  profundidade.
+- **Tempos: 60 s na bancada, 30 min em campo (`TODO(hw)`).** O valor de campo é
+  palpite conservador: o real sai do volume da caixa dividido pela vazão. Curto
+  demais bloqueia a bomba em operação normal.
+- **O bloqueio é um latch, não um estado.** Se fosse só o estado `kOverrun`, um
+  silêncio de rádio levaria a `kLinkLost` e o `LIGAR` seguinte religaria a
+  bomba — ou seja, cair o enlace seria um jeito trivial de burlar o limite. O
+  latch sobrevive a qualquer transição.
+- **Rearme só por `COMANDO_BOMBA = desligar`.** Escolhido em vez de cooldown
+  automático (que ciclaria para sempre com a boia travada) e em vez de travar
+  até o reset (que exigiria ida ao local). Na prática, o rearme acontece quando
+  a caixa enche ou a boia é consertada.
+- **Mensagem nova `BOMBA_STATUS` (0x06), bomba → reservatório.** Informativa, sem
+  ACK, enviada a cada troca de estado. O reservatório apenas loga: deixar a
+  decisão reagir ao bloqueio é uma decisão à parte.
+- **Não resolve a falta de autenticação** (issues #5, #6, #7). Só limita o dano.
+
 ## Par T30D no protótipo (decidido em 2026-09-19)
 
 Substitui a decisão anterior "Par do protótipo: T22D".

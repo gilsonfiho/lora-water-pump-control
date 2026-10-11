@@ -64,6 +64,7 @@ espera, e nada mais. Para os tempos de campo, troque
 | Ciclo do reservatório | 2 s | 10 s |
 | Heartbeat | 5 s | 15 s |
 | Failsafe (perda de enlace) | 15 s | 45 s |
+| Tempo máximo bombeando | 60 s | 30 min `TODO(hw)` |
 | Telemetria de bateria | 15 s | 60 s |
 | Potência de TX (`cfg::kTxPower`, T30D) | `kLow` = 21 dBm | `kMax` = 30 dBm |
 
@@ -114,9 +115,26 @@ confira que **cada E220 tem a sua antena** e que os nós estão **a ≥ 3 m**.
    `ENLACE PERDIDO (failsafe)`. Este é o teste que mais importa.
 6. **Recuperação.** Religue o reservatório: o enlace volta e o LED reacende.
 
+### Tempo máximo de bombeamento (failsafe local)
+
+Independe do reservatório: vale com o enlace perfeito. Roteiro detalhado, com os
+logs esperados, no [README](../../README.md#roteiro-de-validação-do-tempo-máximo-de-bombeamento).
+
+7. **Dispara.** Chave fechada, sem tocar em nada por 60 s: o LED apaga sozinho e
+   a bomba loga `BLOQUEIO por tempo maximo`.
+8. **Não religa.** Com a chave ainda fechada, o LED não volta, mesmo com o
+   reservatório reenviando LIGAR a cada ciclo.
+9. **Rearma.** Abra a chave: `bloqueio rearmado por DESLIGAR`. Fechar de novo
+   liga a bomba e reinicia o cronômetro.
+10. **Sobrevive à queda do enlace.** Com a bomba bloqueada e a chave fechada,
+    desligue e religue o reservatório. O LED **não** pode acender. Se acender, o
+    latch virou estado e o limite é burlável por um silêncio de rádio.
+
 ## O que a bancada ainda não prova
 
 - Alcance e margem de enlace. O teste de campo é outro.
 - Comportamento com a carga AC real: surto do contator, transientes, ruído.
 - Consumo e autonomia (não há bateria nem medição).
 - Comportamento da boia de verdade (chave travada, fiação invertida, `kMid`).
+- O tempo máximo de bombeamento **de campo** (30 min): a bancada valida o
+  mecanismo com 60 s, não o valor real, que depende do volume da caixa.

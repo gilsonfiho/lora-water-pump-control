@@ -91,6 +91,19 @@ cfg::LoraProfile makeProfile() {
                  levelName(e.previous), levelName(e.current));
     });
 
+    // Status reportado pela bomba (BOMBA_STATUS): so log, sem mudar a decisao.
+    controller.onPumpStatus().subscribe([](const protocol::PumpStatusPayload& s) {
+        if (s.overrunLatched) {
+            ESP_LOGW(kTag, "bomba BLOQUEADA por tempo maximo (saida=%s)",
+                     s.outputOn ? "LIGADA" : "DESLIGADA");
+            return;
+        }
+        ESP_LOGI(kTag, "bomba: estado=%u saida=%s ligada ha %us",
+                 static_cast<unsigned>(s.state),
+                 s.outputOn ? "LIGADA" : "DESLIGADA",
+                 static_cast<unsigned>(s.runSeconds));
+    });
+
     // Diagnostico do enlace: TX/ACK/retry/timeout aparecem no monitor.
     link.onEvent([](const protocol::LinkEvent& e) { logLinkEvent(kTag, e); });
 

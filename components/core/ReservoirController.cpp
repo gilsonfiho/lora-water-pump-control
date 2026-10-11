@@ -13,8 +13,16 @@ namespace core {
 void ReservoirController::begin() {
     sensor_.begin();
     battery_.begin();
+    link_.onReceive([this](const protocol::Packet& pkt) { onPacket(pkt); });
     lastLevel_ = hw::LevelState::kUnknown;
     desired_ = protocol::PumpCommand::kOff;
+}
+
+void ReservoirController::onPacket(const protocol::Packet& pkt) {
+    protocol::PumpStatusPayload status;
+    if (protocol::parsePumpStatus(pkt, status)) {
+        pumpStatus_.emit(status);
+    }
 }
 
 void ReservoirController::loop() {

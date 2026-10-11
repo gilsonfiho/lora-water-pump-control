@@ -37,6 +37,7 @@ const char* stateName(core::PumpController::State s) {
         case core::PumpController::State::kIdle:     return "OCIOSO";
         case core::PumpController::State::kPumping:  return "BOMBEANDO";
         case core::PumpController::State::kLinkLost: return "ENLACE PERDIDO (failsafe)";
+        case core::PumpController::State::kOverrun:  return "BLOQUEADA POR TEMPO MAXIMO";
         default:                                     return "?";
     }
 }
@@ -56,7 +57,7 @@ cfg::LoraProfile makeProfile() {
     static hw::E220Radio          radio(UART_NUM_1, makeProfile());
     static hw::RelayPumpActuator  pump;
     static protocol::LinkLayer     link(radio, cfg::kAddrPump);
-    static core::PumpController    controller(link, pump);
+    static core::PumpController    controller(link, pump, cfg::kAddrReservoir);
 
     // Estado seguro primeiro: o controlador ja forca a bomba DESLIGADA.
     controller.begin();
@@ -69,11 +70,15 @@ cfg::LoraProfile makeProfile() {
     // Diagnostico do enlace: RX de outro no, CRC invalido, etc. no monitor.
     link.onEvent([](const protocol::LinkEvent& e) { logLinkEvent(kTag, e); });
 
-    ESP_LOGI(kTag, "pronto (bancada: LED no GPIO %d, failsafe em %lu ms)",
+    ESP_LOGI(kTag,
+             "pronto (bancada: LED no GPIO %d, failsafe em %lu ms, "
+             "max bombeando %lu ms)",
              cfg::PumpPins::kRelay,
-             static_cast<unsigned long>(cfg::Timing::kLinkLostTimeoutMs));
+             static_cast<unsigned long>(cfg::Timing::kLinkLostTimeoutMs),
+             static_cast<unsigned long>(cfg::Timing::kMaxPumpRunMs));
 
     core::PumpController::State last = core::PumpController::State::kBoot;
+    bool lastLatched = false;
     while (true) {
         controller.loop();
 
@@ -82,6 +87,20 @@ cfg::LoraProfile makeProfile() {
             last = controller.state();
             ESP_LOGI(kTag, "estado -> %s (saida=%s)",
                      stateName(last), pump.isOn() ? "LIGADA" : "DESLIGADA");
+        }
+
+        // O latch merece log proprio: ele sobrevive a troca de estado, e e o
+        // que explica por que a bomba ignora LIGAR.
+        if (controller.overrunLatched() != lastLatched) {
+            lastLatched = controller.overrunLatched();
+            if (lastLatched) {
+                ESP_LOGW(kTag,
+                         "BLOQUEIO por tempo maximo (%lu ms ligada): LIGAR sera "
+                         "ignorado ate chegar um DESLIGAR",
+                         static_cast<unsigned long>(cfg::Timing::kMaxPumpRunMs));
+            } else {
+                ESP_LOGI(kTag, "bloqueio rearmado por DESLIGAR");
+            }
         }
 
         platform::delayMs(kLoopPeriodMs);
