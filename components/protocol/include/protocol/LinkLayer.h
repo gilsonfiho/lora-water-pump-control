@@ -16,6 +16,7 @@
 
 #include "protocol/Packet.h"
 #include "config/NodeConfig.h"
+#include "config/SecurityConfig.h"
 #include "hw/ILoRaRadio.h"
 
 namespace protocol {
@@ -33,13 +34,17 @@ struct LinkEvent {
         kTimeout,   // esgotou as retransmissoes -> entrega falhou
         kCrcFail,   // achou SYNC mas o quadro nao decodificou (CRC/truncado)
         kNotForMe,  // pacote valido, mas endereçado a outro no
+        kAuthFail,  // MAC invalido: adulteracao ou chave errada (#5/#8)
+        kReplay,    // contador <= ultimo visto desta origem: reproducao (#7)
     };
     Type     type;
     uint8_t  seq         = 0;
+    uint8_t  src         = 0;   // kAuthFail / kReplay
     uint8_t  dst         = 0;   // kTx / kNotForMe
     uint8_t  bytes       = 0;   // kTx: tamanho do quadro no ar
     uint8_t  retriesLeft = 0;   // kRetry
     uint32_t rttMs       = 0;   // kAckOk
+    uint32_t counter     = 0;   // kReplay: o contador rejeitado
 };
 
 class LinkLayer {
@@ -51,9 +56,10 @@ public:
 
     LinkLayer(hw::ILoRaRadio& radio, uint8_t localAddress,
               uint32_t ackTimeoutMs = cfg::Timing::kAckTimeoutMs,
-              uint8_t maxRetries = cfg::Timing::kMaxRetries)
+              uint8_t maxRetries = cfg::Timing::kMaxRetries,
+              const uint8_t* key = cfg::Security::kLinkKey)
         : radio_(radio), localAddress_(localAddress),
-          ackTimeoutMs_(ackTimeoutMs), maxRetries_(maxRetries) {}
+          ackTimeoutMs_(ackTimeoutMs), maxRetries_(maxRetries), key_(key) {}
 
     void onReceive(ReceiveHandler handler) { handler_ = std::move(handler); }
 
@@ -76,19 +82,29 @@ public:
 private:
     void processIncoming();
     void handleDecoded(const Packet& pkt);
-    void transmit(const Packet& pkt);
+    void transmit(Packet pkt);
     void emitEvent(const LinkEvent& event) const {
         if (eventHandler_) eventHandler_(event);
     }
+    // Frescor anti-replay: true (e atualiza) se `counter` for maior que o
+    // ultimo visto desta origem; false se for reproducao.
+    bool acceptCounter(uint8_t src, uint32_t counter);
 
     hw::ILoRaRadio& radio_;
     uint8_t localAddress_;
     uint32_t ackTimeoutMs_;
     uint8_t maxRetries_;
+    const uint8_t* key_;
 
     ReceiveHandler handler_;
     EventHandler   eventHandler_;
     uint8_t nextSeq_ = 1;
+
+    // Ultimo contador aceito por origem (janela anti-replay em RAM). Ponto a
+    // ponto usa 1-2 slots; 4 cobre com folga.
+    struct RxCounter { uint8_t src; uint32_t counter; bool used = false; };
+    static constexpr int kMaxPeers = 4;
+    RxCounter rxCounters_[kMaxPeers] = {};
 
     // Estado da transacao confiavel corrente.
     Packet pending_;
