@@ -293,12 +293,36 @@ um bloqueio de 30 min são verificados sem esperar nada.
 python $env:IDF_PATH\tools\idf_tools.py install qemu-riscv32
 
 # A cada rodada, da raiz do repositório:
-.\test\run-tests.ps1
+.\test\run-tests.ps1            # saída completa (inclui o boot do IDF)
+.\test\run-tests.ps1 -Quiet     # só os casos e o resumo
 ```
 
-O script carrega o ambiente do IDF, acrescenta o QEMU ao PATH (o perfil do EIM
-é gerado antes do QEMU existir, então não o inclui), compila e roda. Cada caso
-imprime `PASS` ou `FAIL` com arquivo e linha.
+Uma rodada leva cerca de 12 s. A saída sai **ao vivo**, caso por caso:
+
+```text
+== compilando os testes...
+== rodando no QEMU...
+./main/test_packet.cpp:29:CRC-16/CCITT-FALSE confere com o vetor conhecido:PASS
+...
+60 Tests 0 Failures 0 Ignored
+==== FIM DOS TESTES: 0 falha(s) ====
+== todos os testes passaram
+```
+
+Falha aparece em vermelho, com arquivo, linha, nome do caso e o que era
+esperado:
+
+```text
+./main/test_pump_controller.cpp:186:nao bloqueia pouco antes do limite:FAIL: Expected 2 Was 3
+```
+
+**O script devolve código de saída** (0 se tudo passou, 1 se houve falha ou
+travamento), então serve para CI ou para um hook de pre-commit. Ele também
+cuida de três armadilhas do ambiente: acrescenta o QEMU ao PATH (o perfil do
+EIM é gerado antes de o QEMU existir), encerra o emulador junto com o processo
+pai (senão sobra um `qemu-system-riscv32` órfão segurando a porta 5555, e a
+rodada seguinte não sobe) e, em caso de falha, imprime as últimas linhas do log
+e onde ele está.
 
 Para rodar na placa em vez do QEMU: `idf.py -C test -p COMx flash monitor`.
 
