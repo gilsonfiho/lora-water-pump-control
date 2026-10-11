@@ -16,6 +16,7 @@
 
 #include "config/PinConfig.h"
 #include "node_app.h"
+#include "nonce_store.h"
 #include "platform/Clock.h"
 
 namespace {
@@ -53,6 +54,10 @@ Role readRoleStrap() {
 }  // namespace
 
 extern "C" void app_main() {
+    // Nonce anti-replay persistido antes de qualquer TX (o enlace o usa em
+    // cada pacote). Se o NVS falhar, cai no contador em RAM.
+    app::installPersistentNonce();
+
     const Role role = readRoleStrap();
 
     if (role == Role::kPump) {
