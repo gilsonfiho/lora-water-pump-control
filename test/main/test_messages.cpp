@@ -4,9 +4,12 @@
 
 #include <unity.h>
 
+#include "config/SecurityConfig.h"
 #include "protocol/Messages.h"
 
 using namespace protocol;
+
+namespace { const uint8_t* key() { return cfg::Security::kLinkKey; } }
 
 TEST_CASE("COMANDO_BOMBA pede ACK e sobrevive ao ar", "[protocol]")
 {
@@ -16,9 +19,9 @@ TEST_CASE("COMANDO_BOMBA pede ACK e sobrevive ao ar", "[protocol]")
                             static_cast<uint8_t>(p.type));
 
     uint8_t wire[kMaxPacketSize];
-    const size_t n = encodePacket(p, wire, sizeof(wire));
+    const size_t n = encodePacket(p, key(), wire, sizeof(wire));
     Packet decoded;
-    TEST_ASSERT_TRUE(decodePacket(wire, n, decoded));
+    TEST_ASSERT_TRUE(decodePacket(wire, n, key(), decoded));
 
     PumpCommand cmd = PumpCommand::kOff;
     TEST_ASSERT_TRUE(parseCommand(decoded, cmd));
@@ -81,10 +84,10 @@ TEST_CASE("BATERIA_STATUS preserva tensao, corrente e fonte", "[protocol]")
     in.source = hw::PowerSource::kExternal;
 
     uint8_t wire[kMaxPacketSize];
-    const size_t n = encodePacket(makeBatteryStatus(0x01, 0xFF, 3, in), wire,
+    const size_t n = encodePacket(makeBatteryStatus(0x01, 0xFF, 3, in), key(), wire,
                                   sizeof(wire));
     Packet decoded;
-    TEST_ASSERT_TRUE(decodePacket(wire, n, decoded));
+    TEST_ASSERT_TRUE(decodePacket(wire, n, key(), decoded));
 
     hw::BatteryTelemetry out;
     TEST_ASSERT_TRUE(parseBatteryStatus(decoded, out));
@@ -108,9 +111,9 @@ TEST_CASE("BOMBA_STATUS leva bloqueio, saida e tempo ligada", "[protocol]")
     TEST_ASSERT_FALSE(p.wantsAck());  // informativo: nao pode travar o atuador
 
     uint8_t wire[kMaxPacketSize];
-    const size_t n = encodePacket(p, wire, sizeof(wire));
+    const size_t n = encodePacket(p, key(), wire, sizeof(wire));
     Packet decoded;
-    TEST_ASSERT_TRUE(decodePacket(wire, n, decoded));
+    TEST_ASSERT_TRUE(decodePacket(wire, n, key(), decoded));
 
     PumpStatusPayload out;
     TEST_ASSERT_TRUE(parsePumpStatus(decoded, out));

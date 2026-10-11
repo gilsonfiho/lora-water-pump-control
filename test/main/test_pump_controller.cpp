@@ -11,6 +11,7 @@
 #include <vector>
 
 #include "config/NodeConfig.h"
+#include "config/SecurityConfig.h"
 #include "core/PumpController.h"
 #include "fakes.h"
 #include "protocol/LinkLayer.h"
@@ -39,10 +40,14 @@ struct PumpFixture {
     }
     ~PumpFixture() { FakeClock::uninstall(); }
 
-    // Entrega um pacote como se tivesse vindo do reservatorio.
+    // Entrega um pacote como se tivesse vindo do reservatorio. Cada entrega leva
+    // um contador crescente (frescor anti-replay), como faz o LinkLayer no ar.
     void deliver(const protocol::Packet& pkt) {
+        protocol::Packet p = pkt;
+        p.counter = ++counter_;
         uint8_t wire[protocol::kMaxPacketSize];
-        const size_t n = protocol::encodePacket(pkt, wire, sizeof(wire));
+        const size_t n = protocol::encodePacket(p, cfg::Security::kLinkKey, wire,
+                                                sizeof(wire));
         radio.inject(wire, n);
         controller.loop();
     }
@@ -85,7 +90,7 @@ struct PumpFixture {
         for (size_t i = radio.sent.size(); i > 0; --i) {
             protocol::Packet p;
             const std::vector<uint8_t>& f = radio.sent[i - 1];
-            if (!protocol::decodePacket(f.data(), f.size(), p)) continue;
+            if (!protocol::decodePacket(f.data(), f.size(), cfg::Security::kLinkKey, p)) continue;
             if (protocol::parsePumpStatus(p, out)) return true;
         }
         return false;
@@ -93,6 +98,7 @@ struct PumpFixture {
 
 private:
     uint8_t seq_ = 0;
+    uint32_t counter_ = 0;
     uint32_t lastBeatMs_ = 0;
 };
 
@@ -127,7 +133,7 @@ TEST_CASE("o src do BOMBA_STATUS vem do LinkLayer", "[core][pump]")
     for (size_t i = f.radio.sent.size(); i > 0 && !found; --i) {
         protocol::Packet p;
         const std::vector<uint8_t>& fr = f.radio.sent[i - 1];
-        if (!protocol::decodePacket(fr.data(), fr.size(), p)) continue;
+        if (!protocol::decodePacket(fr.data(), fr.size(), cfg::Security::kLinkKey, p)) continue;
         if (p.type != protocol::MessageType::kBombaStatus) continue;
         found = true;
         TEST_ASSERT_EQUAL_HEX8(kPumpAddr, p.src);
@@ -344,4 +350,37 @@ TEST_CASE("o bloqueio e reportado em BOMBA_STATUS", "[core][pump][issue9]")
     const uint16_t limitSeconds = cfg::Timing::kMaxPumpRunMs / 1000;
     TEST_ASSERT_GREATER_OR_EQUAL_UINT16(limitSeconds, status.runSeconds);
     TEST_ASSERT_LESS_OR_EQUAL_UINT16(limitSeconds + 5, status.runSeconds);
+}
+
+// ---- Issue #5: a bomba so obedece ao reservatorio --------------------------
+
+TEST_CASE("comando autenticado de SRC errado nao liga a bomba", "[core][pump][issue5]")
+{
+    PumpFixture f;
+    // Pacote com MAC valido (chave certa) porem com SRC que nao e o do
+    // reservatorio: um no legitimo com papel trocado, por exemplo. O MAC prova
+    // que o SRC nao foi forjado; o PumpController recusa a origem.
+    f.deliver(protocol::makeCommand(0x7E, kPumpAddr, 1, protocol::PumpCommand::kOn));
+
+    TEST_ASSERT_FALSE(f.pump.isOn());
+    TEST_ASSERT_EQUAL_UINT8(static_cast<uint8_t>(PumpController::State::kIdle),
+                            static_cast<uint8_t>(f.controller.state()));
+}
+
+TEST_CASE("heartbeat de SRC errado nao mantem o enlace vivo", "[core][pump][issue5]")
+{
+    PumpFixture f;
+    f.sendCommand(protocol::PumpCommand::kOn);  // bomba ligada, enlace vivo
+
+    // So chegam heartbeats de um TERCEIRO (src errado), na cadencia real. Como
+    // nao vem do reservatorio, nao renovam o "enlace vivo": o failsafe dispara.
+    for (uint32_t t = 0; t < cfg::Timing::kLinkLostTimeoutMs + 500;
+         t += cfg::Timing::kHeartbeatPeriodMs) {
+        FakeClock::advance(cfg::Timing::kHeartbeatPeriodMs);
+        f.deliver(protocol::makeHeartbeat(0x7E, kPumpAddr, 1));
+    }
+
+    TEST_ASSERT_EQUAL_UINT8(static_cast<uint8_t>(PumpController::State::kLinkLost),
+                            static_cast<uint8_t>(f.controller.state()));
+    TEST_ASSERT_FALSE(f.pump.isOn());
 }
