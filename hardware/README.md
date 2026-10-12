@@ -44,8 +44,9 @@ componentes marcados DNP conforme o papel (reservatório ou bomba).
 python hardware/tools/gen_symbols.py      # simbolos proprios
 python hardware/tools/gen_footprints.py   # footprints e STEP proprios
 python hardware/tools/build_sch.py        # esquematicos das duas placas
-& "C:\Program Files\KiCad.0in\python.exe" hardware/tools/build_pcb.py emissor
-& "C:\Program Files\KiCad.0in\python.exe" hardware/tools/build_pcb.py receptor
+$py = "C:\Program Files\KiCad.0in\python.exe"   # Python do proprio KiCad (modulo pcbnew)
+& $py hardware/tools/build_pcb.py emissor
+& $py hardware/tools/build_pcb.py receptor
 ```
 
 Regenerar **sobrescreve** o que for editado no KiCad. Quando o layout passar a ser
