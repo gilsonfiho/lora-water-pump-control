@@ -26,3 +26,13 @@ Thumbs.db
 test/build/
 test/sdkconfig
 test/sdkconfig.old
+
+# KiCad (bibliotecas em hardware/libs ficam versionadas)
+hardware/**/*-backups/
+hardware/**/_autosave-*
+hardware/**/*.kicad_prl
+hardware/**/fp-info-cache
+hardware/**/*.lck
+hardware/**/*.bak
+hardware/**/*.kicad_sch-bak
+hardware/**/*.kicad_pcb-bak
