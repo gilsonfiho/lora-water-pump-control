@@ -10,6 +10,24 @@ Formato: data, decisão, motivo. Mais recentes no topo.
   versionadas; backups, autosave e `*.kicad_prl` ficam no `.gitignore`.
 - Tags de hardware `hw-vX.Y`.
 
+## 2026-10-12: layout compacto (hw-v0.1, ainda sem trilhas)
+
+- **Placa de 86 x 52 mm** (era 100 x 76): -41 % de area, cantos arredondados de 2 mm.
+- **Ideia central:** o C3 no canto superior esquerdo, com a antena para fora da borda
+  esquerda. O courtyard do footprint (43 x 32 mm, definido pela Espressif) so ocupa o
+  canto, e nao a placa inteira. O E220 vai no alto a direita, com o SMA rente a borda
+  direita, a ~50 mm da antena do C3.
+- **Por funcao:** MCU (botoes, header I2C, jumper de papel) ao lado do C3; alimentacao
+  (USB-C, ICs, diodos) no centro; bornes e USB-C na borda de baixo, com a entrada dos cabos
+  voltada para fora. 2 furos M3 nos cantos de baixo (os de cima cairiam sob o modulo).
+- **Serigrafia:** referencias de 0,8 mm; avisos (antena, 5 V, papel) na faixa livre
+  abaixo da antena do C3; funcao de cada borne em texto.
+- **Nao feito (ideia para a v0.2):** pecas baixas sob o E220 (ele fica 4,2 mm acima da
+  placa) reduziriam mais a area; exige conferir a altura real do modulo.
+- DRC: 0 erros de folga, curto ou courtyard. Restam avisos de serigrafia (sobre cobre,
+  sobreposicao e borda) e **73 conexoes abertas: falta rotear**.
+- Skill local `.claude/skills/pcb-design/` registra as regras de layout deste projeto.
+
 ## 2026-10-11: duas placas (emissor e receptor), hw-v0.1 em desenvolvimento
 
 Substitui a premissa "uma PCB com variantes DNP": o autor quer **duas placas**,
