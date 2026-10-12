@@ -38,9 +38,14 @@ Por pedido do autor: **a alimentacao e por jack de 12 V**, nao por borne de 5 V.
   para o plano de baixo. O USB-C (passo 0,5 mm, D+ e D- intercalados) tem escape manual
   com vias de 0,5 mm. Regras do projeto: folga 0,15 mm, trilha 0,2 mm, via 0,6/0,3 mm
   (a JLCPCB trabalha com 0,127 mm; conferir no site).
-- **Resultado (checkpoint 2026-10-12):** receptor roteado por inteiro (0 conexoes abertas de
-  circuito; restam avisos de ilha de GND e de serigrafia na borda); emissor com 1 net
-  (USB_DM, 3 trechos curtos) ainda aberta. DRC: 0 erros de folga, curto ou courtyard.
+- **Resultado (checkpoint 2026-10-12, noite):** ~120 vias por placa (35 de GND; eram ~175, a
+  "pipoca de via GND" apontada em revisao). DRC: 0 erros de folga, curto, courtyard ou area
+  proibida. **Resta 1 net aberta por placa**, cercada por trilhas ja fixas (o roteador nao achou
+  caminho): emissor `E220_RXD` (GPIO5 do C3 -> pino 3 do E220); receptor `PUMP_DRV` (GPIO1 do C3
+  -> R15/R16 sob o E220). Fechar no KiCad com o roteador interativo, ou aumentar a placa.
+- **Ferramentas de acabamento** (`tools/`): `finish.py` (fecha nets abertas), `fix_keepout.py`,
+  `dedupe_vias.py`, `stitch.py` (costura de GND, nao usada na versao atual: gerava vias demais),
+  `pockets_report.py` (bolsoes de GND).
 
 ### Padrao de serigrafia (vale para as duas placas, `tools/silk.py`)
 
