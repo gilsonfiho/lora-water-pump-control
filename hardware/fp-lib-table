@@ -1,0 +1,4 @@
+(fp_lib_table
+  (version 7)
+  (lib (name "lora-pump")(type "KiCad")(uri "${KIPRJMOD}/libs/footprints/lora-pump.pretty")(options "")(descr "Footprints proprios do projeto"))
+)

@@ -43,3 +43,6 @@ hardware/libs/vendor/*
 !hardware/libs/vendor/SOURCES.md
 hardware/docs/datasheets/*
 !hardware/docs/datasheets/SOURCES.md
+
+# Historico local do proprio KiCad (repositorio git embutido)
+hardware/.history/
