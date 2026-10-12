@@ -10,6 +10,46 @@ Formato: data, decisão, motivo. Mais recentes no topo.
   versionadas; backups, autosave e `*.kicad_prl` ficam no `.gitignore`.
 - Tags de hardware `hw-vX.Y`.
 
+## 2026-10-11: esquemático, etapa 1 (folhas MCU e Rádio)
+
+Gerado por `hardware/tools/build_sch.py` (símbolos oficiais do KiCad + os
+próprios em `libs/symbols/lora-pump.kicad_sym`, gerados por `gen_symbols.py`).
+Conectividade por nome de net, sem fios entre componentes. Para editar o
+esquemático, altere o gerador (ou edite no KiCad e abandone o gerador: decisão
+a tomar antes do layout).
+
+- **ESP32-C3-MINI-1-H4X** (-40 a 105 °C, 4 MB), não o N4X (-40 a 85 °C): caixa
+  externa ao sol. O N4 e o H4 estão em NRND; N4X e H4X são os recomendados
+  (Datasheet v2.2, Tabela 1-1, p. 3).
+- **Símbolo próprio do MINI-1**: o KiCad 10 não tem símbolo nem footprint do
+  ESP32-C3-MINI-1. Pinos da Tabela 3-1 (p. 11). Os 18 GND (inclusive o EPAD) são
+  pinos ocultos ligados à net GND por nome.
+- **EN com RC de 10 k + 1 uF** (p. 34), botão RESET em EN→GND. Botão BOOT em
+  GPIO9→GND, que também é `I2C_SCL`; GPIO8 (`I2C_SDA`) e GPIO9 têm pull-up de
+  4k7 para garantir nível 1 no boot (Tabela 4-3, p. 13).
+- **GPIO2 com pull-up de 10 k** (nota da Tabela 4-3: recomendado, por causa de
+  glitches). Serve também de polarização da boia alta.
+- **Strap de papel (GPIO3):** pull-up 10 k + solder jumper `JP1` para GND
+  (fechado = bomba), serigrafia "PAPEL". Mantém "aberto = reservatório" do firmware.
+- **E220 T30D e T22D sobrepostos** (U2/U3, campo `Variante`), mesmas nets. Os pinos
+  TXD e AUX do símbolo são `tri_state` para o ERC aceitar as duas saídas na
+  mesma net; só um módulo é montado.
+- **A antena é o SMA-K do próprio módulo E220** (Manual, Tabela 2-2, p. 5). Não há
+  conector SMA na PCB: o que a placa define é a posição do módulo na caixa.
+- **Pull-ups de 10 k em TXD e AUX do E220: DNP.** Só para MCU de 5 V (Tabela 4-1,
+  p. 7); aqui o MCU é de 3,3 V.
+- **Capacitor de VCC_RF: 470 uF, `TODO(hw)`.** O README fala em 100 uF + 100 nF e
+  a bancada usa 1000 uF; o valor definitivo sai da medição com o buck escolhido.
+- PWR_FLAG de `+3V3`, `GND` e `VCC_RF` são provisórios (marcados TEMP no
+  esquemático) e saem com a folha de alimentação.
+- **MPNs** são sugestões; estoque e preço no catálogo da JLCPCB **não foram
+  verificados** (sem acesso nesta sessão).
+
+ERC (kicad-cli 10.0.7): 0 erros, 8 avisos: 3 de footprint não encontrado (os
+footprints próprios são a etapa seguinte) e 5 de rótulo global com um só pino
+(`BAT_ADC`, `FLOAT_LOW_PUMP_DRV`, `USB_DM`, `USB_DP`, `EXT_PRESENT`: serão
+ligados nas folhas de alimentação, entradas/saídas e conectores).
+
 ## 2026-10-11: premissas adotadas ao "construir o projeto" (a revisar)
 
 O autor pediu "construa o projeto" sem responder às perguntas de arquitetura.
