@@ -46,3 +46,7 @@ hardware/docs/datasheets/*
 
 # Historico local do proprio KiCad (repositorio git embutido)
 hardware/.history/
+
+# Relatorios locais de ERC/DRC (resumo fica em hardware/docs/decisoes.md)
+hardware/*/erc.rpt
+hardware/*/drc.rpt

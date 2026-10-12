@@ -84,10 +84,34 @@ def load_symbol(libfile, name):
         _lib_cache[key] = parse(path.read_text(encoding="utf-8"))
     for node in _lib_cache[key]:
         if isinstance(node, list) and node and node[0] == "symbol" and unq(node[1]) == name:
-            if any(isinstance(x, list) and x[0] == "extends" for x in node):
-                raise ValueError(f"{name}: simbolos com 'extends' nao suportados")
+            ext = next((x for x in node if isinstance(x, list) and x[0] == "extends"), None)
+            if ext:
+                return _flatten(libfile, node, unq(ext[1]))
             return node
     raise KeyError(f"{name} nao encontrado em {path}")
+
+
+def _flatten(libfile, node, base_name):
+    """Resolve 'extends': copia o simbolo base, renomeando-o e aplicando as propriedades."""
+    base = load_symbol(libfile, base_name)
+    name = unq(node[1])
+    rename = lambda t: t.replace(base_name, name)
+
+    def walk(n):
+        out = []
+        for x in n:
+            if isinstance(x, list):
+                out.append(walk(x))
+            else:
+                out.append(rename(x) if x.startswith('"%s' % base_name) else x)
+        return out
+
+    flat = walk(base)
+    flat[1] = q(name)
+    own = {unq(x[1]): x for x in node if isinstance(x, list) and x[0] == "property"}
+    flat = [own[unq(x[1])] if isinstance(x, list) and x[0] == "property" and unq(x[1]) in own else x
+            for x in flat]
+    return flat
 
 
 def pins_of(symbol):

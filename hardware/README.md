@@ -1,6 +1,6 @@
 # Hardware (PCB)
 
-Projeto KiCad **10** (10.0.x; formatos de arquivo da série 10, que as versões anteriores não abrem) da placa dos dois nós. Uma única PCB, com
+Duas placas, `emissor/` e `receptor/` (um projeto KiCad cada). Projeto KiCad **10** (10.0.x; formatos de arquivo da série 10, que as versões anteriores não abrem) da placa dos dois nós. Uma única PCB, com
 componentes marcados DNP conforme o papel (reservatório ou bomba).
 
 > **Status:** estrutura criada. Nenhum esquemático ainda: o escopo depende das
@@ -31,3 +31,22 @@ componentes marcados DNP conforme o papel (reservatório ou bomba).
   Os datasheets do E220, já no repositório, ficam em `../docs/datasheets/`.
 - Versionados: o projeto KiCad e as bibliotecas **próprias** (`libs/symbols`,
   `libs/footprints`), que usam caminhos relativos (`${KIPRJMOD}`).
+
+## Como abrir
+
+- Emissor: `emissor/emissor.kicad_pro`. Receptor: `receptor/receptor.kicad_pro`.
+- No editor de PCB, **View > 3D Viewer** (Alt+3) mostra a placa em 3D.
+- Imagens e STEP prontos em `fab/emissor/` e `fab/receptor/`.
+
+## Como regenerar (os arquivos KiCad saem dos scripts em `tools/`)
+
+```powershell
+python hardware/tools/gen_symbols.py      # simbolos proprios
+python hardware/tools/gen_footprints.py   # footprints e STEP proprios
+python hardware/tools/build_sch.py        # esquematicos das duas placas
+& "C:\Program Files\KiCad.0in\python.exe" hardware/tools/build_pcb.py emissor
+& "C:\Program Files\KiCad.0in\python.exe" hardware/tools/build_pcb.py receptor
+```
+
+Regenerar **sobrescreve** o que for editado no KiCad. Quando o layout passar a ser
+editado a mao (roteamento), parar de rodar o `build_pcb.py`.
