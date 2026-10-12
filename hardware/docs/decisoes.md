@@ -47,21 +47,20 @@ Por pedido do autor: **a alimentacao e por jack de 12 V**, nao por borne de 5 V.
   `dedupe_vias.py`, `stitch.py` (costura de GND, nao usada na versao atual: gerava vias demais),
   `pockets_report.py` (bolsoes de GND).
 
-### Padrao de serigrafia (vale para as duas placas, `tools/silk.py` e `tools/siglas.py`)
+### Padrao de serigrafia (vale para as duas placas, `tools/silk.py`)
 
-Decisao do autor (2026-10-12): **so as siglas dos componentes, o basico**. Sem rotulos
-funcionais, sem avisos, sem mapa de pinos e sem texto na face de baixo.
-
-- Cada componente mostra apenas a sigla (REF: U1, J2, SW1, R3...), 0,8 mm de altura e 0,12 mm
-  de traco, na horizontal.
-- A sigla vai para a posicao livre MAIS PROXIMA da propria peca, fora do corpo e dos pads.
-- Peca escondida sob o E220 depois de montado, ou sem vaga limpa: sigla so na camada de
-  montagem (Fab), nao na serigrafia.
-- Tentativa descartada: rotulos funcionais e texto na face de baixo (pinagem do E220, mapa de
-  GPIO, funcao dos bornes, identificacao). O autor considerou texto demais e sem padrao.
-- **Aviso de antena do E220** (pedido no briefing original): saiu da serigrafia junto com os
-  demais textos; permanece no esquematico, aqui e na documentacao. Decidir se volta como um
-  marcador curto perto do E220.
+- Texto de 0,8 mm e traco de 0,12 mm, MAIUSCULAS, horizontal. Nada sobre pad, corpo de
+  componente, furo, modulo ou area da antena.
+- **Frente:** siglas (REF) so das pecas principais (CI, conectores, chaves, jumper, LEDs,
+  transistor, indutor); resistores, capacitores e diodos ficam com a sigla na camada Fab.
+  Rotulos curtos so onde ajudam a operar: funcao dos bornes, papel do jumper, RESET/BOOT, aviso
+  da antena e identificacao (nome, versao, data).
+- **Atras (so o essencial, como em placas comerciais):** um bloco de identificacao (nome,
+  versao, data) e o nome de cada pino colado ao respectivo pad dos conectores de furo passante:
+  E220 (M0..GND), header I2C (3V3, SDA, SCL, GND), bornes J4 (BAIXA/ALTA/GND ou +12V/BOB-) e jack
+  J3 (+, -). Texto espelhado, alinhado ao pino.
+- Tentativas descartadas por excesso de texto: mapa de GPIO, cadeia de alimentacao, notas de USB
+  e parametros de RF na face de baixo (o autor considerou poluido e sem padrao).
 
 ### Pecas retiradas por nao terem funcao na hw-v0.1
 

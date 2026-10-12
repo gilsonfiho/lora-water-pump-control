@@ -11123,10 +11123,10 @@
 			)
 		)
 	)
-	(gr_text "J3 JACK 12V DC"
-		(at 10 27.825 0)
+	(gr_text "-"
+		(at 8.199999 34.1 0)
 		(layer "B.SilkS")
-		(uuid "df218cd2-3284-4ccf-b518-47a7989e9c2d")
+		(uuid "20eaaff1-bc0a-426f-ad35-1c036ad3878a")
 		(effects
 			(font
 				(size 0.8 0.8)
@@ -11135,10 +11135,10 @@
 			(justify mirror)
 		)
 	)
-	(gr_text "CENTRO = + | ANEL = GND"
-		(at 10 29.175 0)
+	(gr_text "+"
+		(at 14.2 34.1 0)
 		(layer "B.SilkS")
-		(uuid "c7f73042-ade2-4f41-b41a-e99ebb28bd61")
+		(uuid "28b51005-b7d9-472e-9c31-7cec7839a74c")
 		(effects
 			(font
 				(size 0.8 0.8)
@@ -11147,10 +11147,10 @@
 			(justify mirror)
 		)
 	)
-	(gr_text "J2 USB-C"
-		(at 16.5 23.15 0)
+	(gr_text "GND"
+		(at 19.88 33.6 0)
 		(layer "B.SilkS")
-		(uuid "31f0c3f9-db64-4e1c-bf1b-7505ffd24133")
+		(uuid "57c9fbb6-fa82-4ea0-9b3c-0152d4e38198")
 		(effects
 			(font
 				(size 0.8 0.8)
@@ -11159,10 +11159,10 @@
 			(justify mirror)
 		)
 	)
-	(gr_text "GRAVAR E DEPURAR"
-		(at 16.5 24.5 0)
+	(gr_text "RECEPTOR"
+		(at 22 37.15 0)
 		(layer "B.SilkS")
-		(uuid "4ee2e8df-d5dd-4652-9602-a48928444c12")
+		(uuid "095e5d34-9358-4327-b422-b3a2799ce62a")
 		(effects
 			(font
 				(size 0.8 0.8)
@@ -11171,10 +11171,10 @@
 			(justify mirror)
 		)
 	)
-	(gr_text "NAO ALIMENTA O E220"
-		(at 16.5 25.85 0)
+	(gr_text "HW-V0.1"
+		(at 22 38.5 0)
 		(layer "B.SilkS")
-		(uuid "6609a4c6-1d0b-407b-8bf9-d8b7f16f2e6b")
+		(uuid "8917c2a2-6e5d-4a1d-82b4-4e7e8a16dd88")
 		(effects
 			(font
 				(size 0.8 0.8)
@@ -11183,10 +11183,10 @@
 			(justify mirror)
 		)
 	)
-	(gr_text "LORA-WATER-PUMP-CONTROL"
-		(at 32.5 39.975 0)
+	(gr_text "2026-10-12"
+		(at 22 39.85 0)
 		(layer "B.SilkS")
-		(uuid "d2e99d74-061e-42bc-9e97-21cc2b3aa832")
+		(uuid "ca528448-5ad5-431e-853b-03aaabfe64f7")
 		(effects
 			(font
 				(size 0.8 0.8)
@@ -11195,10 +11195,10 @@
 			(justify mirror)
 		)
 	)
-	(gr_text "RECEPTOR (BOMBA)"
-		(at 32.5 41.325 0)
+	(gr_text "SCL"
+		(at 22.42 33.6 0)
 		(layer "B.SilkS")
-		(uuid "4ef4571b-c522-419c-b719-24506f766547")
+		(uuid "1d583f06-d473-48c2-8e94-134a17805224")
 		(effects
 			(font
 				(size 0.8 0.8)
@@ -11207,10 +11207,10 @@
 			(justify mirror)
 		)
 	)
-	(gr_text "HW-V0.1  2026-10-12"
-		(at 32.5 42.675 0)
+	(gr_text "SDA"
+		(at 24.96 33.6 0)
 		(layer "B.SilkS")
-		(uuid "d1509c68-9606-4ba9-8e70-ae6d312d949f")
+		(uuid "ef321375-d238-4fe9-b63b-ee4771700997")
 		(effects
 			(font
 				(size 0.8 0.8)
@@ -11219,10 +11219,10 @@
 			(justify mirror)
 		)
 	)
-	(gr_text "GITHUB.COM/GILSONFIHO"
-		(at 32.5 44.025 0)
+	(gr_text "3V3"
+		(at 27.5 33.6 0)
 		(layer "B.SilkS")
-		(uuid "ebd9bb63-3869-4e2c-acf3-ef861ae04942")
+		(uuid "bded4b6b-dbc6-49c2-a6ff-82979229d3fd")
 		(effects
 			(font
 				(size 0.8 0.8)
@@ -11231,10 +11231,10 @@
 			(justify mirror)
 		)
 	)
-	(gr_text "12V > BUCK 5V > LDO 3V3"
-		(at 33.5 23.325 0)
+	(gr_text "GND"
+		(at 38.1 5.86 0)
 		(layer "B.SilkS")
-		(uuid "de974f91-3370-42d9-babd-e24edbd35400")
+		(uuid "8d73391f-6dfd-49f7-b6e6-36ce44ff5bc8")
 		(effects
 			(font
 				(size 0.8 0.8)
@@ -11243,10 +11243,10 @@
 			(justify mirror)
 		)
 	)
-	(gr_text "E220 NOS 5V (>= 5,0 V)"
-		(at 33.5 24.675 0)
+	(gr_text "VCC"
+		(at 38.1 8.4 0)
 		(layer "B.SilkS")
-		(uuid "70d81c77-1198-4852-9524-97b3169ed6db")
+		(uuid "85f7d41e-d53a-493f-ad7f-675138ff52c0")
 		(effects
 			(font
 				(size 0.8 0.8)
@@ -11255,10 +11255,10 @@
 			(justify mirror)
 		)
 	)
-	(gr_text "E220 PINOS"
-		(at 45.5 18.15 0)
+	(gr_text "AUX"
+		(at 38.1 10.94 0)
 		(layer "B.SilkS")
-		(uuid "6348348c-e8a3-4731-8eda-91f0af1ad2d9")
+		(uuid "8a7af9f1-280a-4d47-8432-c73e6f74d338")
 		(effects
 			(font
 				(size 0.8 0.8)
@@ -11267,10 +11267,10 @@
 			(justify mirror)
 		)
 	)
-	(gr_text "1 M0  2 M1  3 RXD  4 TXD"
-		(at 45.5 19.5 0)
+	(gr_text "TXD"
+		(at 38.1 13.48 0)
 		(layer "B.SilkS")
-		(uuid "79a24963-e69a-496c-89e1-a3456dba861b")
+		(uuid "d865f3a5-e158-4462-bf72-66bcf534653e")
 		(effects
 			(font
 				(size 0.8 0.8)
@@ -11279,10 +11279,10 @@
 			(justify mirror)
 		)
 	)
-	(gr_text "5 AUX  6 VCC 5V  7 GND"
-		(at 45.5 20.85 0)
+	(gr_text "RXD"
+		(at 38.1 16.02 0)
 		(layer "B.SilkS")
-		(uuid "0f17b91a-7bbe-443e-bc63-5a0bad716fbb")
+		(uuid "d37c6cbf-bbd8-4391-9fe1-bd8f48b567a8")
 		(effects
 			(font
 				(size 0.8 0.8)
@@ -11291,10 +11291,10 @@
 			(justify mirror)
 		)
 	)
-	(gr_text "E220-900T30D"
-		(at 54 22.65 0)
+	(gr_text "M1"
+		(at 38.1 18.56 0)
 		(layer "B.SilkS")
-		(uuid "ff06fd15-507a-4be0-8982-cf8e7353fa44")
+		(uuid "93134637-c65d-450d-8df3-1d7187b5c1ef")
 		(effects
 			(font
 				(size 0.8 0.8)
@@ -11303,10 +11303,10 @@
 			(justify mirror)
 		)
 	)
-	(gr_text "CH55 905,125 MHZ"
-		(at 54 24 0)
+	(gr_text "M0"
+		(at 38.1 21.1 0)
 		(layer "B.SilkS")
-		(uuid "0393fa87-d948-437e-9ff8-94f6dc111020")
+		(uuid "6c45b179-cf3a-45f9-b60c-374c9cd994c4")
 		(effects
 			(font
 				(size 0.8 0.8)
@@ -11315,10 +11315,10 @@
 			(justify mirror)
 		)
 	)
-	(gr_text "NUNCA SEM ANTENA"
-		(at 54 25.35 0)
+	(gr_text "+12V"
+		(at 50.4 43.4 0)
 		(layer "B.SilkS")
-		(uuid "16524f12-f41b-4aa0-aba1-0bc83ee8b5e9")
+		(uuid "1d98824e-497c-4e17-84d1-1020b913a618")
 		(effects
 			(font
 				(size 0.8 0.8)
@@ -11327,130 +11327,10 @@
 			(justify mirror)
 		)
 	)
-	(gr_text "C3 GPIO (1/2)"
-		(at 56.5 29.475 0)
+	(gr_text "BOB-"
+		(at 55.48 43.4 0)
 		(layer "B.SilkS")
-		(uuid "cc353e00-3015-4264-b9db-77d6c1a38975")
-		(effects
-			(font
-				(size 0.8 0.8)
-				(thickness 0.12)
-			)
-			(justify mirror)
-		)
-	)
-	(gr_text "IO1 PUMP_DRV"
-		(at 56.5 30.825 0)
-		(layer "B.SilkS")
-		(uuid "5c472359-177c-4723-9171-abaec56e586a")
-		(effects
-			(font
-				(size 0.8 0.8)
-				(thickness 0.12)
-			)
-			(justify mirror)
-		)
-	)
-	(gr_text "IO2 FLOAT_HIGH  IO3 PAPEL"
-		(at 56.5 32.174999 0)
-		(layer "B.SilkS")
-		(uuid "7cb18b3b-b3a5-4743-b78b-9a5cebcce459")
-		(effects
-			(font
-				(size 0.8 0.8)
-				(thickness 0.12)
-			)
-			(justify mirror)
-		)
-	)
-	(gr_text "IO4 E220 TXD  IO5 E220 RXD"
-		(at 56.5 33.525 0)
-		(layer "B.SilkS")
-		(uuid "daa7b60d-ab6e-46f6-88c8-cd71e845bbda")
-		(effects
-			(font
-				(size 0.8 0.8)
-				(thickness 0.12)
-			)
-			(justify mirror)
-		)
-	)
-	(gr_text "J4 BOBINA 12V"
-		(at 58 35.15 0)
-		(layer "B.SilkS")
-		(uuid "2bff1f0e-4742-49a5-ad7e-6db6addd711e")
-		(effects
-			(font
-				(size 0.8 0.8)
-				(thickness 0.12)
-			)
-			(justify mirror)
-		)
-	)
-	(gr_text "1 +12V  2 BOBINA-"
-		(at 58 36.5 0)
-		(layer "B.SilkS")
-		(uuid "2179093b-5c81-485c-a14b-21ad52fb60ef")
-		(effects
-			(font
-				(size 0.8 0.8)
-				(thickness 0.12)
-			)
-			(justify mirror)
-		)
-	)
-	(gr_text "COM RELE EXTERNO 12V"
-		(at 58 37.85 0)
-		(layer "B.SilkS")
-		(uuid "480f3815-90e5-4167-90e8-fac61b91374f")
-		(effects
-			(font
-				(size 0.8 0.8)
-				(thickness 0.12)
-			)
-			(justify mirror)
-		)
-	)
-	(gr_text "C3 GPIO (2/2)"
-		(at 60.5 10.975 0)
-		(layer "B.SilkS")
-		(uuid "1c5d8447-8c44-42aa-9da0-e24c81fe400d")
-		(effects
-			(font
-				(size 0.8 0.8)
-				(thickness 0.12)
-			)
-			(justify mirror)
-		)
-	)
-	(gr_text "IO6 M0  IO7 M1  IO10 AUX"
-		(at 60.5 12.325 0)
-		(layer "B.SilkS")
-		(uuid "b2b4ab55-10af-44b0-b614-9fc3d4f8fd79")
-		(effects
-			(font
-				(size 0.8 0.8)
-				(thickness 0.12)
-			)
-			(justify mirror)
-		)
-	)
-	(gr_text "IO8 SDA  IO9 SCL/BOOT"
-		(at 60.5 13.674999 0)
-		(layer "B.SilkS")
-		(uuid "3b2e4e2b-7aac-47c4-b102-afa1d61e296f")
-		(effects
-			(font
-				(size 0.8 0.8)
-				(thickness 0.12)
-			)
-			(justify mirror)
-		)
-	)
-	(gr_text "IO20 EXT 12V  IO21 LED"
-		(at 60.5 15.024999 0)
-		(layer "B.SilkS")
-		(uuid "138f4120-887e-436e-85fa-cbab52a05e0b")
+		(uuid "f6e71eba-1363-443b-a8e3-13ca37627a74")
 		(effects
 			(font
 				(size 0.8 0.8)
