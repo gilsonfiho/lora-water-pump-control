@@ -8,6 +8,7 @@
 #include <vector>
 
 #include "config/NodeConfig.h"
+#include "config/SecurityConfig.h"
 #include "core/ReservoirController.h"
 #include "fakes.h"
 #include "protocol/LinkLayer.h"
@@ -27,6 +28,7 @@ struct ReservoirFixture {
     FakeBattery battery;
     protocol::LinkLayer link{radio, cfg::kAddrReservoir};
     ReservoirController controller{link, sensor, battery, cfg::kAddrPump};
+    uint32_t counter_ = 0;  // frescor crescente dos pacotes injetados
 
     ReservoirFixture() {
         FakeClock::install();
@@ -46,12 +48,14 @@ struct ReservoirFixture {
         for (size_t i = radio.sent.size(); i > 0; --i) {
             protocol::Packet p;
             const std::vector<uint8_t>& f = radio.sent[i - 1];
-            if (!protocol::decodePacket(f.data(), f.size(), p)) continue;
+            if (!protocol::decodePacket(f.data(), f.size(), cfg::Security::kLinkKey, p)) continue;
             if (p.type != protocol::MessageType::kComandoBomba) continue;
             uint8_t wire[protocol::kMaxPacketSize];
-            const size_t n = protocol::encodePacket(
-                protocol::makeAck(cfg::kAddrPump, cfg::kAddrReservoir, p.seq),
-                wire, sizeof(wire));
+            protocol::Packet ack =
+                protocol::makeAck(cfg::kAddrPump, cfg::kAddrReservoir, p.seq);
+            ack.counter = ++counter_;
+            const size_t n =
+                protocol::encodePacket(ack, cfg::Security::kLinkKey, wire, sizeof(wire));
             radio.inject(wire, n);
             controller.loop();
             return;
@@ -63,7 +67,7 @@ struct ReservoirFixture {
         int total = 0;
         for (const std::vector<uint8_t>& f : radio.sent) {
             protocol::Packet p;
-            if (protocol::decodePacket(f.data(), f.size(), p) && p.type == type) {
+            if (protocol::decodePacket(f.data(), f.size(), cfg::Security::kLinkKey, p) && p.type == type) {
                 ++total;
             }
         }
@@ -75,7 +79,7 @@ struct ReservoirFixture {
         for (size_t i = radio.sent.size(); i > 0; --i) {
             protocol::Packet p;
             const std::vector<uint8_t>& f = radio.sent[i - 1];
-            if (!protocol::decodePacket(f.data(), f.size(), p)) continue;
+            if (!protocol::decodePacket(f.data(), f.size(), cfg::Security::kLinkKey, p)) continue;
             if (protocol::parseCommand(p, out)) return true;
         }
         return false;
@@ -197,7 +201,7 @@ TEST_CASE("telemetria de bateria sai na cadencia e com os valores lidos",
     for (size_t i = f.radio.sent.size(); i > 0 && !found; --i) {
         protocol::Packet p;
         const std::vector<uint8_t>& fr = f.radio.sent[i - 1];
-        if (!protocol::decodePacket(fr.data(), fr.size(), p)) continue;
+        if (!protocol::decodePacket(fr.data(), fr.size(), cfg::Security::kLinkKey, p)) continue;
         found = protocol::parseBatteryStatus(p, out);
     }
     TEST_ASSERT_TRUE(found);
@@ -221,9 +225,10 @@ TEST_CASE("BOMBA_STATUS recebido vira evento no reservatorio",
     status.runSeconds = 61;
 
     uint8_t wire[protocol::kMaxPacketSize];
-    const size_t n = protocol::encodePacket(
-        protocol::makePumpStatus(cfg::kAddrPump, cfg::kAddrReservoir, 1, status),
-        wire, sizeof(wire));
+    protocol::Packet st =
+        protocol::makePumpStatus(cfg::kAddrPump, cfg::kAddrReservoir, 1, status);
+    st.counter = 1;
+    const size_t n = protocol::encodePacket(st, cfg::Security::kLinkKey, wire, sizeof(wire));
     f.radio.inject(wire, n);
     f.controller.loop();
 
@@ -250,7 +255,7 @@ TEST_CASE("nao empilha transacoes: cada SEQ vive uma rodada de retentativas",
     size_t distinct = 0;
     for (const std::vector<uint8_t>& fr : f.radio.sent) {
         protocol::Packet p;
-        if (!protocol::decodePacket(fr.data(), fr.size(), p)) continue;
+        if (!protocol::decodePacket(fr.data(), fr.size(), cfg::Security::kLinkKey, p)) continue;
         if (p.type != protocol::MessageType::kComandoBomba) continue;
         size_t idx = distinct;
         for (size_t i = 0; i < distinct; ++i) {

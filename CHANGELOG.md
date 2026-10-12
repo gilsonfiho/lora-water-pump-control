@@ -15,18 +15,91 @@ e o projeto adota o [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
 ## [Não lançado]
 
-Migração para ESP-IDF e preparação do protótipo de bancada. **Compila** com
-ESP-IDF v6.1 para o ESP32-C3, mas ainda **não foi validado em hardware**.
+Nada mergeado aguardando versão. O backlog aberto está abaixo.
+
+### Pendências conhecidas
+- **Regulatório:** em canal fixo de 125 kHz, o E220 só se enquadra no limite
+  genérico da ANATEL (≈ −1 dBm EIRP). Alta potência exige salto de frequência,
+  e isso afeta a escolha do rádio e o SKU T30D.
+- **Gestão/rotação de chave do MAC ([#6]).** Hoje a chave é única e estática em
+  `config/SecurityConfig.h`. Falta provisão por nó/SKU e rotação.
+- `kFloatHigh` (GPIO 2, strap) e `kExternalPresent` (GPIO 18, USB D−) precisam
+  de outros pinos antes de voltar às boias e ao monitor de bateria real.
+- Roteiro de bancada (`docs/context/bancada.md`) ainda não executado.
+- **Validação em hardware** pendente em todas as versões `0.0.x`: até aqui tudo
+  foi verificado por compilação (ESP-IDF v6.1) e pela suíte Unity no QEMU.
+
+## [0.0.5] - 2026-10-11
+
+Autenticação e anti-replay do enlace. Compila com ESP-IDF v6.1 para o ESP32-C3;
+68/68 testes no QEMU. **Não validado em hardware.**
 
 ### Segurança
-- **Failsafe de tempo máximo de bombeamento no nó da bomba**
-  ([#9](https://github.com/gilsonfiho/lora-water-pump-control/issues/9)). A bomba
+- **Autenticação e anti-replay no enlace** ([#5], [#7]). Todo quadro passa a
+  levar um **MAC de 8 bytes** (SipHash-2-4 com chave pré-compartilhada de 128
+  bits) e um **contador monotônico de 4 bytes**. Quem recebe só aceita o quadro
+  se o MAC confere e se o contador é maior que o último visto daquele `src` —
+  rejeita, então, tanto tráfego forjado (não tem a chave) quanto a **repetição**
+  de um quadro capturado no ar. O `PumpController` também passou a descartar
+  qualquer pacote cujo `src` não seja o reservatório esperado. O contador é
+  atribuído por transmissão física (não por transação), via
+  `platform::nextNonce()`, de modo que uma **retransmissão legítima** do mesmo
+  comando usa um contador novo e nunca é confundida com replay; os comandos são
+  idempotentes. No app, o contador é persistido em NVS ao estilo *frame counter*
+  do LoRaWAN, dando salto de reserva a cada boot para nunca reusar valor após
+  reset. Fecha a lacuna que o failsafe #9 só **limitava**: agora um comando
+  forjado ou repetido é **rejeitado**, não apenas contido. Chave de exemplo em
+  `config/SecurityConfig.h` com `TODO(hw)` para injeção fora do controle de
+  versão. Não cobre a gestão/rotação de chave (#6).
+
+### Alterado (incompatível)
+- **Formato do quadro `VER 0x01` → `0x02`.** O cabeçalho ganhou o contador
+  monotônico de 4 bytes e o quadro ganhou o MAC de 8 bytes (entre o payload e o
+  CRC-16, que continua cobrindo tudo para enquadramento). `encodePacket()` e
+  `decodePacket()` agora exigem a chave de 128 bits, e `decodePacket()` devolve
+  o motivo da recusa (`DecodeError`: enquadramento, CRC, MAC). Os dois nós
+  precisam da mesma chave e da mesma versão de firmware; com versões diferentes,
+  não se comunicam.
+
+### Adicionado
+- `platform::nextNonce()` / `setNonceSource()`: fonte de contador substituível
+  (default em RAM para os testes; o app instala a versão persistida em NVS).
+- `main/nonce_store`: contador anti-replay persistido em NVS com salto de
+  reserva por boot.
+- **Testes de segurança** na suíte: vetores oficiais do SipHash-2-4, MAC
+  (adulteração com CRC recalculado e chave errada), anti-replay (contador
+  repetido/antigo rejeitado, retransmissão legítima aceita) e descarte de `src`
+  inesperado no `PumpController`. A suíte foi de 60 para **68 testes**.
+
+## [0.0.4] - 2026-10-10
+
+Failsafe de tempo máximo de bombeamento, mensagem de status da bomba e a
+primeira suíte de testes automatizados. Quadro ainda em `VER 0x01`.
+
+### Segurança
+- **Failsafe de tempo máximo de bombeamento no nó da bomba** ([#9]). A bomba
   desliga sozinha ao passar de `kMaxPumpRunMs` ligada de forma contínua (60 s na
   bancada, 30 min em campo), **mesmo com o enlace perfeito e o reservatório
   insistindo em LIGAR**. Cobre boia travada, comando `ON` preso por bug e
   comando forjado. O bloqueio é um latch: sobrevive à perda de enlace e só
   rearma com um `DESLIGAR` do reservatório. Limita o dano de um comando forjado,
-  mas não substitui autenticação (#5, #6, #7).
+  mas não substitui autenticação (resolvida em 0.0.5; ver #5, #6, #7).
+
+### Adicionado (protocolo)
+- **`BOMBA_STATUS` (0x06), bomba → reservatório:** estado do nó, bloqueio por
+  tempo máximo, estado da saída e segundos ligada. Informativo, sem ACK. O
+  formato do quadro não mudou nesta versão: `VER` seguiu em `0x01` e um nó antigo
+  apenas ignora o tipo desconhecido. O reservatório apenas loga esse status.
+
+### Adicionado (testes)
+- **Suíte de 60 testes (Unity) rodando no QEMU, sem hardware**, em `test/`.
+  Cobre `protocol/` (CRC, quadro, mensagens, ACK/retry/timeout do `LinkLayer`,
+  par de nós em loopback) e `core/` (os dois failsafes da bomba, o latch da
+  issue #9 e a histerese do reservatório). Dublês em `test/main/fakes.h`. Rodar
+  com `.\test\run-tests.ps1` (runner com resumo final e parada automática).
+- **`platform::setTimeSource()`**: troca a fonte de tempo de `platform::millis()`.
+  Existe para os testes verificarem prazos de minutos sem esperar; em produção
+  `millis()` continua no `esp_timer`.
 
 ### Corrigido
 - **`LinkLayer`: heartbeat e auto-ACK adiavam a retransmissão do comando.**
@@ -46,21 +119,26 @@ ESP-IDF v6.1 para o ESP32-C3, mas ainda **não foi validado em hardware**.
 - **`BOMBA_STATUS` reporta o tempo ligada também no bloqueio** (antes ia zerado
   em `kOverrun`, justamente onde o número importa).
 
-### Adicionado (testes)
-- **Suíte de 60 testes (Unity) rodando no QEMU, sem hardware**, em `test/`.
-  Cobre `protocol/` (CRC, quadro, mensagens, ACK/retry/timeout do `LinkLayer`,
-  par de nós em loopback) e `core/` (os dois failsafes da bomba, o latch da
-  issue #9 e a histerese do reservatório). Dublês em `test/main/fakes.h`.
-  Rodar com `.\test\run-tests.ps1`.
-- **`platform::setTimeSource()`**: troca a fonte de tempo de `platform::millis()`.
-  Existe para os testes verificarem prazos de minutos sem esperar; em produção
-  `millis()` continua no `esp_timer`.
+### Adicionado (desenvolvimento)
+- Skills locais C++/ESP-IDF em `.claude/skills/` (simplicidade, planejador e
+  engenheiro sênior) e a regra de **nunca** usar trailer de co-autor em commits
+  e PRs (2026-09-26).
 
-### Adicionado (protocolo)
-- **`BOMBA_STATUS` (0x06), bomba → reservatório:** estado do nó, bloqueio por
-  tempo máximo, estado da saída e segundos ligada. Informativo, sem ACK. O
-  formato do quadro não mudou, então `VER` segue em `0x01`. Hoje o reservatório
-  apenas loga esse status.
+## [0.0.3] - 2026-09-20
+
+Instrumentação para investigar o "não comunica" na bancada.
+
+### Adicionado
+- **Log de diagnóstico do enlace:**
+  - bytes crus em `E220Radio` (`TX/RX N B` + hexdump, nível `DEBUG`);
+  - eventos de protocolo no `LinkLayer` via `onEvent(std::function<...>)` —
+    `kTx`, `kAckOk` (com rtt), `kRetry`, `kTimeout`, `kCrcFail`, `kNotForMe` —
+    logados na camada de app, mantendo `protocol/` sem ESP-IDF.
+
+## [0.0.2] - 2026-09-19
+
+Migração para ESP-IDF e montagem do protótipo de bancada. **Compila** com
+ESP-IDF v6.1 para o ESP32-C3, mas ainda **não foi validado em hardware**.
 
 ### Alterado (incompatível)
 - **Build migrado de PlatformIO/Arduino para ESP-IDF** (v6.1, alvo `esp32c3`).
@@ -79,11 +157,6 @@ ESP-IDF v6.1 para o ESP32-C3, mas ainda **não foi validado em hardware**.
   se comunicam.
 
 ### Adicionado
-- **Log de diagnóstico do enlace** (para investigar o "não comunica" na bancada):
-  - bytes crus em `E220Radio` (`TX/RX N B` + hexdump, nível `DEBUG`);
-  - eventos de protocolo no `LinkLayer` via `onEvent(std::function<...>)` —
-    `kTx`, `kAckOk` (com rtt), `kRetry`, `kTimeout`, `kCrcFail`, `kNotForMe` —
-    logados na camada de app, mantendo `protocol/` sem ESP-IDF.
 - Componente `platform/` (`platform::millis()` / `platform::delayMs()`), que
   mantém `protocol/` e `core/` independentes do ESP-IDF.
 - Drivers reescritos sobre `esp_driver_uart`, `esp_driver_gpio` e `esp_adc`:
@@ -104,13 +177,10 @@ ESP-IDF v6.1 para o ESP32-C3, mas ainda **não foi validado em hardware**.
   bancada), datasheets do E220 em `docs/datasheets/` e a análise regulatória da
   ANATEL (Ato 14.448/2017) em `docs/context/hardware.md`.
 
-### Pendências conhecidas
-- **Regulatório:** em canal fixo de 125 kHz, o E220 só se enquadra no limite
-  genérico da ANATEL (≈ −1 dBm EIRP). Alta potência exige salto de frequência,
-  e isso afeta a escolha do rádio e o SKU T30D.
-- `kFloatHigh` (GPIO 2, strap) e `kExternalPresent` (GPIO 18, USB D−) precisam
-  de outros pinos antes de voltar às boias e ao monitor de bateria real.
-- Roteiro de bancada (`docs/context/bancada.md`) ainda não executado.
+> **Nota de versionamento.** A tag `v0.0.2` existente aponta para a branch
+> abandonada `archive/freertos-esp-idf` (tentativa com tarefas FreeRTOS que não
+> seguiu adiante). A linha que vingou foi a `feature/prototipo-bancada`, aqui
+> documentada. Mesmo marco (migração ESP-IDF), implementação diferente.
 
 ## [0.0.1] - 2026-09-17
 
@@ -170,7 +240,16 @@ documentação. Compila via PlatformIO, porém ainda **não validado em hardware
 - Nível lógico do relé e das boias; razão do divisor do ADC (ou uso do INA219).
 - Validação em hardware, deep sleep e wake-up por evento.
 
-<!-- Links de comparação: adicionar quando houver repositório remoto, ex.:
-[Não lançado]: https://github.com/<org>/<repo>/compare/v0.0.1...HEAD
-[0.0.1]: https://github.com/<org>/<repo>/releases/tag/v0.0.1
--->
+<!-- Issues -->
+[#5]: https://github.com/gilsonfiho/lora-water-pump-control/issues/5
+[#6]: https://github.com/gilsonfiho/lora-water-pump-control/issues/6
+[#7]: https://github.com/gilsonfiho/lora-water-pump-control/issues/7
+[#9]: https://github.com/gilsonfiho/lora-water-pump-control/issues/9
+
+<!-- Links de comparação entre versões -->
+[Não lançado]: https://github.com/gilsonfiho/lora-water-pump-control/compare/v0.0.5...HEAD
+[0.0.5]: https://github.com/gilsonfiho/lora-water-pump-control/compare/v0.0.4...v0.0.5
+[0.0.4]: https://github.com/gilsonfiho/lora-water-pump-control/compare/v0.0.3...v0.0.4
+[0.0.3]: https://github.com/gilsonfiho/lora-water-pump-control/compare/v0.0.2...v0.0.3
+[0.0.2]: https://github.com/gilsonfiho/lora-water-pump-control/compare/v0.0.1...v0.0.2
+[0.0.1]: https://github.com/gilsonfiho/lora-water-pump-control/releases/tag/v0.0.1

@@ -1,10 +1,12 @@
 // ============================================================================
 //  LinkLayer.cpp  -  Maquina de enlace nao bloqueante (ACK/retry/timeout).
+//  Autentica cada pacote (MAC) e rejeita reproducao (contador). Ver #5 e #7.
 // ============================================================================
 
 #include "protocol/LinkLayer.h"
 
 #include "platform/Clock.h"
+#include "platform/Nonce.h"
 
 #include "protocol/Messages.h"
 
@@ -29,7 +31,7 @@ bool LinkLayer::sendReliable(Packet pkt) {
     ev.type = LinkEvent::Type::kTx;
     ev.seq = pending_.seq;
     ev.dst = pending_.dst;
-    ev.bytes = static_cast<uint8_t>(kHeaderSize + pending_.payloadLen + kCrcSize);
+    ev.bytes = static_cast<uint8_t>(kHeaderSize + pending_.payloadLen + kMacSize + kCrcSize);
     ev.retriesLeft = retriesLeft_;
     emitEvent(ev);
     return true;
@@ -44,9 +46,15 @@ bool LinkLayer::sendOnce(Packet pkt) {
     return true;
 }
 
-void LinkLayer::transmit(const Packet& pkt) {
+void LinkLayer::transmit(Packet pkt) {
+    // Nonce FRESCO a cada transmissao fisica (inclusive retransmissao e
+    // auto-ACK): assim toda saida legitima tem contador estritamente crescente
+    // e nunca cai como falso replay no receptor. Comandos sao idempotentes
+    // (ligar/desligar), entao reentregar uma retransmissao e inofensivo.
+    pkt.counter = platform::nextNonce();
+
     uint8_t buffer[kMaxPacketSize];
-    const size_t n = encodePacket(pkt, buffer, sizeof(buffer));
+    const size_t n = encodePacket(pkt, key_, buffer, sizeof(buffer));
     if (n == 0) return;
     radio_.send(buffer, n);
 
@@ -72,7 +80,7 @@ void LinkLayer::poll() {
             return;
         }
         --retriesLeft_;
-        transmit(pending_);  // reenvia com o MESMO SEQ
+        transmit(pending_);  // reenvia com o MESMO SEQ (contador novo)
         lastTxMs_ = platform::millis();
         LinkEvent ev{};
         ev.type = LinkEvent::Type::kRetry;
@@ -86,27 +94,52 @@ void LinkLayer::processIncoming() {
     if (!radio_.available()) return;
 
     const size_t n = radio_.receive(rxScratch_, sizeof(rxScratch_));
-    if (n < kHeaderSize + kCrcSize) return;
+    const size_t minFrame = kHeaderSize + kMacSize + kCrcSize;
+    if (n < minFrame) return;
 
     // Procura o SYNC e tenta decodificar a partir dele (ressincronizacao).
     bool sawSync = false;
-    for (size_t i = 0; i + kHeaderSize + kCrcSize <= n; ++i) {
+    DecodeError lastErr = DecodeError::kFraming;
+    for (size_t i = 0; i + minFrame <= n; ++i) {
         if (rxScratch_[i] != kSyncByte) continue;
         sawSync = true;
         Packet pkt;
-        if (decodePacket(rxScratch_ + i, n - i, pkt)) {
+        DecodeError err = DecodeError::kNone;
+        if (decodePacket(rxScratch_ + i, n - i, key_, pkt, &err)) {
             handleDecoded(pkt);
             return;
         }
+        lastErr = err;
+        // CRC ou MAC falhando significa que achamos um quadro plausivel que
+        // nao confere -- continuar varrendo bytes dentro dele nao acha um
+        // valido. So seguimos se foi erro de framing (SYNC falso no ruido).
+        if (err == DecodeError::kCrc || err == DecodeError::kMac) break;
     }
 
-    // Chegou algo com SYNC mas nada decodificou: CRC ruim ou quadro truncado
-    // (tipico de saturacao do RX ou colisao), nao apenas ruido sem sincronismo.
-    if (sawSync) {
-        LinkEvent ev{};
-        ev.type = LinkEvent::Type::kCrcFail;
-        emitEvent(ev);
+    if (!sawSync) return;
+    LinkEvent ev{};
+    ev.type = (lastErr == DecodeError::kMac) ? LinkEvent::Type::kAuthFail
+                                             : LinkEvent::Type::kCrcFail;
+    emitEvent(ev);
+}
+
+bool LinkLayer::acceptCounter(uint8_t src, uint32_t counter) {
+    for (auto& e : rxCounters_) {
+        if (e.used && e.src == src) {
+            if (counter <= e.counter) return false;  // reproducao
+            e.counter = counter;
+            return true;
+        }
     }
+    for (auto& e : rxCounters_) {
+        if (!e.used) {  // primeira vez vendo esta origem
+            e.used = true;
+            e.src = src;
+            e.counter = counter;
+            return true;
+        }
+    }
+    return true;  // tabela cheia (nao ocorre em ponto a ponto): nao bloqueia
 }
 
 void LinkLayer::handleDecoded(const Packet& pkt) {
@@ -116,6 +149,18 @@ void LinkLayer::handleDecoded(const Packet& pkt) {
         ev.type = LinkEvent::Type::kNotForMe;
         ev.seq = pkt.seq;
         ev.dst = pkt.dst;
+        emitEvent(ev);
+        return;
+    }
+
+    // O MAC ja provou autenticidade/integridade (decodePacket). Falta o
+    // frescor: contador <= ultimo visto desta origem = reproducao, descarta.
+    if (!acceptCounter(pkt.src, pkt.counter)) {
+        LinkEvent ev{};
+        ev.type = LinkEvent::Type::kReplay;
+        ev.src = pkt.src;
+        ev.seq = pkt.seq;
+        ev.counter = pkt.counter;
         emitEvent(ev);
         return;
     }

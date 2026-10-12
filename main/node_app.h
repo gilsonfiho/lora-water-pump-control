@@ -44,6 +44,14 @@ inline void logLinkEvent(const char* tag, const protocol::LinkEvent& e) {
         case T::kNotForMe:
             ESP_LOGD(tag, "RX de outro no (dst=0x%02x)", static_cast<unsigned>(e.dst));
             break;
+        case T::kAuthFail:
+            ESP_LOGW(tag, "RX com MAC invalido -- descartado (adulteracao/chave?)");
+            break;
+        case T::kReplay:
+            ESP_LOGW(tag, "RX replay de 0x%02x (contador=%lu) -- descartado",
+                     static_cast<unsigned>(e.src),
+                     static_cast<unsigned long>(e.counter));
+            break;
     }
 }
 

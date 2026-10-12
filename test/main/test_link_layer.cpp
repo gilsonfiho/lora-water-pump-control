@@ -8,6 +8,7 @@
 #include <vector>
 
 #include "config/NodeConfig.h"
+#include "config/SecurityConfig.h"
 #include "fakes.h"
 #include "protocol/LinkLayer.h"
 #include "protocol/Messages.h"
@@ -21,17 +22,23 @@ namespace {
 constexpr uint8_t kMe   = cfg::kAddrPump;        // 0x02
 constexpr uint8_t kPeer = cfg::kAddrReservoir;   // 0x01
 
+const uint8_t* key() { return cfg::Security::kLinkKey; }
+
 // Decodifica o quadro que o radio transmitiu, para inspecionar o que foi ao ar.
 Packet lastSent(const FakeRadio& radio) {
     Packet p;
     const std::vector<uint8_t>& frame = radio.sent.back();
-    TEST_ASSERT_TRUE(decodePacket(frame.data(), frame.size(), p));
+    TEST_ASSERT_TRUE(decodePacket(frame.data(), frame.size(), key(), p));
     return p;
 }
 
-void injectPacket(FakeRadio& radio, const Packet& pkt) {
+// Injeta um pacote autenticado (chave real), com um contador explicito para os
+// testes de frescor/replay.
+void injectPacket(FakeRadio& radio, const Packet& pkt, uint32_t counter = 1) {
+    Packet p = pkt;
+    p.counter = counter;
     uint8_t wire[kMaxPacketSize];
-    const size_t n = encodePacket(pkt, wire, sizeof(wire));
+    const size_t n = encodePacket(p, key(), wire, sizeof(wire));
     radio.inject(wire, n);
 }
 
@@ -251,7 +258,7 @@ TEST_CASE("quadro com SYNC e CRC ruim emite kCrcFail", "[protocol]")
     link.onEvent([&](const LinkEvent& e) { events.push_back(e); });
 
     uint8_t wire[kMaxPacketSize];
-    const size_t n = encodePacket(makeHeartbeat(kPeer, kMe, 1), wire, sizeof(wire));
+    const size_t n = encodePacket(makeHeartbeat(kPeer, kMe, 1), key(), wire, sizeof(wire));
     wire[n - 1] ^= 0xFF;  // estraga o CRC
     radio.inject(wire, n);
     link.poll();
@@ -291,7 +298,7 @@ TEST_CASE("lixo antes do SYNC nao impede a decodificacao", "[protocol]")
 
     uint8_t wire[kMaxPacketSize + 3];
     wire[0] = 0xDE; wire[1] = 0xAD; wire[2] = 0xBE;  // ressincronizacao
-    const size_t n = encodePacket(makeHeartbeat(kPeer, kMe, 9), wire + 3,
+    const size_t n = encodePacket(makeHeartbeat(kPeer, kMe, 9), key(), wire + 3,
                                   sizeof(wire) - 3);
     radio.inject(wire, n + 3);
     link.poll();
@@ -437,5 +444,95 @@ TEST_CASE("radio ocupado nao aceita o quadro", "[protocol]")
     link.sendReliable(makeCommand(0, kPeer, 0, PumpCommand::kOn));
     TEST_ASSERT_EQUAL_UINT32(0, radio.sent.size());  // AUX baixo: nada foi ao ar
     TEST_ASSERT_TRUE(link.isDelivering());           // segue pendente para retry
+    FakeClock::uninstall();
+}
+
+// ---- Seguranca: autenticacao (#5) e anti-replay (#7) -----------------------
+
+TEST_CASE("MAC invalido (chave errada) e rejeitado e nao gera ACK", "[protocol]")
+{
+    FakeClock::install();
+    FakeRadio radio;
+    LinkLayer link(radio, kMe);
+
+    int received = 0;
+    std::vector<LinkEvent> events;
+    link.onReceive([&](const Packet&) { ++received; });
+    link.onEvent([&](const LinkEvent& e) { events.push_back(e); });
+
+    // Codifica com uma chave ERRADA, como faria um atacante sem a chave.
+    uint8_t wrongKey[16];
+    for (int i = 0; i < 16; ++i) wrongKey[i] = cfg::Security::kLinkKey[i] ^ 0xFF;
+    Packet p = makeCommand(kPeer, kMe, 5, PumpCommand::kOn);
+    p.counter = 123;
+    uint8_t wire[kMaxPacketSize];
+    const size_t n = encodePacket(p, wrongKey, wire, sizeof(wire));
+    radio.inject(wire, n);
+    link.poll();
+
+    TEST_ASSERT_EQUAL_INT(0, received);              // nao entregue a aplicacao
+    TEST_ASSERT_EQUAL_UINT32(0, radio.sent.size());  // nem auto-ACK ao atacante
+    TEST_ASSERT_EQUAL_UINT8(static_cast<uint8_t>(LinkEvent::Type::kAuthFail),
+                            static_cast<uint8_t>(events.back().type));
+    FakeClock::uninstall();
+}
+
+TEST_CASE("replay: contador repetido ou antigo e rejeitado", "[protocol]")
+{
+    FakeClock::install();
+    FakeRadio radio;
+    LinkLayer link(radio, kMe);
+
+    int received = 0;
+    std::vector<LinkEvent> events;
+    link.onReceive([&](const Packet&) { ++received; });
+    link.onEvent([&](const LinkEvent& e) { events.push_back(e); });
+
+    injectPacket(radio, makeHeartbeat(kPeer, kMe, 1), 100);
+    link.poll();
+    TEST_ASSERT_EQUAL_INT(1, received);  // fresco: entregue
+
+    injectPacket(radio, makeHeartbeat(kPeer, kMe, 1), 100);  // mesmo contador
+    link.poll();
+    TEST_ASSERT_EQUAL_INT(1, received);  // replay: descartado
+    TEST_ASSERT_EQUAL_UINT8(static_cast<uint8_t>(LinkEvent::Type::kReplay),
+                            static_cast<uint8_t>(events.back().type));
+
+    injectPacket(radio, makeHeartbeat(kPeer, kMe, 1), 50);  // mais antigo
+    link.poll();
+    TEST_ASSERT_EQUAL_INT(1, received);  // replay: descartado
+
+    injectPacket(radio, makeHeartbeat(kPeer, kMe, 1), 101);  // avanca
+    link.poll();
+    TEST_ASSERT_EQUAL_INT(2, received);  // fresco: entregue
+    FakeClock::uninstall();
+}
+
+TEST_CASE("retransmissao nao cai como replay (nonce novo por TX)", "[protocol]")
+{
+    FakeClock::install();
+    FakeRadio radioA, radioB;
+    radioA.connect(radioB);
+
+    LinkLayer linkA(radioA, kPeer);  // reservatorio
+    LinkLayer linkB(radioB, kMe);    // bomba
+
+    int deliveredB = 0;
+    linkB.onReceive([&](const Packet&) { ++deliveredB; });
+
+    linkA.sendReliable(makeCommand(0, kMe, 0, PumpCommand::kOn));
+
+    // O ACK do B vai se perder: cortamos B->A antes de B responder.
+    radioB.deliverToPeer = false;
+    FakeClock::advance(50);
+    linkB.poll();  // recebe e entrega (1); auto-ACK se perde
+    TEST_ASSERT_EQUAL_INT(1, deliveredB);
+
+    // A nao recebeu ACK -> retransmite, com um contador NOVO (nonce por TX).
+    FakeClock::advance(cfg::Timing::kAckTimeoutMs);
+    linkA.poll();
+    FakeClock::advance(50);
+    linkB.poll();  // retransmissao: fresca, reentregue (comando e idempotente)
+    TEST_ASSERT_EQUAL_INT(2, deliveredB);
     FakeClock::uninstall();
 }

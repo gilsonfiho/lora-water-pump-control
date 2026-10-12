@@ -29,9 +29,20 @@ guarda só o que **muda ou está em aberto**, para não duplicar a especificaç�
 - **Papéis por strap.** Com firmware único, endereços `SRC`/`DST` deixam de ser
   fixos por ambiente de build e passam a depender do papel lido no boot.
 
+- **Gestão/rotação de chave (issue #6).** O MAC usa hoje uma **chave única e
+  estática** (`config/SecurityConfig.h`), igual em todos os nós e SKUs. Falta
+  definir provisão por nó/fábrica, rotação e o que fazer se a chave vazar.
+
 ## Histórico de mudanças
 
+- **2026-10-11:** quadro `VER 0x01` → `0x02`, com contador monotônico de 4 bytes
+  (anti-replay, por `src`) e MAC de 8 bytes (SipHash-2-4, chave de 128 bits) —
+  autenticação (#5) e anti-replay (#7). O MAC cobre de SYNC ao payload; o CRC
+  segue cobrindo tudo, só para enquadramento. `decodePacket()` passou a exigir a
+  chave e a devolver `DecodeError`. **Formato incompatível:** os dois nós
+  precisam da mesma versão e da mesma chave. O contador é atribuído por
+  transmissão física, então retransmissão legítima não vira replay.
 - **2026-10-10:** novo tipo `BOMBA_STATUS` (0x06), bomba → reservatório, com
   estado do nó, bloqueio por tempo máximo, saída e segundos ligada (4 bytes).
-  Informativo, sem ACK. `VER` do quadro **não** mudou: o formato é o mesmo e um
-  nó antigo simplesmente ignora o tipo desconhecido.
+  Informativo, sem ACK. `VER` do quadro não mudou **nessa** data: o tipo novo
+  não altera o formato, e um nó antigo apenas ignora o tipo desconhecido.
