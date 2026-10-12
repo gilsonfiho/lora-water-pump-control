@@ -47,14 +47,21 @@ Por pedido do autor: **a alimentacao e por jack de 12 V**, nao por borne de 5 V.
   `dedupe_vias.py`, `stitch.py` (costura de GND, nao usada na versao atual: gerava vias demais),
   `pockets_report.py` (bolsoes de GND).
 
-### Padrao de serigrafia (vale para as duas placas, `tools/silk.py`)
+### Padrao de serigrafia (vale para as duas placas, `tools/silk.py` e `tools/siglas.py`)
 
-- Texto de 0,8 mm e traco de 0,12 mm, MAIUSCULAS, sempre na horizontal.
-- Designador na serigrafia so para CI, conectores, chaves, jumper, LEDs, transistor e
-  indutor. Resistores, capacitores e diodos: designador na camada Fab (desenho de montagem).
-- Nada de texto sobre pad, corpo de componente, furo, modulo ou area da antena. Cada rotulo
-  vai para a vaga livre mais proxima do que descreve.
-- Avisos e identificacao (placa, versao, data) agrupados; funcao de cada borne escrita.
+Decisao do autor (2026-10-12): **so as siglas dos componentes, o basico**. Sem rotulos
+funcionais, sem avisos, sem mapa de pinos e sem texto na face de baixo.
+
+- Cada componente mostra apenas a sigla (REF: U1, J2, SW1, R3...), 0,8 mm de altura e 0,12 mm
+  de traco, na horizontal.
+- A sigla vai para a posicao livre MAIS PROXIMA da propria peca, fora do corpo e dos pads.
+- Peca escondida sob o E220 depois de montado, ou sem vaga limpa: sigla so na camada de
+  montagem (Fab), nao na serigrafia.
+- Tentativa descartada: rotulos funcionais e texto na face de baixo (pinagem do E220, mapa de
+  GPIO, funcao dos bornes, identificacao). O autor considerou texto demais e sem padrao.
+- **Aviso de antena do E220** (pedido no briefing original): saiu da serigrafia junto com os
+  demais textos; permanece no esquematico, aqui e na documentacao. Decidir se volta como um
+  marcador curto perto do E220.
 
 ### Pecas retiradas por nao terem funcao na hw-v0.1
 
