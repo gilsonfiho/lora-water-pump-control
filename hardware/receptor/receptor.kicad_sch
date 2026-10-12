@@ -1,0 +1,204 @@
+(kicad_sch
+	(version 20260306)
+	(generator "eeschema")
+	(generator_version "10.0")
+	(uuid "7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f803001")
+	(paper "A3")
+	(title_block
+		(title "Controle de bomba d'agua LoRa")
+		(date "2026-10-11")
+		(rev "0.1")
+		(company "gilsonfiho")
+		(comment 1 "Folha raiz: um bloco por subfolha")
+	)
+	(lib_symbols)
+	(sheet
+		(at 30 40)
+		(size 70 30)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0)
+		)
+		(uuid "7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f803101")
+		(property "Sheetname" "MCU"
+			(at 30 39 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "mcu.kicad_sch"
+			(at 30 71 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(instances
+			(project "receptor"
+				(path "/7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f803001"
+					(page "2")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 120 40)
+		(size 70 30)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0)
+		)
+		(uuid "7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f803102")
+		(property "Sheetname" "Radio E220"
+			(at 120 39 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "radio.kicad_sch"
+			(at 120 71 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(instances
+			(project "receptor"
+				(path "/7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f803001"
+					(page "3")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 210 40)
+		(size 70 30)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0)
+		)
+		(uuid "7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f803103")
+		(property "Sheetname" "Alimentacao"
+			(at 210 39 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "power.kicad_sch"
+			(at 210 71 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(instances
+			(project "receptor"
+				(path "/7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f803001"
+					(page "4")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 30 90)
+		(size 70 30)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0)
+		)
+		(uuid "7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f803104")
+		(property "Sheetname" "Entradas e Saidas"
+			(at 30 89 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "io.kicad_sch"
+			(at 30 121 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(instances
+			(project "receptor"
+				(path "/7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f803001"
+					(page "5")
+				)
+			)
+		)
+	)
+	(sheet_instances
+		(path "/"
+			(page "1")
+		)
+	)
+)

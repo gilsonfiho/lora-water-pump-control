@@ -10,6 +10,49 @@ Formato: data, decisão, motivo. Mais recentes no topo.
   versionadas; backups, autosave e `*.kicad_prl` ficam no `.gitignore`.
 - Tags de hardware `hw-vX.Y`.
 
+## 2026-10-11: duas placas (emissor e receptor), hw-v0.1 em desenvolvimento
+
+Substitui a premissa "uma PCB com variantes DNP": o autor quer **duas placas**,
+`hardware/emissor/` (reservatório) e `hardware/receptor/` (bomba), cada uma um
+projeto KiCad 10 completo, gerado a partir da mesma base (`tools/build_sch.py`
+e `tools/build_pcb.py`). Mesma MCU, rádio e alimentação; muda só a folha de E/S
+e o jumper de papel (`JP1`: aberto no emissor, fechado no receptor).
+
+- **Só o E220-900T30D** nesta revisão (par do protótipo). O T22D volta numa
+  revisão futura (footprint próprio de 21 x 36 mm, 7 + 3 furos).
+- **Alimentação v0.1: 5 V** por USB-C ou borne (OR por dois Schottky SS34),
+  fusível rearmável de 1,5 A, TVS SMBJ5.0A e LDO AP2112K-3.3 (600 mA mín.;
+  Cin = Cout = 1 uF X5R/X7R, Datasheet Diodes p. 2). **Sem 12 V e sem bateria**
+  (hw-v0.2). Os Schottky derrubam ~0,3-0,5 V: o E220 fica abaixo dos 5,0 V da
+  potência plena. `TODO(hw)`: ideal diode.
+- **Emissor:** bornes de 4 vias para 2 boias, cada entrada com TVS, 1 k em série,
+  100 nF e pull-up de 10 k. Sem ultrassônico (o echo é de 5 V).
+- **Receptor:** MOSFET AO3400A em baixa lateral comanda a bobina de 5 V de um
+  relé/contator **externo** (sem rede na placa; ver premissa da bomba acima), com
+  diodo de roda livre e LED. `PUMP_DRV` tem pull-down de 10 k: MOSFET cortado em
+  reset, boot e pino flutuante.
+- **Layout (hw-v0.1, só posicionamento):** placa de 100 x 76 mm, 2 camadas, plano
+  de GND nas duas faces, 4 furos M3. O módulo C3 fica rente à borda esquerda, com a
+  antena para fora da placa e a keepout do próprio footprint; o E220 gira 90° com o
+  SMA rente à borda direita (50 mm longe da antena do C3). USB-C na borda superior,
+  bornes embaixo. **Sem trilhas ainda**: 73 conexões abertas no DRC.
+- **3D:** STEP de envelope (caixas) gerados em `libs/3d/` para MINI-1, E220 e USB-C
+  (o STEP do USB-C não vem nesta instalação do KiCad). Os demais usam os modelos
+  oficiais. Os furos de fixação e o solder jumper não têm modelo (só cobre).
+  `fab/<placa>/<placa>.step` é a placa inteira.
+- **Footprint do MINI-1** copiado do footprint oficial do ESP32-C6-MINI-1 (mesmo
+  invólucro 13,2 x 16,6 mm, 53 pinos; EPAD de 1,45 mm confere com a Fig. 10-1).
+  `TODO(hw)`: conferir visualmente contra a Fig. 10-1 do datasheet.
+- **Footprint do E220-900T30D** lido de uma figura de baixa resolução (Manual
+  v1.0, Fig. 3-1, p. 6): passo 2,54 mm, pino 1 a 4,38 mm da borda, furos de fixação
+  a 3,0 mm da borda inferior. **`TODO(hw)`: medir o módulo físico com paquímetro
+  antes de fabricar.** O 3D do E220 é aproximado (a espessura de 12,8 mm vem da
+  Fig. 3-1; o SMA e a blindagem são estimativas).
+- ERC (kicad-cli 10.0.7): emissor 0 erros e 0 avisos; receptor 0 erros e 1 aviso
+  (símbolo AO3400A "não bate" com a biblioteca: o gerador resolve o `extends`).
+  DRC: 0 erros de folga, curto ou courtyard; restam avisos de serigrafia e as
+  conexões abertas por falta de roteamento.
+
 ## 2026-10-11: esquemático, etapa 1 (folhas MCU e Rádio)
 
 Gerado por `hardware/tools/build_sch.py` (símbolos oficiais do KiCad + os
@@ -113,7 +156,7 @@ Escolhas e consequências:
 - Boias: 1 ou 2.
 - Mapa de pinos final (faltam 14 sinais para 8 GPIOs livres; ver conversa de
   2026-10-11) e se o console migra para o USB Serial/JTAG.
-- Ferramentas: KiCad 10 e leitor de PDF ainda não instalados (aguardando OK).
+- Ferramentas: KiCad 10.0.7 e `pypdf` instalados em 2026-10-11.
 
 ## 2026-10-11: KiCad 10
 

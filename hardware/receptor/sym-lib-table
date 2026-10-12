@@ -1,0 +1,4 @@
+(sym_lib_table
+  (version 7)
+  (lib (name "lora-pump")(type "KiCad")(uri "${KIPRJMOD}/../libs/symbols/lora-pump.kicad_sym")(options "")(descr "Simbolos proprios do projeto"))
+)

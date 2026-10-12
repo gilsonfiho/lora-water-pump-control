@@ -15,6 +15,12 @@ e o projeto adota o [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
 ## [Não lançado]
 
+### Hardware (hw-v0.1, em desenvolvimento)
+- Projeto KiCad 10 das duas placas, **emissor** e **receptor**, em `hardware/`:
+  esquemático hierárquico (MCU, rádio E220-900T30D, alimentação, E/S), footprints e
+  modelos 3D próprios, posicionamento em placa de 100 x 76 mm e renders/STEP em
+  `hardware/fab/`. Ainda sem roteamento e sem tag `hw-v0.1`.
+
 Nada mergeado aguardando versão. O backlog aberto está abaixo.
 
 ### Pendências conhecidas
