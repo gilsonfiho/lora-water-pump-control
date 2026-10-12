@@ -56,8 +56,7 @@ Por pedido do autor: **a alimentacao e por jack de 12 V**, nao por borne de 5 V.
   capacitores e diodos: sigla so na camada Fab. Rotulos funcionais (bornes, RESET/BOOT, papel do
   jumper, aviso da antena) foram retirados a pedido do autor; o aviso da antena continua no
   esquematico e nesta documentacao.
-- **Atras (so o essencial, como em placas comerciais):** um bloco de identificacao (nome,
-  versao, data) e o nome de cada pino colado ao respectivo pad dos conectores de furo passante:
+- **Atras (so o essencial, como em placas comerciais):** apenas o nome de cada pino colado ao respectivo pad dos conectores de furo passante:
   E220 (M0..GND), header I2C (3V3, SDA, SCL, GND), bornes J4 (BAIXA/ALTA/GND ou +12V/BOB-) e jack
   J3 (+, -). Texto espelhado, alinhado ao pino.
 - Tentativas descartadas por excesso de texto: mapa de GPIO, cadeia de alimentacao, notas de USB

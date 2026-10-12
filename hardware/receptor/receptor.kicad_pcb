@@ -11049,42 +11049,6 @@
 			(justify mirror)
 		)
 	)
-	(gr_text "RECEPTOR"
-		(at 22 37.15 0)
-		(layer "B.SilkS")
-		(uuid "095e5d34-9358-4327-b422-b3a2799ce62a")
-		(effects
-			(font
-				(size 0.8 0.8)
-				(thickness 0.12)
-			)
-			(justify mirror)
-		)
-	)
-	(gr_text "HW-V0.1"
-		(at 22 38.5 0)
-		(layer "B.SilkS")
-		(uuid "8917c2a2-6e5d-4a1d-82b4-4e7e8a16dd88")
-		(effects
-			(font
-				(size 0.8 0.8)
-				(thickness 0.12)
-			)
-			(justify mirror)
-		)
-	)
-	(gr_text "2026-10-12"
-		(at 22 39.85 0)
-		(layer "B.SilkS")
-		(uuid "ca528448-5ad5-431e-853b-03aaabfe64f7")
-		(effects
-			(font
-				(size 0.8 0.8)
-				(thickness 0.12)
-			)
-			(justify mirror)
-		)
-	)
 	(gr_text "SCL"
 		(at 22.42 33.6 0)
 		(layer "B.SilkS")
