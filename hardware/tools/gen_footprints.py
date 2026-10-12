@@ -60,7 +60,12 @@ def e220_t30d():
     gfx = [
         rect("F.SilkS", x0, y0, x1, y1, 0.15),
         rect("F.Fab", x0, y0, x1, y1, 0.1),
-        rect("F.CrtYd", x0 - 0.25, y0 - 0.25, x1 + 0.25, y1 + 0.25, 0.05),
+        # Courtyard so onde NAO pode haver peca: faixa dos pinos, furos de fixacao e SMA.
+        # O resto do modulo fica 4,2 mm acima da placa: pecas baixas (<= 3 mm) cabem embaixo.
+        # TODO(hw): confirmar no modulo fisico que o lado de baixo e liso.
+        rect("F.CrtYd", -4.7, -1.8, 19.9, 1.8, 0.05),
+        rect("F.CrtYd", -1.2, 37.3, 8.5, 39.7, 0.05),
+        rect("F.CrtYd", 10.0, 30.3, 16.8, 41.8, 0.05),
         '\t(fp_text user "ANTENA" (at 13.4 36 0) (layer "F.SilkS") '
         '(effects (font (size 1 1) (thickness 0.15))))',
         '\t(fp_text reference "REF**" (at 7.62 -3.5 0) (layer "F.SilkS") '

@@ -15,13 +15,14 @@ import pcbnew
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import kicadgen as k  # noqa: E402
+import route  # noqa: E402
 
 HW = Path(__file__).resolve().parent.parent
 KICAD = Path(r"C:\Program Files\KiCad\10.0")
 FP_DIRS = {"lora-pump": HW / "libs" / "footprints" / "lora-pump.pretty"}
 MM = pcbnew.FromMM
 
-W, H = 86.0, 52.0          # placa (mm)
+W, H = 76.0, 44.0          # placa (mm)
 E220_PIN1 = (W - 41.5, 21.1)  # pino 1 do E220: SMA rente a borda direita
 ESP_POS = (11.05, 7.6)        # antena do MINI-1 rente a borda esquerda
 
@@ -99,6 +100,18 @@ def text(board, s, x, y, size=1.0, layer=pcbnew.F_SilkS, rot=0):
     board.Add(t)
 
 
+def patch_rules(pro):
+    """Regras do projeto usadas pelo roteador: folga 0,15 mm, trilha 0,2 mm, via 0,6/0,3 mm."""
+    import json
+    if not pro.exists():
+        return
+    d = json.loads(pro.read_text(encoding="utf-8"))
+    d["board"]["design_settings"]["rules"].update({"min_track_width": 0.15, "min_clearance": 0.15})
+    d["net_settings"]["classes"][0].update({"clearance": 0.15, "track_width": 0.2,
+                                            "via_diameter": 0.6, "via_drill": 0.3})
+    pro.write_text(json.dumps(d, indent=2), encoding="utf-8")
+
+
 def main(role):
     comps, nets = netlist(role)
     board = pcbnew.BOARD()
@@ -132,24 +145,37 @@ def main(role):
     fps["U2"].SetPosition(vec(*E220_PIN1))
     fps["U1"].SetOrientationDegrees(90)
     fps["U1"].SetPosition(vec(*ESP_POS))
-    fps["J2"].SetPosition(vec(14.0, H - 4.2))          # USB-C: abertura para a borda de baixo
-    fps["J3"].SetPosition(vec(48.0, H - 5.6))          # bornes na borda de baixo
-    fps["J4"].SetPosition(vec(60.0, H - 5.6))
+    fps["J2"].SetOrientationDegrees(180)
+    fps["J2"].SetPosition(vec(25.0, 4.3))              # USB-C na borda de cima, junto ao C3
+    fps["J3"].SetPosition(vec(39.0, H - 5.6))          # bornes na borda de baixo
+    fps["J4"].SetPosition(vec(50.4, H - 5.6))
+    fps["J1"].SetOrientationDegrees(270)               # header I2C deitado
+    fps["J1"].SetPosition(vec(14.5, 31.2))
+    fps["C4"].SetPosition(vec(39.0, 6.2))              # bulk do VCC_RF junto ao pino 6 do E220
+    fps["C11"].SetPosition(vec(39.0, 10.0))
+    fps["U4"].SetPosition(vec(25.0, 13.0))             # ESD e CC logo abaixo do USB-C
+    fps["R9"].SetPosition(vec(21.0, 13.0))
+    fps["R10"].SetPosition(vec(29.0, 13.0))
     px = E220_PIN1[0] - 3.2                            # desacoplamento ao lado dos pinos do E220
     for ref, dy in (("C5", -15.0), ("R8", -10.0), ("R7", -6.0)):
         fps[ref].SetOrientationDegrees(90)
         fps[ref].SetPosition(vec(px, E220_PIN1[1] + dy))
+    fps["SW1"].SetPosition(vec(21.8, 31.0))
+    fps["SW2"].SetPosition(vec(31.0, 31.0))
+    fps["D1"].SetPosition(vec(42.0, 29.8))
+    fps["JP1"].SetPosition(vec(46.0, 29.8))
 
-    fixed = {"U1", "U2", "J2", "J3", "J4", "C5", "R7", "R8"}
+    fixed = {"U1", "U2", "J1", "J2", "J3", "J4", "C4", "C11", "C5", "R7", "R8", "SW1", "SW2", "D1", "JP1", "U4", "R9", "R10"}
     groups = {
-        (17.5, 1, 39.5, 29): ["C1", "C2", "R1", "C3", "R2", "R3", "R4", "R5", "R6", "SW1", "SW2",
-                              "JP1", "D1", "J1"],
-        (20.5, 30, 44.5, 51): ["U4", "R9", "R10", "D2", "U5", "C6", "C7", "C8", "R13", "R14"],
-        (44, 27, 85.5, 38.5): ["C4", "D4", "D3", "F1", "R11", "R12", "D5", "D6", "R15", "R16",
-                               "R17", "C9", "C10", "Q1"],
+        # junto aos pinos do C3: desacoplamento, EN, pull-ups
+        (17.5, 16.5, 29.8, 28.5): ["C1", "C2", "R1", "C3", "R2", "R3", "R4", "R5", "R6"],
+        # sob o E220 (4,2 mm de vao): so pecas baixas
+        (43.0, 2.0, 63.5, 25.0): ["D2", "U5", "C6", "C7", "C8", "R13", "R14",
+                                  "D4", "D3", "F1", "R11", "R12", "D5", "D6", "R15", "R16", "R17",
+                                  "C9", "C10", "Q1"],
     }
     for region, refs in groups.items():
-        pack([fps[r] for r in refs if r in fps], region, gap=0.8)
+        pack([fps[r] for r in refs if r in fps], region, gap=0.7)
     left = [r for r in fps if r not in fixed and not any(r in v for v in groups.values())]
     if left:
         print("sem posicao:", left)
@@ -206,21 +232,23 @@ def main(role):
             o.Append(MM(x), MM(y))
         board.Add(z)
 
-    # Serigrafia (faixa livre abaixo da antena do MINI-1, x 0-17).
+    # Serigrafia.
     emi = role == "emissor"
-    for y, s_, sz in [(31.2, "NAO LIGAR O E220", 0.8), (32.6, "SEM ANTENA!", 0.8),
-                      (34.6, "ENTRADA 5V APENAS", 0.8), (36.0, "NAO LIGAR 12V", 0.8),
-                      (38.0, "JP1 PAPEL:", 0.8), (39.4, "ABERTO=RESERV." if emi else "FECHADO=BOMBA", 0.8),
-                      (41.0, "EMISSOR" if emi else "RECEPTOR", 1.0)]:
-        text(board, s_, 8.5, y, sz)
-    text(board, "hw-v0.1 2026-10-11", 62, 3, 0.8)
-    text(board, "J3: 5V+ | GND", 33.0, 44.0, 0.8)
-    text(board, "J4: BOIA-B|GND|BOIA-A|GND" if emi else "J4: BOBINA 5V+ | -", 33.0, 46.5, 0.8)
+    text(board, "NAO LIGAR O E220 SEM ANTENA!", 52, 26.5, 0.8)
+    text(board, "ENTRADA 5V APENAS - NAO LIGAR 12V", 52, 28.0, 0.8)
+    text(board, "EMISSOR" if emi else "RECEPTOR", 6, 36.0, 1.0)
+    text(board, "hw-v0.1", 6, 38.0, 0.8)
+    text(board, "JP1 PAPEL: " + ("ABERTO=RESERV." if emi else "FECHADO=BOMBA"), 60, 30.2, 0.7)
+    text(board, "J3: 5V+ | GND", 43.0, 31.4, 0.7)
+    text(board, "J4: BOIA-B|GND|BOIA-A|GND" if emi else "J4: BOBINA 5V+ | -", 59.0, 31.4, 0.7)
 
+    if "--sem-trilhas" not in sys.argv:
+        route.run(board, W, H)
     pcbnew.ZONE_FILLER(board).Fill(board.Zones())
     board.BuildConnectivity()
     out = HW / role / f"{role}.kicad_pcb"
     board.Save(str(out))
+    patch_rules(HW / role / f"{role}.kicad_pro")
     print("escrito", out, f"({len(fps)} footprints, {len(nets)} nets)")
 
 

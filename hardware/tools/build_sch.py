@@ -19,7 +19,7 @@ FP_C = "Capacitor_SMD:C_0603_1608Metric"
 MPN_R = {"10k": "RC0603FR-0710KL", "4k7": "RC0603FR-074K7L", "1k": "RC0603FR-071KL",
          "5k1": "RC0603FR-075K1L", "100k": "RC0603FR-07100KL", "100R": "RC0603FR-07100RL",
          "0R": "RC0603ZR-070RL"}
-MPN_C = {"100nF": "CL10B104KB8NNNC", "10uF": "CL10A106KP8NNNC", "1uF": "CL10A105KB8NNNC"}
+MPN_C = {"47uF": "CL32A476MPVNNNE", "100nF": "CL10B104KB8NNNC", "10uF": "CL10A106KP8NNNC", "1uF": "CL10A105KB8NNNC"}
 
 ROLES = {
     "emissor": {"titulo": "Emissor (reservatorio)", "gpio1": "FLOAT_LOW",
@@ -116,10 +116,12 @@ def sheet_radio(c, uid):
            {"1": "E220_M0", "2": "E220_M1", "3": "E220_RXD", "4": "E220_TXD",
             "5": "E220_AUX", "6": "VCC_RF", "7": "GND"},
            footprint="lora-pump:E220-900T30D", mpn="E220-900T30D", globals_=c.G)
-    sh.add("Device:C_Polarized", "Device.kicad_sym", "C4", "470uF/10V", 190, 130,
-           {"1": "VCC_RF", "2": "GND"}, footprint="Capacitor_SMD:CP_Elec_8x10.5",
-           mpn="EEE-FK1A471P", globals_=c.G)
-    sh.text(175, 150, "TODO(hw): 470 uF e palpite;\nbancada usa 1000 uF", 1.0)
+    # Bulk do VCC_RF: 2 x 47 uF ceramicos 1210 (baixos: cabem sob o modulo, junto ao pino VCC).
+    # TODO(hw): MPN/derating (X5R a 5 V perde ~50 %) a validar; README recomenda 100 uF + 100 nF.
+    for ref, x in (("C4", 190), ("C11", 210)):
+        sh.add("Device:C", "Device.kicad_sym", ref, "47uF/10V", x, 130,
+               {"1": "VCC_RF", "2": "GND"}, footprint="Capacitor_SMD:C_1210_3225Metric",
+               mpn=MPN_C["47uF"], globals_=c.G)
     C(sh, c, "C5", "100nF", 230, 130, "VCC_RF", "GND")
     R(sh, c, "R7", "10k", 260, 130, "+3V3", "E220_TXD", dnp=True)
     R(sh, c, "R8", "10k", 290, 130, "+3V3", "E220_AUX", dnp=True)
