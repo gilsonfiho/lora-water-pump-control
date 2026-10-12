@@ -1,7 +1,7 @@
 (kicad_sch
-	(version 20260306)
+	(version 20250114)
 	(generator "eeschema")
-	(generator_version "10.0")
+	(generator_version "9.0")
 	(uuid "7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f803102")
 	(paper "A3")
 	(title_block
@@ -11,161 +11,6 @@
 		(company "gilsonfiho")
 	)
 	(lib_symbols
-		(symbol "Device:C"
-			(pin_numbers
-				(hide yes)
-			)
-			(pin_names
-				(offset 0.254)
-			)
-			(exclude_from_sim no)
-			(in_bom yes)
-			(on_board yes)
-			(in_pos_files yes)
-			(duplicate_pin_numbers_are_jumpers no)
-			(property "Reference" "C"
-				(at 0.635 2.54 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(justify left)
-				)
-			)
-			(property "Value" "C"
-				(at 0.635 -2.54 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(justify left)
-				)
-			)
-			(property "Footprint" ""
-				(at 0.9652 -3.81 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(hide yes)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "Datasheet" ""
-				(at 0 0 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(hide yes)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "Description" "Unpolarized capacitor"
-				(at 0 0 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(hide yes)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "ki_keywords" "cap capacitor"
-				(at 0 0 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(hide yes)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "ki_fp_filters" "C_*"
-				(at 0 0 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(hide yes)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(symbol "C_0_1"
-				(polyline
-					(pts
-						(xy -2.032 0.762) (xy 2.032 0.762)
-					)
-					(stroke
-						(width 0.508)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-				(polyline
-					(pts
-						(xy -2.032 -0.762) (xy 2.032 -0.762)
-					)
-					(stroke
-						(width 0.508)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-			)
-			(symbol "C_1_1"
-				(pin passive line
-					(at 0 3.81 270)
-					(length 2.794)
-					(name ""
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "1"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-				(pin passive line
-					(at 0 -3.81 90)
-					(length 2.794)
-					(name ""
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "2"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-			)
-			(embedded_fonts no)
-		)
 		(symbol "lora-pump:E220-900TxxD"
 			(exclude_from_sim no)
 			(in_bom yes)
@@ -450,7 +295,8 @@
 			(symbol "+5V_0_1"
 				(polyline
 					(pts
-						(xy -0.762 1.27) (xy 0 2.54)
+						(xy -0.762 1.27)
+						(xy 0 2.54)
 					)
 					(stroke
 						(width 0)
@@ -462,7 +308,8 @@
 				)
 				(polyline
 					(pts
-						(xy 0 2.54) (xy 0.762 1.27)
+						(xy 0 2.54)
+						(xy 0.762 1.27)
 					)
 					(stroke
 						(width 0)
@@ -474,7 +321,8 @@
 				)
 				(polyline
 					(pts
-						(xy 0 0) (xy 0 2.54)
+						(xy 0 0)
+						(xy 0 2.54)
 					)
 					(stroke
 						(width 0)
@@ -589,7 +437,12 @@
 			(symbol "GND_0_1"
 				(polyline
 					(pts
-						(xy 0 0) (xy 0 -1.27) (xy 1.27 -1.27) (xy 0 -2.54) (xy -1.27 -1.27) (xy 0 -1.27)
+						(xy 0 0)
+						(xy 0 -1.27)
+						(xy 1.27 -1.27)
+						(xy 0 -2.54)
+						(xy -1.27 -1.27)
+						(xy 0 -1.27)
 					)
 					(stroke
 						(width 0)
@@ -622,1240 +475,198 @@
 			)
 			(embedded_fonts no)
 		)
-	)
-	(text "!! O E220 TRANSMITE LOGO NO BOOT: NUNCA ENERGIZAR SEM ANTENA NO SMA DO MODULO !!\nA antena e o SMA-K do proprio modulo (Manual T30D, Tabela 2-2, p.5): nao ha SMA na PCB.\nPinos (Tabela 3-1, p.6): 1 M0, 2 M1, 3 RXD, 4 TXD, 5 AUX, 6 VCC, 7 GND; 8-11 furos de fixacao.\nUART/M0/M1/AUX em 3,3 V. VCC em 5 V (>= 5,0 V para potencia plena): 620 mA de pico em TX.\nEntrada maxima do RX: +10 dBm (nos a >= 3 m na bancada).\nSem pull-ups em TXD/AUX: so sao necessarios para MCU de 5 V (Tabela 4-1, p.7); aqui o MCU e de 3,3 V."
-		(exclude_from_sim no)
-		(at 15 22 0)
-		(effects
-			(font
-				(size 1.27 1.27)
+		(symbol "Device:C"
+			(pin_numbers
+				(hide yes)
 			)
-			(justify left top)
-		)
-		(uuid "40108dfd-d090-4018-894d-2ec645a5a7a3")
-	)
-	(text "RADIO - EBYTE E220-900T30D (par do prototipo)"
-		(exclude_from_sim no)
-		(at 15 12 0)
-		(effects
-			(font
-				(size 2.5 2.5)
+			(pin_names
+				(offset 0.254)
 			)
-			(justify left top)
-		)
-		(uuid "926cebb3-c15b-43c7-8180-fe4b795a0021")
-	)
-	(wire
-		(pts
-			(xy 109.22 147.32) (xy 109.22 152.4)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "20a5f863-09bb-466a-92ac-8253fd1b539b")
-	)
-	(wire
-		(pts
-			(xy 96.52 127) (xy 91.44 127)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "2239bb23-fb2c-460f-b44e-fae47f17407d")
-	)
-	(wire
-		(pts
-			(xy 96.52 134.62) (xy 91.44 134.62)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "2ef99f7e-0818-4d8d-8946-3bef5b723679")
-	)
-	(wire
-		(pts
-			(xy 231.14 125.73) (xy 231.14 120.65)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "52cdb69a-8e5d-4aee-8c7b-e9a22b7c3c91")
-	)
-	(wire
-		(pts
-			(xy 231.14 133.35) (xy 231.14 138.43)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "60ddfc21-f9ef-477a-9b66-d9470e293925")
-	)
-	(wire
-		(pts
-			(xy 96.52 129.54) (xy 91.44 129.54)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "647faef9-7be8-4b43-a889-71ff6bb243da")
-	)
-	(wire
-		(pts
-			(xy 109.22 111.76) (xy 109.22 106.68)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "651841f0-dffc-488e-a463-20102cea9d0e")
-	)
-	(wire
-		(pts
-			(xy 190.5 125.73) (xy 190.5 120.65)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "8d035df9-5be1-4ec7-a3bd-22a074a697ca")
-	)
-	(wire
-		(pts
-			(xy 210.82 133.35) (xy 210.82 138.43)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "8ebc8460-24e1-49f7-a7f9-bb9101509ae8")
-	)
-	(wire
-		(pts
-			(xy 210.82 125.73) (xy 210.82 120.65)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "935b7da7-3725-4fc9-bb8a-2cdc7aae3272")
-	)
-	(wire
-		(pts
-			(xy 96.52 124.46) (xy 91.44 124.46)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "b3b7764b-4bbe-4e11-8ed0-815ed527c9a6")
-	)
-	(wire
-		(pts
-			(xy 190.5 133.35) (xy 190.5 138.43)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "e3792be5-b505-4760-ac69-4a7fe355cd8a")
-	)
-	(wire
-		(pts
-			(xy 96.52 132.08) (xy 91.44 132.08)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "eb80428a-2dc1-498a-b147-6065f38bcc66")
-	)
-	(global_label "E220_M1"
-		(shape bidirectional)
-		(at 91.44 127 180)
-		(fields_autoplaced yes)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right bottom)
-		)
-		(uuid "0bd8f531-f751-4528-a14b-3140543ff650")
-		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 91.44 127 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(in_pos_files yes)
+			(duplicate_pin_numbers_are_jumpers no)
+			(property "Reference" "C"
+				(at 0.635 2.54 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(justify left)
 				)
 			)
+			(property "Value" "C"
+				(at 0.635 -2.54 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(justify left)
+				)
+			)
+			(property "Footprint" ""
+				(at 0.9652 -3.81 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Datasheet" ""
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Description" "Unpolarized capacitor"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "ki_keywords" "cap capacitor"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "ki_fp_filters" "C_*"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(symbol "C_0_1"
+				(polyline
+					(pts
+						(xy -2.032 0.762)
+						(xy 2.032 0.762)
+					)
+					(stroke
+						(width 0.508)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy -2.032 -0.762)
+						(xy 2.032 -0.762)
+					)
+					(stroke
+						(width 0.508)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+			)
+			(symbol "C_1_1"
+				(pin passive line
+					(at 0 3.81 270)
+					(length 2.794)
+					(name ""
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at 0 -3.81 90)
+					(length 2.794)
+					(name ""
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
 		)
 	)
-	(global_label "E220_M0"
-		(shape bidirectional)
-		(at 91.44 124.46 180)
-		(fields_autoplaced yes)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right bottom)
-		)
-		(uuid "2b065264-3e15-42d6-9f2d-348cced8611b")
-		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 91.44 124.46 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-	)
-	(global_label "E220_RXD"
-		(shape bidirectional)
-		(at 91.44 129.54 180)
-		(fields_autoplaced yes)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right bottom)
-		)
-		(uuid "7d8dda64-80c0-49c9-afb2-492cf9445228")
-		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 91.44 129.54 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-	)
-	(global_label "E220_TXD"
-		(shape bidirectional)
-		(at 91.44 132.08 180)
-		(fields_autoplaced yes)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right bottom)
-		)
-		(uuid "94846076-2c93-4f23-b788-df7bc123c3ce")
-		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 91.44 132.08 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-	)
-	(global_label "E220_AUX"
-		(shape bidirectional)
-		(at 91.44 134.62 180)
-		(fields_autoplaced yes)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right bottom)
-		)
-		(uuid "9f4e01e6-73c7-4d71-b006-e83a8fadb983")
-		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 91.44 134.62 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "power:+5V")
-		(at 109.22 106.68 0)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom no)
-		(on_board no)
-		(in_pos_files yes)
-		(dnp no)
-		(uuid "1bee4b77-73b0-4e6c-adef-b971064447ed")
-		(property "Reference" "#PWR87"
-			(at 109.22 106.68 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Value" "+5V"
-			(at 109.22 103.68 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" ""
-			(at 109.22 106.68 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Datasheet" ""
-			(at 109.22 106.68 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" ""
-			(at 109.22 106.68 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "1"
-			(uuid "3031211e-e94c-49f8-b285-d39702e144e8")
-		)
-		(instances
-			(project "lora-pump"
-				(path "/7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f803001/7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f803102"
-					(reference "#PWR87")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Device:C")
-		(at 210.82 129.54 0)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(in_pos_files yes)
-		(dnp no)
-		(uuid "358dc67a-22f2-4472-b1c0-b02ca341b396")
-		(property "Reference" "C11"
-			(at 210.82 123.54 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Value" "47uF/10V"
-			(at 210.82 135.54 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "Capacitor_SMD:C_1210_3225Metric"
-			(at 210.82 129.54 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Datasheet" ""
-			(at 210.82 129.54 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" ""
-			(at 210.82 129.54 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "MPN" "CL32A476MPVNNNE"
-			(at 210.82 129.54 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "1"
-			(uuid "260549b4-4c9c-425e-9066-07888e9131a8")
-		)
-		(pin "2"
-			(uuid "d9c9f324-ec1f-44b3-bb80-354157adb4d9")
-		)
-		(instances
-			(project "lora-pump"
-				(path "/7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f803001/7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f803102"
-					(reference "C11")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "power:GND")
-		(at 210.82 138.43 0)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom no)
-		(on_board no)
-		(in_pos_files yes)
-		(dnp no)
-		(uuid "471cf187-bacd-4a6a-ac81-d010934bbb5a")
-		(property "Reference" "#PWR92"
-			(at 210.82 138.43 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Value" "GND"
-			(at 210.82 141.43 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" ""
-			(at 210.82 138.43 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Datasheet" ""
-			(at 210.82 138.43 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" ""
-			(at 210.82 138.43 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "1"
-			(uuid "a8225e31-c43b-453a-986f-3ddf5d7863f3")
-		)
-		(instances
-			(project "lora-pump"
-				(path "/7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f803001/7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f803102"
-					(reference "#PWR92")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "lora-pump:E220-900TxxD")
-		(at 109.22 129.54 0)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(in_pos_files yes)
-		(dnp no)
-		(uuid "6a3b0829-317e-4aaa-8d07-98169d0780ca")
-		(property "Reference" "U2"
-			(at 109.22 123.54 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Value" "E220-900T30D"
-			(at 109.22 135.54 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "lora-pump:E220-900T30D"
-			(at 109.22 129.54 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Datasheet" ""
-			(at 109.22 129.54 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" ""
-			(at 109.22 129.54 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "MPN" "E220-900T30D"
-			(at 109.22 129.54 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "1"
-			(uuid "d2e8d344-fdfd-4e1c-95f4-4a1459aadd1a")
-		)
-		(pin "2"
-			(uuid "07293f79-2b87-440d-86b6-e9587574a3c7")
-		)
-		(pin "3"
-			(uuid "bfba4cd4-d12d-42ce-99a7-8f015f087b9e")
-		)
-		(pin "4"
-			(uuid "d6bcc866-46ed-45e8-b9e6-8a778789d304")
-		)
-		(pin "5"
-			(uuid "99d077d3-ca3f-452b-af06-a019db822439")
-		)
-		(pin "6"
-			(uuid "fefafe98-a6c5-46c2-87ec-7fdb7991e062")
-		)
-		(pin "7"
-			(uuid "ca09d4d2-47e4-43fe-94d4-b76656da4631")
-		)
-		(instances
-			(project "lora-pump"
-				(path "/7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f803001/7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f803102"
-					(reference "U2")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Device:C")
-		(at 190.5 129.54 0)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(in_pos_files yes)
-		(dnp no)
-		(uuid "730f252a-b073-4912-9641-dd47c00582dc")
-		(property "Reference" "C4"
-			(at 190.5 123.54 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Value" "47uF/10V"
-			(at 190.5 135.54 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "Capacitor_SMD:C_1210_3225Metric"
-			(at 190.5 129.54 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Datasheet" ""
-			(at 190.5 129.54 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" ""
-			(at 190.5 129.54 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "MPN" "CL32A476MPVNNNE"
-			(at 190.5 129.54 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "1"
-			(uuid "558219d6-1c1e-479f-b975-3ea8802f3161")
-		)
-		(pin "2"
-			(uuid "f6c0d47c-7ff3-406b-9427-252cc2bbb3bd")
-		)
-		(instances
-			(project "lora-pump"
-				(path "/7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f803001/7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f803102"
-					(reference "C4")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "power:+5V")
-		(at 210.82 120.65 0)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom no)
-		(on_board no)
-		(in_pos_files yes)
-		(dnp no)
-		(uuid "7c16f9a1-80b4-4adb-a21d-fafbcb196755")
-		(property "Reference" "#PWR91"
-			(at 210.82 120.65 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Value" "+5V"
-			(at 210.82 117.65 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" ""
-			(at 210.82 120.65 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Datasheet" ""
-			(at 210.82 120.65 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" ""
-			(at 210.82 120.65 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "1"
-			(uuid "036ffbcd-217c-4d75-9a70-6a0e39420ae7")
-		)
-		(instances
-			(project "lora-pump"
-				(path "/7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f803001/7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f803102"
-					(reference "#PWR91")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "power:GND")
-		(at 109.22 152.4 0)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom no)
-		(on_board no)
-		(in_pos_files yes)
-		(dnp no)
-		(uuid "7ced1996-6aee-4ad5-8a43-86a6cdf0beec")
-		(property "Reference" "#PWR88"
-			(at 109.22 152.4 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Value" "GND"
-			(at 109.22 155.4 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" ""
-			(at 109.22 152.4 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Datasheet" ""
-			(at 109.22 152.4 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" ""
-			(at 109.22 152.4 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "1"
-			(uuid "507e5a98-f83b-43f1-8bae-6bb0e8b74fb8")
-		)
-		(instances
-			(project "lora-pump"
-				(path "/7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f803001/7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f803102"
-					(reference "#PWR88")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "power:+5V")
-		(at 231.14 120.65 0)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom no)
-		(on_board no)
-		(in_pos_files yes)
-		(dnp no)
-		(uuid "b2266a4a-f92b-48a9-848a-3521e17009bb")
-		(property "Reference" "#PWR93"
-			(at 231.14 120.65 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Value" "+5V"
-			(at 231.14 117.65 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" ""
-			(at 231.14 120.65 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Datasheet" ""
-			(at 231.14 120.65 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" ""
-			(at 231.14 120.65 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "1"
-			(uuid "9f6dea85-7719-4d0c-828a-3dc63c7e7cfd")
-		)
-		(instances
-			(project "lora-pump"
-				(path "/7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f803001/7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f803102"
-					(reference "#PWR93")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "power:GND")
-		(at 190.5 138.43 0)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom no)
-		(on_board no)
-		(in_pos_files yes)
-		(dnp no)
-		(uuid "c2664e27-7853-4a46-beb5-976a81623b20")
-		(property "Reference" "#PWR90"
-			(at 190.5 138.43 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Value" "GND"
-			(at 190.5 141.43 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" ""
-			(at 190.5 138.43 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Datasheet" ""
-			(at 190.5 138.43 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" ""
-			(at 190.5 138.43 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "1"
-			(uuid "876360b6-45bf-4168-96e9-19493427b069")
-		)
-		(instances
-			(project "lora-pump"
-				(path "/7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f803001/7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f803102"
-					(reference "#PWR90")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "power:+5V")
-		(at 190.5 120.65 0)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom no)
-		(on_board no)
-		(in_pos_files yes)
-		(dnp no)
-		(uuid "e4bd8600-7733-4138-85d9-f894bb2bf0e8")
-		(property "Reference" "#PWR89"
-			(at 190.5 120.65 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Value" "+5V"
-			(at 190.5 117.65 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" ""
-			(at 190.5 120.65 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Datasheet" ""
-			(at 190.5 120.65 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" ""
-			(at 190.5 120.65 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "1"
-			(uuid "be37722c-b178-4acc-8b26-456a70ab09c2")
-		)
-		(instances
-			(project "lora-pump"
-				(path "/7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f803001/7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f803102"
-					(reference "#PWR89")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Device:C")
-		(at 231.14 129.54 0)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(in_pos_files yes)
-		(dnp no)
-		(uuid "ee9fc036-7b7f-4c28-ad05-af57278d9cb6")
-		(property "Reference" "C5"
-			(at 231.14 123.54 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Value" "100nF"
-			(at 231.14 135.54 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
-			(at 231.14 129.54 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Datasheet" ""
-			(at 231.14 129.54 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" ""
-			(at 231.14 129.54 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "MPN" "CL10B104KB8NNNC"
-			(at 231.14 129.54 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "1"
-			(uuid "2a0d6791-8de2-4f63-bf16-f6b5b837e91d")
-		)
-		(pin "2"
-			(uuid "6d18f267-9589-447e-b8c6-1305707f79ce")
-		)
-		(instances
-			(project "lora-pump"
-				(path "/7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f803001/7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f803102"
-					(reference "C5")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "power:GND")
-		(at 231.14 138.43 0)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom no)
-		(on_board no)
-		(in_pos_files yes)
-		(dnp no)
-		(uuid "f30cbd08-e23e-477f-b6ee-0350ce58ff72")
-		(property "Reference" "#PWR94"
-			(at 231.14 138.43 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Value" "GND"
-			(at 231.14 141.43 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" ""
-			(at 231.14 138.43 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Datasheet" ""
-			(at 231.14 138.43 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" ""
-			(at 231.14 138.43 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "1"
-			(uuid "cb5bcca7-c49c-4c1f-b9a0-b7638b66c461")
-		)
-		(instances
-			(project "lora-pump"
-				(path "/7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f803001/7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f803102"
-					(reference "#PWR94")
-					(unit 1)
-				)
-			)
-		)
-	)
+	(text "RADIO - EBYTE E220-900T30D (par do prototipo)" (exclude_from_sim no) (at 15 12 0) (effects (font (size 2.5 2.5)) (justify left top)) (uuid "006faa78-fbf7-4e22-94c6-5018a07acaab"))
+	(text "!! O E220 TRANSMITE LOGO NO BOOT: NUNCA ENERGIZAR SEM ANTENA NO SMA DO MODULO !!\nA antena e o SMA-K do proprio modulo (Manual T30D, Tabela 2-2, p.5): nao ha SMA na PCB.\nPinos (Tabela 3-1, p.6): 1 M0, 2 M1, 3 RXD, 4 TXD, 5 AUX, 6 VCC, 7 GND; 8-11 furos de fixacao.\nUART/M0/M1/AUX em 3,3 V. VCC em 5 V (>= 5,0 V para potencia plena): 620 mA de pico em TX.\nEntrada maxima do RX: +10 dBm (nos a >= 3 m na bancada).\nSem pull-ups em TXD/AUX: so sao necessarios para MCU de 5 V (Tabela 4-1, p.7); aqui o MCU e de 3,3 V." (exclude_from_sim no) (at 15 22 0) (effects (font (size 1.27 1.27)) (justify left top)) (uuid "688b4847-07ee-4c54-8121-8854890e4f81"))
+	(symbol (lib_id "lora-pump:E220-900TxxD") (at 109.22 129.54 0) (unit 1) (exclude_from_sim no) (in_bom yes) (on_board yes) (dnp no) (uuid "e83eebf6-a929-4763-8171-57e8dfee67a6") (property "Reference" "U2" (at 109.22 123.54 0) (effects (font (size 1.27 1.27)))) (property "Value" "E220-900T30D" (at 109.22 135.54 0) (effects (font (size 1.27 1.27)))) (property "Footprint" "lora-pump:E220-900T30D" (at 109.22 129.54 0) (effects (font (size 1.27 1.27)) hide)) (property "Datasheet" "" (at 109.22 129.54 0) (effects (font (size 1.27 1.27)) hide)) (property "MPN" "E220-900T30D" (at 109.22 129.54 0) (effects (font (size 1.27 1.27)) hide)) (pin "1" (uuid "0e7a346b-26d4-47f6-af54-6ae1e5de5ffa")) (pin "2" (uuid "0b142dd2-327b-4ed3-b0d9-646c2c0015dc")) (pin "3" (uuid "bffba22a-9c3c-4138-9fe2-52befa7809a0")) (pin "4" (uuid "74c87174-9fdd-4e64-bb99-df067adb8101")) (pin "5" (uuid "8c0ab267-7053-4fe2-a281-0faf1bc3f419")) (pin "6" (uuid "7ad985ab-c3ea-4db5-86ac-2287c468d244")) (pin "7" (uuid "cd6291b6-44b4-419d-a314-3241c85bee6e")) (instances (project "lora-pump" (path "/7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f803001/7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f803102" (reference "U2") (unit 1)))))
+	(wire (pts (xy 96.52 124.46) (xy 91.44 124.46)) (stroke (width 0) (type default)) (uuid "ce1990d3-aefd-445e-9519-d798ce49a05b"))
+	(global_label "E220_M0" (shape bidirectional) (at 91.44 124.46 180) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right bottom)) (uuid "130e09ca-d24b-4aee-a559-bc5033d9d982") (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 91.44 124.46 0) (effects (font (size 1.27 1.27)) hide)))
+	(wire (pts (xy 96.52 127.00) (xy 91.44 127.00)) (stroke (width 0) (type default)) (uuid "d665861c-b36b-40b3-ba37-e72bba75bba5"))
+	(global_label "E220_M1" (shape bidirectional) (at 91.44 127.00 180) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right bottom)) (uuid "96a4ef53-1db1-452c-b71b-98f37fc67a3d") (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 91.44 127.00 0) (effects (font (size 1.27 1.27)) hide)))
+	(wire (pts (xy 96.52 129.54) (xy 91.44 129.54)) (stroke (width 0) (type default)) (uuid "ff343239-5462-4f7a-849a-1e9479e97866"))
+	(global_label "E220_RXD" (shape bidirectional) (at 91.44 129.54 180) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right bottom)) (uuid "4820f4e1-bbf6-42bc-8774-553c490e043c") (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 91.44 129.54 0) (effects (font (size 1.27 1.27)) hide)))
+	(wire (pts (xy 96.52 132.08) (xy 91.44 132.08)) (stroke (width 0) (type default)) (uuid "d6d103f9-1ba4-4df4-a588-8bca222e4e02"))
+	(global_label "E220_TXD" (shape bidirectional) (at 91.44 132.08 180) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right bottom)) (uuid "69b0876a-dc19-4f93-a078-69dee4e86124") (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 91.44 132.08 0) (effects (font (size 1.27 1.27)) hide)))
+	(wire (pts (xy 96.52 134.62) (xy 91.44 134.62)) (stroke (width 0) (type default)) (uuid "97f02fee-7696-4331-9e6d-5f50681ee012"))
+	(global_label "E220_AUX" (shape bidirectional) (at 91.44 134.62 180) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right bottom)) (uuid "3d9f9ad9-c1b3-4cfd-9680-983cf89e123c") (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 91.44 134.62 0) (effects (font (size 1.27 1.27)) hide)))
+	(wire (pts (xy 109.22 111.76) (xy 109.22 106.68)) (stroke (width 0) (type default)) (uuid "30c5c0d7-a2ad-4791-9e30-be87f19ac410"))
+	(symbol (lib_id "power:+5V") (at 109.22 106.68 0) (unit 1) (exclude_from_sim no) (in_bom no) (on_board no) (dnp no) (uuid "272060d2-17ce-4d36-8f18-2a1d8bde0ed6") (property "Reference" "#PWR87" (at 109.22 106.68 0) (effects (font (size 1.27 1.27)) hide)) (property "Value" "+5V" (at 109.22 103.68 0) (effects (font (size 1.27 1.27)))) (pin "1" (uuid "9ff9184d-d2b8-4de5-8091-08bc9edf42ae")) (instances (project "lora-pump" (path "/7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f803001/7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f803102" (reference "#PWR87") (unit 1)))))
+	(wire (pts (xy 109.22 147.32) (xy 109.22 152.40)) (stroke (width 0) (type default)) (uuid "329f42d2-28f5-4259-9c2b-f94c172e53e9"))
+	(symbol (lib_id "power:GND") (at 109.22 152.40 0) (unit 1) (exclude_from_sim no) (in_bom no) (on_board no) (dnp no) (uuid "372e5b0d-b4d8-4238-bfd0-8d1c77c1d9c1") (property "Reference" "#PWR88" (at 109.22 152.40 0) (effects (font (size 1.27 1.27)) hide)) (property "Value" "GND" (at 109.22 155.40 0) (effects (font (size 1.27 1.27)))) (pin "1" (uuid "9cf062cd-8215-41a1-8f25-62cec77e3b49")) (instances (project "lora-pump" (path "/7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f803001/7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f803102" (reference "#PWR88") (unit 1)))))
+	(symbol (lib_id "Device:C") (at 190.50 129.54 0) (unit 1) (exclude_from_sim no) (in_bom yes) (on_board yes) (dnp no) (uuid "d3625563-66c2-4a93-ad12-644d0b839ecf") (property "Reference" "C4" (at 190.50 123.54 0) (effects (font (size 1.27 1.27)))) (property "Value" "47uF/10V" (at 190.50 135.54 0) (effects (font (size 1.27 1.27)))) (property "Footprint" "Capacitor_SMD:C_1210_3225Metric" (at 190.50 129.54 0) (effects (font (size 1.27 1.27)) hide)) (property "Datasheet" "" (at 190.50 129.54 0) (effects (font (size 1.27 1.27)) hide)) (property "MPN" "CL32A476MPVNNNE" (at 190.50 129.54 0) (effects (font (size 1.27 1.27)) hide)) (pin "1" (uuid "b3ddb79e-d4ed-47c8-92b0-48348a9214e8")) (pin "2" (uuid "ee45433d-c180-42fe-b3a0-d3872a76a245")) (instances (project "lora-pump" (path "/7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f803001/7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f803102" (reference "C4") (unit 1)))))
+	(wire (pts (xy 190.50 125.73) (xy 190.50 120.65)) (stroke (width 0) (type default)) (uuid "8c38c6fc-0c75-4df5-82e1-efd7a9eed028"))
+	(symbol (lib_id "power:+5V") (at 190.50 120.65 0) (unit 1) (exclude_from_sim no) (in_bom no) (on_board no) (dnp no) (uuid "5b87681a-8ecf-4709-9d92-d5581a7fd626") (property "Reference" "#PWR89" (at 190.50 120.65 0) (effects (font (size 1.27 1.27)) hide)) (property "Value" "+5V" (at 190.50 117.65 0) (effects (font (size 1.27 1.27)))) (pin "1" (uuid "9f106009-a82b-4f0d-917f-29207037b6e0")) (instances (project "lora-pump" (path "/7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f803001/7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f803102" (reference "#PWR89") (unit 1)))))
+	(wire (pts (xy 190.50 133.35) (xy 190.50 138.43)) (stroke (width 0) (type default)) (uuid "ca758488-1ac5-4a61-91a0-152d3767d656"))
+	(symbol (lib_id "power:GND") (at 190.50 138.43 0) (unit 1) (exclude_from_sim no) (in_bom no) (on_board no) (dnp no) (uuid "526f3004-b70d-435d-a88a-fdd3d97644b1") (property "Reference" "#PWR90" (at 190.50 138.43 0) (effects (font (size 1.27 1.27)) hide)) (property "Value" "GND" (at 190.50 141.43 0) (effects (font (size 1.27 1.27)))) (pin "1" (uuid "e20167c5-aa23-49da-8bf1-cedc99a38e55")) (instances (project "lora-pump" (path "/7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f803001/7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f803102" (reference "#PWR90") (unit 1)))))
+	(symbol (lib_id "Device:C") (at 210.82 129.54 0) (unit 1) (exclude_from_sim no) (in_bom yes) (on_board yes) (dnp no) (uuid "5ba0041e-49e3-4879-8491-1a0b48790678") (property "Reference" "C11" (at 210.82 123.54 0) (effects (font (size 1.27 1.27)))) (property "Value" "47uF/10V" (at 210.82 135.54 0) (effects (font (size 1.27 1.27)))) (property "Footprint" "Capacitor_SMD:C_1210_3225Metric" (at 210.82 129.54 0) (effects (font (size 1.27 1.27)) hide)) (property "Datasheet" "" (at 210.82 129.54 0) (effects (font (size 1.27 1.27)) hide)) (property "MPN" "CL32A476MPVNNNE" (at 210.82 129.54 0) (effects (font (size 1.27 1.27)) hide)) (pin "1" (uuid "4d0e100f-c947-458b-bb0a-30bbf2df3b07")) (pin "2" (uuid "af2b8433-37e7-4b10-ad0d-40a596701947")) (instances (project "lora-pump" (path "/7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f803001/7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f803102" (reference "C11") (unit 1)))))
+	(wire (pts (xy 210.82 125.73) (xy 210.82 120.65)) (stroke (width 0) (type default)) (uuid "f1a05f73-3d50-4f5e-915f-fb5d7ef633a6"))
+	(symbol (lib_id "power:+5V") (at 210.82 120.65 0) (unit 1) (exclude_from_sim no) (in_bom no) (on_board no) (dnp no) (uuid "ff9d913f-0da4-4303-b988-febd481e5b0b") (property "Reference" "#PWR91" (at 210.82 120.65 0) (effects (font (size 1.27 1.27)) hide)) (property "Value" "+5V" (at 210.82 117.65 0) (effects (font (size 1.27 1.27)))) (pin "1" (uuid "2c462b9d-d70f-45c2-b3b7-794d591ec5ec")) (instances (project "lora-pump" (path "/7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f803001/7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f803102" (reference "#PWR91") (unit 1)))))
+	(wire (pts (xy 210.82 133.35) (xy 210.82 138.43)) (stroke (width 0) (type default)) (uuid "64bd3428-7301-4f43-9f46-633a27a5f68c"))
+	(symbol (lib_id "power:GND") (at 210.82 138.43 0) (unit 1) (exclude_from_sim no) (in_bom no) (on_board no) (dnp no) (uuid "20a10cea-6896-4641-a531-457ef3687f8c") (property "Reference" "#PWR92" (at 210.82 138.43 0) (effects (font (size 1.27 1.27)) hide)) (property "Value" "GND" (at 210.82 141.43 0) (effects (font (size 1.27 1.27)))) (pin "1" (uuid "ab8cb0c8-d15a-482e-adfc-77ff8627a346")) (instances (project "lora-pump" (path "/7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f803001/7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f803102" (reference "#PWR92") (unit 1)))))
+	(symbol (lib_id "Device:C") (at 231.14 129.54 0) (unit 1) (exclude_from_sim no) (in_bom yes) (on_board yes) (dnp no) (uuid "4b1b14f7-0725-474a-8dc7-a1f44cdafd9a") (property "Reference" "C5" (at 231.14 123.54 0) (effects (font (size 1.27 1.27)))) (property "Value" "100nF" (at 231.14 135.54 0) (effects (font (size 1.27 1.27)))) (property "Footprint" "Capacitor_SMD:C_0603_1608Metric" (at 231.14 129.54 0) (effects (font (size 1.27 1.27)) hide)) (property "Datasheet" "" (at 231.14 129.54 0) (effects (font (size 1.27 1.27)) hide)) (property "MPN" "CL10B104KB8NNNC" (at 231.14 129.54 0) (effects (font (size 1.27 1.27)) hide)) (pin "1" (uuid "87ef8d6b-03b0-494d-a36b-f33bb832140c")) (pin "2" (uuid "b33544c4-cfb4-4f53-ac5d-3bdfe04d625c")) (instances (project "lora-pump" (path "/7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f803001/7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f803102" (reference "C5") (unit 1)))))
+	(wire (pts (xy 231.14 125.73) (xy 231.14 120.65)) (stroke (width 0) (type default)) (uuid "eed5089c-753b-415f-83a7-5037c1822076"))
+	(symbol (lib_id "power:+5V") (at 231.14 120.65 0) (unit 1) (exclude_from_sim no) (in_bom no) (on_board no) (dnp no) (uuid "242514a1-4487-4964-a6be-5e2507805c89") (property "Reference" "#PWR93" (at 231.14 120.65 0) (effects (font (size 1.27 1.27)) hide)) (property "Value" "+5V" (at 231.14 117.65 0) (effects (font (size 1.27 1.27)))) (pin "1" (uuid "171eeddf-6311-44df-ab0c-d73c451dd0fd")) (instances (project "lora-pump" (path "/7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f803001/7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f803102" (reference "#PWR93") (unit 1)))))
+	(wire (pts (xy 231.14 133.35) (xy 231.14 138.43)) (stroke (width 0) (type default)) (uuid "03fd37eb-90ca-4a85-8235-90dab8976a96"))
+	(symbol (lib_id "power:GND") (at 231.14 138.43 0) (unit 1) (exclude_from_sim no) (in_bom no) (on_board no) (dnp no) (uuid "9c040d90-abb4-4b24-bac7-0538a6421c06") (property "Reference" "#PWR94" (at 231.14 138.43 0) (effects (font (size 1.27 1.27)) hide)) (property "Value" "GND" (at 231.14 141.43 0) (effects (font (size 1.27 1.27)))) (pin "1" (uuid "e9025103-7439-4737-8ea7-61d36e76de73")) (instances (project "lora-pump" (path "/7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f803001/7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f803102" (reference "#PWR94") (unit 1)))))
 	(sheet_instances
-		(path "/"
-			(page "1")
-		)
+		(path "/" (page "1"))
 	)
+	(embedded_fonts no)
 )

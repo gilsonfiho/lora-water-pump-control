@@ -264,3 +264,44 @@ Escolhas e consequências:
   10.0.6). Motivo: decisão do autor. Consequência: os arquivos gerados usam o
   formato da série 10 e não abrem em 8 ou 9; o `kicad-cli` usado em ERC, DRC e
   fabricação é o da mesma versão.
+
+## 2026-10-12: soquete do E220, USB-C afastado, chave liga/desliga, cantos aproveitados
+
+- **E220 plugado em soquete fêmea 1x07 (2,54 mm), não soldado direto.** O footprint `E220-900T30D`
+  mantém os 7 furos (agora de 1,0 mm, como no soquete do KiCad) e traz dois modelos 3D: o soquete
+  `PinSocket_1x07_P2.54mm_Vertical` (biblioteca oficial do KiCad) e o módulo da EBYTE, elevado em
+  8,5 mm. Vantagens: troca de módulo (T22D x T30D) sem dessoldar. A folga sob o módulo sobe de
+  ~2,8 mm para ~8,5 mm, então as peças sob ele deixam de ser limitadas a ~2,5 mm.
+  `TODO(hw)`: o soquete entra na BOM como item à parte (fêmea 1x07, passo 2,54 mm); conferir a
+  altura real do soquete comprado (8,5 mm é a do modelo do KiCad) e o comprimento dos pinos do módulo.
+- **USB-C afastado 2,5 mm** (x = 27,5): estava 1 mm sobre o corpo do ESP32-C3-MINI-1. ESD (U4),
+  R9 e R10 acompanharam.
+- **Chave liga/desliga SW3** (SPDT deslizante, THT, botão voltado para a borda de baixo) em série
+  com o jack, antes do fusível: rede nova `12V_JACK` (jack -> SW3) e `12V_IN` (SW3 -> F1).
+  Footprint `SW_Slide_SPDT_Angled_CK_OS102011MA1Q`. `TODO(hw)`: a chave precisa suportar a
+  corrente da placa (E220 ~0,3 A a 12 V + buck, e no receptor a bobina). Muitas chaves
+  deslizantes miniatura são de poucas centenas de mA: escolher pela folha de dados uma chave de
+  >= 2 A / 16 V; se não houver, usar chave externa ligada em dois pinos.
+- **Cantos vazios aproveitados:** os 9 passivos do C3 foram para o canto esquerdo, logo abaixo
+  dos pinos; o header I2C subiu para o espaço ao lado; botões e jumper foram para o canto direito
+  de baixo, e a chave SW3 ficou ao lado do jack.
+- **Identificação também atrás (revisa o item anterior):** nome, versão e data voltaram à face
+  de baixo, numa única linha embaixo (`silk.labels_back`), além da linha da frente.
+- **Módulo LoRa 2,5 mm mais à direita** (pino 1 em x = 37,0): a placa do E220 passa a sobrar da
+  borda direita, como o SMA, para liberar espaço ao USB-C (x = 28,7), que estava sobre o C3.
+
+### Revisão do mesmo dia (layout final desta rodada)
+
+- **Zona proibida da antena reduzida** de ±21,6 mm (43 mm de altura, herdada do C6) para ±9,6 mm
+  (19 mm): o footprint oficial da Espressif para o C3 (`libs/vendor/espressif`) define só o retângulo
+  da antena do módulo (13,2 x 5,4 mm, x = ±6,6); somamos 3 mm de folga lateral. `TODO(hw)`: conferir
+  a folga nas diretrizes de hardware da Espressif (não estão em `docs/datasheets`).
+  Isso devolveu o jack à borda esquerda e permitiu o furo M3 no canto superior esquerdo (3,5; 3,5).
+- **Posições finais:** C3 na esquerda em y = 17 (altura intermediária); jack 12 V na esquerda com
+  a chave SW3 ao lado; E220 com pino 1 em x = 37; USB-C em x = 28,7; header I2C no alto, entre o
+  furo e o USB-C; botões e jumper no canto inferior direito.
+- **Resultado:** ERC emissor 0 / receptor 1 aviso (símbolo AO3400A, como antes). DRC das duas placas:
+  só 3 avisos de serigrafia na borda; sem nets abertas, curtos nem sobreposição de courtyard. O
+  roteador é aleatório por semente: emissor fechou com `ROUTE_SEED=32`, receptor com `24`.
+  Para reproduzir o mesmo cobre, rodar `build_pcb.py` com essa variável.
+- **Identificação (nome, versão, data) em duas faces:** frente e trás, esta numa linha embaixo.
