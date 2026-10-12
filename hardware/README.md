@@ -1,6 +1,6 @@
 # Hardware (PCB)
 
-Projeto KiCad (8 ou superior) da placa dos dois nós. Uma única PCB, com
+Projeto KiCad **10** (10.0.x; formatos de arquivo da série 10, que as versões anteriores não abrem) da placa dos dois nós. Uma única PCB, com
 componentes marcados DNP conforme o papel (reservatório ou bomba).
 
 > **Status:** estrutura criada. Nenhum esquemático ainda: o escopo depende das

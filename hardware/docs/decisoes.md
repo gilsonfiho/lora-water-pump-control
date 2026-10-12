@@ -21,4 +21,11 @@ Formato: data, decisão, motivo. Mais recentes no topo.
 - Boias: 1 ou 2.
 - Mapa de pinos final (faltam 14 sinais para 8 GPIOs livres; ver conversa de
   2026-10-11) e se o console migra para o USB Serial/JTAG.
-- Ferramentas: KiCad e leitor de PDF ainda não instalados.
+- Ferramentas: KiCad 10 e leitor de PDF ainda não instalados (aguardando OK).
+
+## 2026-10-11: KiCad 10
+
+- Projeto em **KiCad 10** (instalação via `winget install KiCad.KiCad`, hoje
+  10.0.6). Motivo: decisão do autor. Consequência: os arquivos gerados usam o
+  formato da série 10 e não abrem em 8 ou 9; o `kicad-cli` usado em ERC, DRC e
+  fabricação é o da mesma versão.
