@@ -3,12 +3,12 @@
 	(generator "pcbnew")
 	(generator_version "10.0")
 	(layer "F.Cu")
-	(descr "Modulo LoRa EBYTE E220-900T30D, 24 x 43 mm, 7 pinos a 2,54 mm + 4 furos de fixacao. Cotas do Manual v1.0 Fig. 3-1 (p.6): CONFERIR COM PAQUIMETRO")
+	(descr "Modulo LoRa EBYTE E220-900T30D, placa 24 x 43 mm, 7 pinos a 2,54 mm. Modelo 3D oficial da EBYTE em libs/vendor.")
 	(tags "LoRa E220 EBYTE T30D")
 	(property "Reference" "REF**"
 		(at 7.62 -3.5 0)
 		(layer "F.SilkS")
-		(uuid "ab3afef5-2207-4cd4-ace7-e5bb47014fab")
+		(uuid "3416484a-5af9-4835-8c95-a5f659a39872")
 		(effects
 			(font
 				(size 1 1)
@@ -19,7 +19,7 @@
 	(property "Value" "E220-900T30D"
 		(at 7.62 20 0)
 		(layer "F.Fab")
-		(uuid "8799e1a0-6941-4706-ba98-041652fdb9d9")
+		(uuid "10ae334d-4534-4806-ad63-2714cb647016")
 		(effects
 			(font
 				(size 1 1)
@@ -31,7 +31,7 @@
 		(at 0 0 0)
 		(layer "F.Fab")
 		(hide yes)
-		(uuid "47813ea3-3d0e-4df9-a645-3018f69b8d6e")
+		(uuid "b01724ac-6c6b-4c36-99a5-c095ec06ce37")
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -42,7 +42,7 @@
 		(at 0 0 0)
 		(layer "F.Fab")
 		(hide yes)
-		(uuid "5f5db4d4-03bc-474d-bf01-b61a43141264")
+		(uuid "1e8b99ca-db28-41d7-b5c8-f0076cbf5081")
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -60,7 +60,7 @@
 		)
 		(fill no)
 		(layer "F.SilkS")
-		(uuid "540722f8-ca22-41d3-ab3c-5d97f8ae92bb")
+		(uuid "6218965b-3492-4c5c-8adc-65df5772fba9")
 	)
 	(fp_rect
 		(start -4.7 -1.8)
@@ -71,29 +71,18 @@
 		)
 		(fill no)
 		(layer "F.CrtYd")
-		(uuid "6ad897d9-a755-4541-9904-6542dd260a4a")
+		(uuid "a2b51eed-c2d1-4dd6-8d11-5f4784a5adc6")
 	)
 	(fp_rect
-		(start -1.2 37.3)
-		(end 8.5 39.7)
+		(start -2.9 30)
+		(end 4.1 41.8)
 		(stroke
 			(width 0.05)
 			(type default)
 		)
 		(fill no)
 		(layer "F.CrtYd")
-		(uuid "15241acb-dd31-4201-b6e0-41ab19e5ec5a")
-	)
-	(fp_rect
-		(start 10 30.3)
-		(end 16.8 41.8)
-		(stroke
-			(width 0.05)
-			(type default)
-		)
-		(fill no)
-		(layer "F.CrtYd")
-		(uuid "dd703574-5b4e-4e97-bd9d-a337db47aa73")
+		(uuid "7b49b072-83da-46a3-9b20-f61e92f6ae53")
 	)
 	(fp_rect
 		(start -4.38 -1.5)
@@ -104,18 +93,7 @@
 		)
 		(fill no)
 		(layer "F.Fab")
-		(uuid "4e239d88-0969-490b-b104-091f35d1a066")
-	)
-	(fp_text user "ANTENA"
-		(at 13.4 36 0)
-		(layer "F.SilkS")
-		(uuid "247c6318-d85b-45f3-8039-ffe42f51f506")
-		(effects
-			(font
-				(size 1 1)
-				(thickness 0.15)
-			)
-		)
+		(uuid "dc1ea099-ec7e-435b-a326-57ae9598f3e5")
 	)
 	(pad "1" thru_hole rect
 		(at 0 0)
@@ -123,7 +101,7 @@
 		(drill 0.9)
 		(layers "*.Cu" "*.Mask")
 		(remove_unused_layers no)
-		(uuid "db15c1ff-c49d-4da6-b7ce-6a6519e7b284")
+		(uuid "7501913d-0534-4b10-b324-537a36072e68")
 	)
 	(pad "2" thru_hole circle
 		(at 2.54 0)
@@ -131,7 +109,7 @@
 		(drill 0.9)
 		(layers "*.Cu" "*.Mask")
 		(remove_unused_layers no)
-		(uuid "fdcd90dc-2398-4ee2-b561-35779b89e395")
+		(uuid "15c05169-3efc-4f47-9ad8-0e5c7ef3b604")
 	)
 	(pad "3" thru_hole circle
 		(at 5.08 0)
@@ -139,7 +117,7 @@
 		(drill 0.9)
 		(layers "*.Cu" "*.Mask")
 		(remove_unused_layers no)
-		(uuid "4274d0da-4dce-4f2f-822c-d8fdc501bf23")
+		(uuid "67934714-cff8-49c7-afb0-9161ca574019")
 	)
 	(pad "4" thru_hole circle
 		(at 7.62 0)
@@ -147,7 +125,7 @@
 		(drill 0.9)
 		(layers "*.Cu" "*.Mask")
 		(remove_unused_layers no)
-		(uuid "a001c2af-a412-41e0-973f-00033f1cb1ce")
+		(uuid "82a1675d-4593-4cd3-aa7e-71a25de1ecc4")
 	)
 	(pad "5" thru_hole circle
 		(at 10.16 0)
@@ -155,7 +133,7 @@
 		(drill 0.9)
 		(layers "*.Cu" "*.Mask")
 		(remove_unused_layers no)
-		(uuid "b0669ad9-a413-44ca-9837-7ae822fd5d1e")
+		(uuid "c74299b6-77e5-477e-892a-efe04759e007")
 	)
 	(pad "6" thru_hole circle
 		(at 12.7 0)
@@ -163,7 +141,7 @@
 		(drill 0.9)
 		(layers "*.Cu" "*.Mask")
 		(remove_unused_layers no)
-		(uuid "81b7f639-3396-448a-8eb3-99851cb4667a")
+		(uuid "4cb4c223-62d8-40cf-be23-4adc6253194d")
 	)
 	(pad "7" thru_hole circle
 		(at 15.24 0)
@@ -171,50 +149,18 @@
 		(drill 0.9)
 		(layers "*.Cu" "*.Mask")
 		(remove_unused_layers no)
-		(uuid "b76a3ac4-4d12-4334-a589-37cecfd13057")
-	)
-	(pad "8" thru_hole circle
-		(at -0.18 38.5)
-		(size 1.7 1.7)
-		(drill 0.9)
-		(layers "*.Cu" "*.Mask")
-		(remove_unused_layers no)
-		(uuid "5e4646c7-e68a-4e23-aedd-e74cf6a2ef25")
-	)
-	(pad "9" thru_hole circle
-		(at 2.36 38.5)
-		(size 1.7 1.7)
-		(drill 0.9)
-		(layers "*.Cu" "*.Mask")
-		(remove_unused_layers no)
-		(uuid "158570bf-7aa3-4201-ab0f-a3c2634a3fb0")
-	)
-	(pad "10" thru_hole circle
-		(at 4.9 38.5)
-		(size 1.7 1.7)
-		(drill 0.9)
-		(layers "*.Cu" "*.Mask")
-		(remove_unused_layers no)
-		(uuid "992de3e9-3514-4aaf-b2f1-96013b33c8b9")
-	)
-	(pad "11" thru_hole circle
-		(at 7.44 38.5)
-		(size 1.7 1.7)
-		(drill 0.9)
-		(layers "*.Cu" "*.Mask")
-		(remove_unused_layers no)
-		(uuid "a3236d64-1679-41e9-8ddf-22cd720cf544")
+		(uuid "446137eb-8f5e-4af2-b8d4-e5f9e5ce0721")
 	)
 	(embedded_fonts no)
-	(model "${KIPRJMOD}/../libs/3d/E220-900T30D.step"
+	(model "${KIPRJMOD}/../libs/vendor/ebyte_3d/E220-XXXT30D_3D.step"
 		(offset
-			(xyz 0 0 0)
+			(xyz -4.4 1.4 3.1)
 		)
 		(scale
 			(xyz 1 1 1)
 		)
 		(rotate
-			(xyz 0 0 0)
+			(xyz 0 0 90)
 		)
 	)
 )

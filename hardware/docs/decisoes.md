@@ -10,6 +10,22 @@ Formato: data, decisão, motivo. Mais recentes no topo.
   versionadas; backups, autosave e `*.kicad_prl` ficam no `.gitignore`.
 - Tags de hardware `hw-vX.Y`.
 
+## 2026-10-12: modelo 3D oficial do E220 e correcao do footprint
+
+- **3D do E220 = STEP oficial da EBYTE** (`libs/vendor/ebyte_3d/`, fora do Git; origem em
+  `libs/vendor/SOURCES.md`). Substitui o bloco aproximado. Transformacao no footprint:
+  rotacao 90 graus, deslocamento (-4,4; 1,4; 3,1) mm, conferida por render sobre os pads.
+- **O que o modelo oficial mostrou:**
+  - O contorno de 24 x 43 mm e a PLACA do modulo; o **SMA sai ~10 mm alem da borda** da placa
+    do modulo (o bloco aproximado o punha dentro).
+  - **Os 4 "furos de fixacao" do manual (pinos 8-11) sao so furos na placa do modulo, sem pino**:
+    foram removidos do footprint e das placas. O SMA fica do lado do pino 1.
+  - **Folga sob o modulo ~2,8 mm**, nao os 4,2 mm que eu supunha (pinos de 4,7 mm rentes ao fundo
+    da PCB de 1,6 mm). Pecas sob o E220 devem ter ate ~2,5 mm: os 1210 (C4, C11) e os diodos SMA/SMB
+    estao no limite. `TODO(hw)`: conferir com o modulo na mao.
+- Repositorio oficial do KiCad (`kicad-packages3D`): **nao tem** os modelos do USB-C HRO
+  TYPE-C-31-M-12, do jack CUI PJ-102AH nem do ESP32-C3-MINI-1 (conferido pela API do GitLab).
+
 ## 2026-10-12: alimentacao por jack de 12 V, roteamento e layout v3
 
 Por pedido do autor: **a alimentacao e por jack de 12 V**, nao por borne de 5 V.
