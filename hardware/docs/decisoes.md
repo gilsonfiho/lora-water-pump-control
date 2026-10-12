@@ -51,10 +51,11 @@ Por pedido do autor: **a alimentacao e por jack de 12 V**, nao por borne de 5 V.
 
 - Texto de 0,8 mm e traco de 0,12 mm, MAIUSCULAS, horizontal. Nada sobre pad, corpo de
   componente, furo, modulo ou area da antena.
-- **Frente:** siglas (REF) so das pecas principais (CI, conectores, chaves, jumper, LEDs,
-  transistor, indutor); resistores, capacitores e diodos ficam com a sigla na camada Fab.
-  Rotulos curtos so onde ajudam a operar: funcao dos bornes, papel do jumper, RESET/BOOT, aviso
-  da antena e identificacao (nome, versao, data).
+- **Frente (so o essencial):** siglas (REF) das pecas principais (CI, conectores, chaves, jumper,
+  LEDs, transistor, indutor) e uma linha de identificacao (nome, versao, data). Resistores,
+  capacitores e diodos: sigla so na camada Fab. Rotulos funcionais (bornes, RESET/BOOT, papel do
+  jumper, aviso da antena) foram retirados a pedido do autor; o aviso da antena continua no
+  esquematico e nesta documentacao.
 - **Atras (so o essencial, como em placas comerciais):** um bloco de identificacao (nome,
   versao, data) e o nome de cada pino colado ao respectivo pad dos conectores de furo passante:
   E220 (M0..GND), header I2C (3V3, SDA, SCL, GND), bornes J4 (BAIXA/ALTA/GND ou +12V/BOB-) e jack
