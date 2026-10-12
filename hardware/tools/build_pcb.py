@@ -21,9 +21,9 @@ KICAD = Path(r"C:\Program Files\KiCad\10.0")
 FP_DIRS = {"lora-pump": HW / "libs" / "footprints" / "lora-pump.pretty"}
 MM = pcbnew.FromMM
 
-W, H = 100.0, 76.0          # placa (mm)
-E220_PIN1 = (W - 41.5, 36.0)  # pino 1 do E220: SMA rente a borda direita
-ESP_POS = (11.05, 38.0)       # antena do MINI-1 rente a borda esquerda
+W, H = 86.0, 52.0          # placa (mm)
+E220_PIN1 = (W - 41.5, 21.1)  # pino 1 do E220: SMA rente a borda direita
+ESP_POS = (11.05, 7.6)        # antena do MINI-1 rente a borda esquerda
 
 
 def vec(x, y):
@@ -132,41 +132,59 @@ def main(role):
     fps["U2"].SetPosition(vec(*E220_PIN1))
     fps["U1"].SetOrientationDegrees(90)
     fps["U1"].SetPosition(vec(*ESP_POS))
-    fps["J2"].SetOrientationDegrees(180)
-    fps["J2"].SetPosition(vec(36.0, 4.4))
-    fps["C4"].SetPosition(vec(64.0, 9.0))
-    px = E220_PIN1[0] - 3.2
+    fps["J2"].SetPosition(vec(14.0, H - 4.2))          # USB-C: abertura para a borda de baixo
+    fps["J3"].SetPosition(vec(48.0, H - 5.6))          # bornes na borda de baixo
+    fps["J4"].SetPosition(vec(60.0, H - 5.6))
+    px = E220_PIN1[0] - 3.2                            # desacoplamento ao lado dos pinos do E220
     for ref, dy in (("C5", -15.0), ("R8", -10.0), ("R7", -6.0)):
         fps[ref].SetOrientationDegrees(90)
         fps[ref].SetPosition(vec(px, E220_PIN1[1] + dy))
 
-    fixed = {"U1", "U2", "J2", "C4", "C5", "R7", "R8"}
+    fixed = {"U1", "U2", "J2", "J3", "J4", "C5", "R7", "R8"}
     groups = {
-        (19, 12, 56, 26): ["U4", "R9", "R10", "D2", "U5", "C6", "C7", "C8", "R13", "R14"],
-        (19, 29, 56, 54): ["C1", "C2", "R1", "C3", "R2", "R3", "R4", "R5", "R6", "SW1", "SW2",
-                           "JP1", "D1", "J1"],
-        (19, 57, 56, 74): ["J3", "F1", "D3", "D4", "R11", "R12"],
-        (58, 54, 99, 74): ["J4", "D5", "D6", "R15", "R16", "R17", "C9", "C10", "Q1"],
+        (17.5, 1, 39.5, 29): ["C1", "C2", "R1", "C3", "R2", "R3", "R4", "R5", "R6", "SW1", "SW2",
+                              "JP1", "D1", "J1"],
+        (20.5, 30, 44.5, 51): ["U4", "R9", "R10", "D2", "U5", "C6", "C7", "C8", "R13", "R14"],
+        (44, 27, 85.5, 38.5): ["C4", "D4", "D3", "F1", "R11", "R12", "D5", "D6", "R15", "R16",
+                               "R17", "C9", "C10", "Q1"],
     }
     for region, refs in groups.items():
-        pack([fps[r] for r in refs if r in fps], region)
+        pack([fps[r] for r in refs if r in fps], region, gap=0.8)
     left = [r for r in fps if r not in fixed and not any(r in v for v in groups.values())]
     if left:
         print("sem posicao:", left)
+    for fp in fps.values():                            # referencias pequenas e finas
+        fp.Reference().SetTextSize(vec(0.8, 0.8))
+        fp.Reference().SetTextThickness(MM(0.12))
 
-    # Contorno da placa.
-    corners = [(0, 0), (W, 0), (W, H), (0, H)]
-    for i in range(4):
+    # Contorno com cantos arredondados (raio 2 mm).
+    r = 2.0
+    c = [(r, 0, W - r, 0), (W, r, W, H - r), (W - r, H, r, H), (0, H - r, 0, r)]
+    for x0, y0, x1, y1 in c:
         s = pcbnew.PCB_SHAPE(board)
         s.SetShape(pcbnew.SHAPE_T_SEGMENT)
-        s.SetStart(vec(*corners[i]))
-        s.SetEnd(vec(*corners[(i + 1) % 4]))
+        s.SetStart(vec(x0, y0))
+        s.SetEnd(vec(x1, y1))
         s.SetLayer(pcbnew.Edge_Cuts)
         s.SetWidth(MM(0.1))
         board.Add(s)
+    import math
+    d = r * (1 - math.sqrt(0.5))
+    for (cx, cy), (sx, sy), (mx, my), (ex, ey) in [
+        ((r, r), (0, r), (d, d), (r, 0)),
+        ((W - r, r), (W - r, 0), (W - d, d), (W, r)),
+        ((W - r, H - r), (W, H - r), (W - d, H - d), (W - r, H)),
+        ((r, H - r), (r, H), (d, H - d), (0, H - r)),
+    ]:
+        a_ = pcbnew.PCB_SHAPE(board)
+        a_.SetShape(pcbnew.SHAPE_T_ARC)
+        a_.SetArcGeometry(vec(sx, sy), vec(mx, my), vec(ex, ey))
+        a_.SetLayer(pcbnew.Edge_Cuts)
+        a_.SetWidth(MM(0.1))
+        board.Add(a_)
 
-    # Furos de fixacao M3.
-    for i, (x, y) in enumerate([(4, 4), (W - 4, 4), (4, H - 4), (W - 4, H - 4)]):
+    # Furos de fixacao M3 (nos cantos de baixo; os de cima ficam sob o modulo / a antena).
+    for i, (x, y) in enumerate([(3.5, H - 3.5), (W - 3.5, H - 3.5)]):
         mh = load_fp("MountingHole:MountingHole_3.2mm_M3")
         mh.SetReference(f"H{i + 1}")
         mh.SetPosition(vec(x, y))
@@ -188,18 +206,16 @@ def main(role):
             o.Append(MM(x), MM(y))
         board.Add(z)
 
-    # Serigrafia.
-    papel = "EMISSOR (RESERVATORIO)" if role == "emissor" else "RECEPTOR (BOMBA)"
-    text(board, papel, 80, 6, 1.8)
-    text(board, "hw-v0.1  2026-10-11", 80, 10, 1.0)
-    text(board, "NAO LIGAR O E220 SEM ANTENA!", 58, 44, 1.2)
-    text(board, "O E220 TRANSMITE NO BOOT", 58, 47, 1.0)
-    text(board, "ENTRADA 5V APENAS - NAO LIGAR 12V", 38, 55.5, 0.9)
-    if role == "emissor":
-        text(board, "BOIAS: BAIXA | GND | ALTA | GND", 58, 51, 0.9)
-    else:
-        text(board, "BOBINA 5V: + | -", 58, 51, 0.9)
-    text(board, "JP1 PAPEL: " + ("ABERTO=RESERV." if role == "emissor" else "FECHADO=BOMBA"), 38, 51.5, 0.9)
+    # Serigrafia (faixa livre abaixo da antena do MINI-1, x 0-17).
+    emi = role == "emissor"
+    for y, s_, sz in [(31.2, "NAO LIGAR O E220", 0.8), (32.6, "SEM ANTENA!", 0.8),
+                      (34.6, "ENTRADA 5V APENAS", 0.8), (36.0, "NAO LIGAR 12V", 0.8),
+                      (38.0, "JP1 PAPEL:", 0.8), (39.4, "ABERTO=RESERV." if emi else "FECHADO=BOMBA", 0.8),
+                      (41.0, "EMISSOR" if emi else "RECEPTOR", 1.0)]:
+        text(board, s_, 8.5, y, sz)
+    text(board, "hw-v0.1 2026-10-11", 62, 3, 0.8)
+    text(board, "J3: 5V+ | GND", 33.0, 44.0, 0.8)
+    text(board, "J4: BOIA-B|GND|BOIA-A|GND" if emi else "J4: BOBINA 5V+ | -", 33.0, 46.5, 0.8)
 
     pcbnew.ZONE_FILLER(board).Fill(board.Zones())
     board.BuildConnectivity()
