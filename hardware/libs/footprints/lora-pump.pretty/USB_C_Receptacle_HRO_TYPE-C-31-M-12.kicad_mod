@@ -359,15 +359,9 @@
 		(uuid "e783dde5-f762-4528-9b55-9220820b0b1c")
 	)
 	(embedded_fonts no)
-	(model "${KIPRJMOD}/../libs/3d/USB_C_HRO_TYPE-C-31-M-12.step"
-		(offset
-			(xyz 0 0 0)
-		)
-		(scale
-			(xyz 1 1 1)
-		)
-		(rotate
-			(xyz 0 0 0)
-		)
+	(model "${KIPRJMOD}/../libs/vendor/easyeda/usbc_TYPE-C-31-M-12.wrl"
+		(offset (xyz 0 -1.1 0))
+		(scale (xyz 1 1 1))
+		(rotate (xyz 0 0 180))
 	)
 )

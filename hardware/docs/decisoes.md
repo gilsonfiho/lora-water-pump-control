@@ -23,8 +23,16 @@ Formato: data, decisão, motivo. Mais recentes no topo.
   - **Folga sob o modulo ~2,8 mm**, nao os 4,2 mm que eu supunha (pinos de 4,7 mm rentes ao fundo
     da PCB de 1,6 mm). Pecas sob o E220 devem ter ate ~2,5 mm: os 1210 (C4, C11) e os diodos SMA/SMB
     estao no limite. `TODO(hw)`: conferir com o modulo na mao.
-- Repositorio oficial do KiCad (`kicad-packages3D`): **nao tem** os modelos do USB-C HRO
-  TYPE-C-31-M-12, do jack CUI PJ-102AH nem do ESP32-C3-MINI-1 (conferido pela API do GitLab).
+- **3D das demais pecas grandes** (pedido do autor: "o modelo exato, de repositorio"):
+  - ESP32-C3-MINI-1: **modelo oficial da Espressif** (`espressif/kicad-libraries`). O footprint
+    proprio foi conferido contra o oficial: mesmos 61 pads, so a origem muda (2,7 mm). Offset do
+    modelo ajustado de acordo. Footprint da Espressif nao foi copiado (licenca nao declarada).
+  - USB-C HRO TYPE-C-31-M-12 e jack CUI PJ-102AH: **modelos do catalogo EasyEDA/LCSC**
+    (C165948 e C9900001188), convertidos de OBJ para VRML. O repositorio oficial do KiCad
+    (`kicad-packages3D`) nao tem esses tres modelos (conferido pela API do GitLab).
+  - Os modelos do EasyEDA sao de origem comunitaria: vale conferir as cotas com o datasheet.
+  - O STEP exportado da placa (`fab/*/*.step`) nao inclui o USB-C e o jack, porque VRML nao entra
+    em STEP; o render e o visualizador 3D do KiCad mostram tudo.
 
 ## 2026-10-12: alimentacao por jack de 12 V, roteamento e layout v3
 

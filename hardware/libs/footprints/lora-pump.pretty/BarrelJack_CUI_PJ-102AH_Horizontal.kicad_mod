@@ -351,15 +351,9 @@
 		(uuid "0e44316c-8911-42cb-bc20-ea130827a431")
 	)
 	(embedded_fonts no)
-	(model "${KIPRJMOD}/../libs/3d/BarrelJack_CUI_PJ-102AH.step"
-		(offset
-			(xyz 0 0 0)
-		)
-		(scale
-			(xyz 1 1 1)
-		)
-		(rotate
-			(xyz 0 0 0)
-		)
+	(model "${KIPRJMOD}/../libs/vendor/easyeda/jack_PJ-102AH.wrl"
+		(offset (xyz 0 -6.2 0))
+		(scale (xyz 1 1 1))
+		(rotate (xyz 0 0 180))
 	)
 )

@@ -1507,9 +1507,9 @@
 			)
 		)
 		(embedded_fonts no)
-		(model "${KIPRJMOD}/../libs/3d/ESP32-C3-MINI-1.step"
+		(model "${KIPRJMOD}/../libs/vendor/espressif/ESP32-C3-MINI-1.STEP"
 			(offset
-				(xyz 0 0 0)
+				(xyz -6.6 -11.07 0)
 			)
 			(scale
 				(xyz 1 1 1)
@@ -8463,15 +8463,15 @@
 			(uuid "9283bd40-20a7-4388-8a2a-fda398f247d0")
 		)
 		(embedded_fonts no)
-		(model "${KIPRJMOD}/../libs/3d/BarrelJack_CUI_PJ-102AH.step"
+		(model "${KIPRJMOD}/../libs/vendor/easyeda/jack_PJ-102AH.wrl"
 			(offset
-				(xyz 0 0 0)
+				(xyz 0 -6.2 0)
 			)
 			(scale
 				(xyz 1 1 1)
 			)
 			(rotate
-				(xyz 0 0 0)
+				(xyz 0 0 180)
 			)
 		)
 	)
@@ -9905,15 +9905,15 @@
 			(uuid "25f83eb9-3d1b-49b6-a227-fa7c47922038")
 		)
 		(embedded_fonts no)
-		(model "${KIPRJMOD}/../libs/3d/USB_C_HRO_TYPE-C-31-M-12.step"
+		(model "${KIPRJMOD}/../libs/vendor/easyeda/usbc_TYPE-C-31-M-12.wrl"
 			(offset
-				(xyz 0 0 0)
+				(xyz 0 -1.1 0)
 			)
 			(scale
 				(xyz 1 1 1)
 			)
 			(rotate
-				(xyz 0 0 0)
+				(xyz 0 0 180)
 			)
 		)
 	)

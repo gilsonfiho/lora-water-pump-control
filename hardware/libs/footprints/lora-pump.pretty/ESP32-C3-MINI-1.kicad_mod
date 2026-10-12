@@ -707,15 +707,9 @@
 		)
 	)
 	(embedded_fonts no)
-	(model "${KIPRJMOD}/../libs/3d/ESP32-C3-MINI-1.step"
-		(offset
-			(xyz 0 0 0)
-		)
-		(scale
-			(xyz 1 1 1)
-		)
-		(rotate
-			(xyz 0 0 0)
-		)
+	(model "${KIPRJMOD}/../libs/vendor/espressif/ESP32-C3-MINI-1.STEP"
+		(offset (xyz -6.6 -11.07 0))
+		(scale (xyz 1 1 1))
+		(rotate (xyz 0 0 0))
 	)
 )
