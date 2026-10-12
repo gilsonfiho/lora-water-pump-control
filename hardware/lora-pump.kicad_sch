@@ -1,0 +1,20 @@
+(kicad_sch
+	(version 20260306)
+	(generator "eeschema")
+	(generator_version "10.0")
+	(uuid "5b0c6a3e-3f6e-4d0a-9d55-2f1c7a0e1001")
+	(paper "A4")
+	(title_block
+		(title "Controle de bomba d'agua LoRa")
+		(date "2026-10-11")
+		(rev "0.0")
+		(company "gilsonfiho")
+		(comment 1 "Esqueleto: sem circuito ainda (ver hardware/docs/decisoes.md)")
+	)
+	(lib_symbols)
+	(sheet_instances
+		(path "/"
+			(page "1")
+		)
+	)
+)
