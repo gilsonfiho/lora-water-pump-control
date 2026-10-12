@@ -18,7 +18,7 @@ FP_R = "Resistor_SMD:R_0603_1608Metric"
 FP_C = "Capacitor_SMD:C_0603_1608Metric"
 MPN_R = {"10k": "RC0603FR-0710KL", "4k7": "RC0603FR-074K7L", "1k": "RC0603FR-071KL",
          "5k1": "RC0603FR-075K1L", "100k": "RC0603FR-07100KL", "100R": "RC0603FR-07100RL",
-         "0R": "RC0603ZR-070RL"}
+         "0R": "RC0603ZR-070RL", "33k": "RC0603FR-0733KL"}
 MPN_C = {"47uF": "CL32A476MPVNNNE", "100nF": "CL10B104KB8NNNC", "10uF": "CL10A106KP8NNNC", "1uF": "CL10A105KB8NNNC"}
 
 ROLES = {
@@ -63,11 +63,12 @@ def sheet_mcu(c, uid):
                     "GPIO18/19 = USB Serial/JTAG. GPIO20/21 = UART0 (console): ver decisoes.md.")
     sh.add("lora-pump:ESP32-C3-MINI-1", LIB, "U1", "ESP32-C3-MINI-1-H4X", 210, 150, {
         "3": "+3V3", "1": "GND",
-        "8": "MCU_EN", "12": "BAT_ADC", "13": c.gpio1, "5": "FLOAT_HIGH",
+        "8": "MCU_EN", "13": c.gpio1, "5": "FLOAT_HIGH",
         "6": "ROLE_STRAP", "18": "E220_TXD", "19": "E220_RXD", "20": "E220_M0",
         "21": "E220_M1", "22": "I2C_SDA", "23": "I2C_SCL", "16": "E220_AUX",
         "26": "USB_DM", "27": "USB_DP", "30": "EXT_PRESENT", "31": "LED_STATUS_DRV",
-    }, footprint="lora-pump:ESP32-C3-MINI-1", mpn="ESP32-C3-MINI-1-H4X", globals_=c.G)
+    }, footprint="lora-pump:ESP32-C3-MINI-1", mpn="ESP32-C3-MINI-1-H4X", globals_=c.G,
+        nc=("12",))   # GPIO0 (BAT_ADC) sem uso: nao ha bateria na hw-v0.1
     C(sh, c, "C1", "10uF", 40, 80, "+3V3", "GND")
     C(sh, c, "C2", "100nF", 65, 80, "+3V3", "GND")
     R(sh, c, "R1", "10k", 100, 80, "+3V3", "MCU_EN")
@@ -111,32 +112,32 @@ def sheet_radio(c, uid):
             "Pinos (Tabela 3-1, p.6): 1 M0, 2 M1, 3 RXD, 4 TXD, 5 AUX, 6 VCC, 7 GND; 8-11 furos de fixacao.\n"
             "UART/M0/M1/AUX em 3,3 V. VCC em 5 V (>= 5,0 V para potencia plena): 620 mA de pico em TX.\n"
             "Entrada maxima do RX: +10 dBm (nos a >= 3 m na bancada).\n"
-            "Pull-ups de 4-10 k em TXD/AUX so para MCU de 5 V (Tabela 4-1, p.7): DNP aqui (MCU de 3,3 V).")
+            "Sem pull-ups em TXD/AUX: so sao necessarios para MCU de 5 V (Tabela 4-1, p.7); aqui o MCU e de 3,3 V.")
     sh.add("lora-pump:E220-900TxxD", LIB, "U2", "E220-900T30D", 110, 130,
            {"1": "E220_M0", "2": "E220_M1", "3": "E220_RXD", "4": "E220_TXD",
-            "5": "E220_AUX", "6": "VCC_RF", "7": "GND"},
+            "5": "E220_AUX", "6": "+5V", "7": "GND"},
            footprint="lora-pump:E220-900T30D", mpn="E220-900T30D", globals_=c.G)
     # Bulk do VCC_RF: 2 x 47 uF ceramicos 1210 (baixos: cabem sob o modulo, junto ao pino VCC).
     # TODO(hw): MPN/derating (X5R a 5 V perde ~50 %) a validar; README recomenda 100 uF + 100 nF.
     for ref, x in (("C4", 190), ("C11", 210)):
         sh.add("Device:C", "Device.kicad_sym", ref, "47uF/10V", x, 130,
-               {"1": "VCC_RF", "2": "GND"}, footprint="Capacitor_SMD:C_1210_3225Metric",
+               {"1": "+5V", "2": "GND"}, footprint="Capacitor_SMD:C_1210_3225Metric",
                mpn=MPN_C["47uF"], globals_=c.G)
-    C(sh, c, "C5", "100nF", 230, 130, "VCC_RF", "GND")
-    R(sh, c, "R7", "10k", 260, 130, "+3V3", "E220_TXD", dnp=True)
-    R(sh, c, "R8", "10k", 290, 130, "+3V3", "E220_AUX", dnp=True)
+    C(sh, c, "C5", "100nF", 230, 130, "+5V", "GND")
     return sh
 
 
 # ---------------------------------------------------------- Alimentacao ----
 def sheet_power(c, uid):
     sh = k.Sheet("Alimentacao", "power.kicad_sch", "Alimentacao e USB", REV, c.root, uid)
-    sh.text(15, 12, "ALIMENTACAO - 5 V (USB-C ou borne) -> +5V -> LDO 3V3", 2.5)
+    sh.text(15, 12, "ALIMENTACAO - jack 12 V -> buck 5 V -> LDO 3V3 (USB-C so para gravar/depurar)", 2.5)
     sh.text(15, 22,
-            "Entrada externa SO 5 V (nao ligar 12 V!). Dois Schottky fazem o OR USB/borne: queda de ~0,3-0,5 V,\n"
-            "o que deixa o E220 abaixo de 5,0 V (potencia plena do T30D). TODO(hw): ideal diode + buck 12 V + bateria no hw-v0.2.\n"
-            "LDO AP2112K-3.3: 600 mA min, Cin = Cout = 1 uF X5R/X7R (Datasheet Diodes, p.2). CC1/CC2 com 5k1 (UFP).\n"
-            "EXT_PRESENT: divisor 100k/100k do borne (2,5 V no GPIO20). BAT_ADC sem bateria: pull-down de 100k.")
+            "Jack DC 12 V, centro positivo. Fusivel rearmavel 1,5 A/16 V, TVS SMBJ15A e Schottky em serie (protecao de polaridade).\n"
+            "Buck AP63205 (5,0 V fixo, 2 A, Vin 3,8-32 V; Datasheet Diodes DS41326, p.13, Tabela 3): L = 4,7 uH, C1 = 10 uF, C2 = 2 x 22 uF, C3 = 100 nF.\n"
+            "LDO AP2112K-3.3: 600 mA min, Cin = Cout = 1 uF X5R/X7R (Datasheet Diodes, p.2). CC1/CC2 do USB-C com 5k1 (UFP).\n"
+            "USB-C alimenta so a logica (Schottky D2, ~4,6 V): o E220 em 5,0 V exige o jack. TODO(hw): bateria 18650 + carregador na hw-v0.2.\n"
+            "EXT_PRESENT: divisor 100k/33k do 12 V (~3 V no GPIO20). Sem bateria na hw-v0.1: GPIO0 livre.")
+    # USB-C
     sh.add("Connector:USB_C_Receptacle_USB2.0_16P", "Connector.kicad_sym", "J2", "USB-C", 60, 120,
            {"A4": "VBUS", "A9": "VBUS", "B4": "VBUS", "B9": "VBUS",
             "A1": "GND", "A12": "GND", "B1": "GND", "B12": "GND", "SH": "GND",
@@ -151,30 +152,41 @@ def sheet_power(c, uid):
            footprint="Package_TO_SOT_SMD:SOT-23-6", mpn="USBLC6-2SC6", globals_=c.G)
     sh.add("Device:D_Schottky", "Device.kicad_sym", "D2", "SS34", 140, 120,
            {"2": "VBUS", "1": "+5V"}, footprint="Diode_SMD:D_SMA", mpn="SS34")
-    sh.add("Connector:Screw_Terminal_01x02", "Connector.kicad_sym", "J3", "5V EXT", 60, 200,
-           {"1": "5V_IN", "2": "GND"},
-           footprint="TerminalBlock_Phoenix:TerminalBlock_Phoenix_MKDS-1,5-2-5.08_1x02_P5.08mm_Horizontal",
-           mpn="MKDS 1,5/2-5,08")
-    sh.add("Device:Polyfuse", "Device.kicad_sym", "F1", "1.5A", 100, 200,
-           {"1": "5V_IN", "2": "+5V_EXT"}, footprint="Fuse:Fuse_1206_3216Metric",
+    # Entrada 12 V
+    sh.add("Connector:Barrel_Jack", "Connector.kicad_sym", "J3", "JACK 12V", 60, 200,
+           {"1": "12V_IN", "2": "GND"},
+           footprint="lora-pump:BarrelJack_CUI_PJ-102AH_Horizontal", mpn="PJ-102AH")
+    sh.add("Device:Polyfuse", "Device.kicad_sym", "F1", "1.5A/16V", 100, 200,
+           {"1": "12V_IN", "2": "+12V_F"}, footprint="Fuse:Fuse_1206_3216Metric",
            mpn="MF-MSMF150/16X-2")
-    sh.add("Device:D_TVS", "Device.kicad_sym", "D4", "SMBJ5.0A", 130, 230,
-           {"1": "+5V_EXT", "2": "GND"}, footprint="Diode_SMD:D_SMB", mpn="SMBJ5.0A")
+    sh.add("Device:D_TVS", "Device.kicad_sym", "D4", "SMBJ15A", 130, 230,
+           {"1": "+12V_F", "2": "GND"}, footprint="Diode_SMD:D_SMB", mpn="SMBJ15A")
     sh.add("Device:D_Schottky", "Device.kicad_sym", "D3", "SS34", 175, 200,
-           {"2": "+5V_EXT", "1": "+5V"}, footprint="Diode_SMD:D_SMA", mpn="SS34")
-    R(sh, c, "R11", "100k", 215, 200, "+5V_EXT", "EXT_PRESENT")
-    R(sh, c, "R12", "100k", 240, 200, "EXT_PRESENT", "GND")
-    C(sh, c, "C6", "10uF", 215, 120, "+5V", "GND")
-    sh.add("Regulator_Linear:AP2112K-3.3", "Regulator_Linear.kicad_sym", "U5", "AP2112K-3.3", 290, 120,
+           {"2": "+12V_F", "1": "+12V"}, footprint="Diode_SMD:D_SMA", mpn="SS34")
+    R(sh, c, "R11", "100k", 215, 200, "+12V_F", "EXT_PRESENT")
+    R(sh, c, "R12", "33k", 240, 200, "EXT_PRESENT", "GND")
+    # Buck 12 V -> 5 V (AP63205, fixo)
+    sh.add("Regulator_Switching:AP63205WU", "Regulator_Switching.kicad_sym", "U6", "AP63205WU", 215, 120,
+           {"3": "+12V", "2": "+12V", "4": "GND", "5": "SW_BUCK", "6": "BST", "1": "+5V"},
+           footprint="Package_TO_SOT_SMD:TSOT-23-6", mpn="AP63205WU-7")
+    sh.add("Device:L", "Device.kicad_sym", "L1", "4.7uH", 255, 120,
+           {"1": "SW_BUCK", "2": "+5V"}, footprint="Inductor_SMD:L_Taiyo-Yuden_NR-60xx",
+           mpn="NR6045T4R7M")
+    C(sh, c, "C14", "100nF", 215, 160, "BST", "SW_BUCK")
+    sh.add("Device:C", "Device.kicad_sym", "C6", "10uF/25V", 175, 120, {"1": "+12V", "2": "GND"},
+           footprint="Capacitor_SMD:C_0805_2012Metric", mpn="CL21A106KAYNNNE")
+    for ref, x in (("C12", 290), ("C13", 310)):
+        sh.add("Device:C", "Device.kicad_sym", ref, "22uF/10V", x, 160, {"1": "+5V", "2": "GND"},
+               footprint="Capacitor_SMD:C_0805_2012Metric", mpn="CL21A226MPQNNNE")
+    # LDO 3V3
+    sh.add("Regulator_Linear:AP2112K-3.3", "Regulator_Linear.kicad_sym", "U5", "AP2112K-3.3", 330, 120,
            {"1": "+5V", "3": "+5V", "2": "GND", "5": "+3V3"}, nc=("4",),
            footprint="Package_TO_SOT_SMD:SOT-23-5", mpn="AP2112K-3.3TRG1")
-    C(sh, c, "C7", "1uF", 265, 80, "+5V", "GND")
-    C(sh, c, "C8", "1uF", 330, 80, "+3V3", "GND")
-    R(sh, c, "R13", "0R", 215, 60, "+5V", "VCC_RF")
-    R(sh, c, "R14", "100k", 360, 120, "BAT_ADC", "GND")
+    C(sh, c, "C7", "1uF", 305, 80, "+5V", "GND")
+    C(sh, c, "C8", "1uF", 360, 80, "+3V3", "GND")
     sh.pwr_flag("+5V", 215, 20)
-    sh.pwr_flag("GND", 245, 20)
-    sh.pwr_flag("VCC_RF", 275, 20, is_global=True)
+    sh.pwr_flag("+12V", 245, 20)
+    sh.pwr_flag("GND", 275, 20)
     return sh
 
 
@@ -204,19 +216,19 @@ def sheet_io(c, uid):
                 "A PCB NAO tem tensao de rede: o MOSFET liga a bobina de um rele/contator EXTERNO de 5 V (modulo de rele\n"
                 "ou rele interposto). Estado seguro: pull-down de 10 k em PUMP_DRV -> MOSFET cortado em reset/boot/pino\n"
                 "flutuante (o GPIO1 do C3 e entrada em alta impedancia no boot). Diodo de roda livre na bobina.\n"
-                "Corrente da bobina limitada pelo fusivel de entrada de 1,5 A (dividido com o E220); TODO(hw).")
+                "Corrente da bobina limitada pelo fusivel de entrada de 1,5 A (dividido com o buck); TODO(hw): dimensionar a bobina.")
         R(sh, c, "R15", "10k", 60, 120, "PUMP_DRV", "GND")
         R(sh, c, "R16", "100R", 100, 140, "PUMP_DRV", "GATE")
         sh.add("Transistor_FET:AO3400A", "Transistor_FET.kicad_sym", "Q1", "AO3400A", 160, 130,
                {"1": "GATE", "2": "GND", "3": "COIL_NEG"},
                footprint="Package_TO_SOT_SMD:SOT-23", mpn="AO3400A")
-        sh.add("Connector:Screw_Terminal_01x02", "Connector.kicad_sym", "J4", "BOBINA 5V", 240, 130,
-               {"1": "+5V", "2": "COIL_NEG"},
+        sh.add("Connector:Screw_Terminal_01x02", "Connector.kicad_sym", "J4", "BOBINA 12V", 240, 130,
+               {"1": "+12V", "2": "COIL_NEG"},
                footprint="TerminalBlock_Phoenix:TerminalBlock_Phoenix_MKDS-1,5-2-5.08_1x02_P5.08mm_Horizontal",
                mpn="MKDS 1,5/2-5,08")
         sh.add("Diode:1N4148W", "Diode.kicad_sym", "D5", "1N4148W", 280, 130,
-               {"1": "+5V", "2": "COIL_NEG"}, footprint="Diode_SMD:D_SOD-123", mpn="1N4148W")
-        R(sh, c, "R17", "1k", 320, 100, "+5V", "LED_COIL")
+               {"1": "+12V", "2": "COIL_NEG"}, footprint="Diode_SMD:D_SOD-123", mpn="1N4148W")
+        R(sh, c, "R17", "4k7", 320, 100, "+12V", "LED_COIL")
         sh.add("Device:LED", "Device.kicad_sym", "D6", "SAIDA ON", 355, 130,
                {"1": "COIL_NEG", "2": "LED_COIL"}, footprint="LED_SMD:LED_0603_1608Metric",
                mpn="APT1608SGC")

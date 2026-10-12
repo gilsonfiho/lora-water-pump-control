@@ -109,12 +109,26 @@ def usbc():
     (D3 / "USB_C_HRO_TYPE-C-31-M-12.step").write_text(s.render(), encoding="utf-8")
 
 
+
+def jack():
+    """Jack DC CUI PJ-102AH: o STEP oficial nao vem nesta instalacao. Envelope aproximado."""
+    src = (KICAD_FP.parent / "Connector_BarrelJack.pretty" /
+           "BarrelJack_CUI_PJ-102AH_Horizontal.kicad_mod").read_text(encoding="utf-8")
+    txt = re.sub(r'\t\(model "\$\{KICAD10_3DMODEL_DIR\}[^"]*"[\s\S]*?\n\t\)\n', "", src).rstrip()
+    txt = txt[:-1].rstrip() + "\n" + MODEL % "BarrelJack_CUI_PJ-102AH" + ")\n"
+    (PRETTY / "BarrelJack_CUI_PJ-102AH_Horizontal.kicad_mod").write_text(txt, encoding="utf-8")
+    s = Step("BarrelJack_CUI_PJ-102AH")
+    s.box(-3.75, -13.5, 0.0, 5.25, 0.5, 10.9, (0.08, 0.08, 0.08))   # corpo (aprox.: 9 x 14 x 10,9 mm)
+    (D3 / "BarrelJack_CUI_PJ-102AH.step").write_text(s.render(), encoding="utf-8")
+
+
 def main():
     PRETTY.mkdir(parents=True, exist_ok=True)
     D3.mkdir(parents=True, exist_ok=True)
     mini1()
     e220_t30d()
     usbc()
+    jack()
     print("footprints e modelos escritos")
 
 

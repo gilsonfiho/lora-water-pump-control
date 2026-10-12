@@ -1049,7 +1049,7 @@
 			)
 			(embedded_fonts no)
 		)
-		(symbol "power:+5V"
+		(symbol "power:+12V"
 			(power global)
 			(pin_numbers
 				(hide yes)
@@ -1074,7 +1074,7 @@
 					)
 				)
 			)
-			(property "Value" "+5V"
+			(property "Value" "+12V"
 				(at 0 3.556 0)
 				(show_name no)
 				(do_not_autoplace no)
@@ -1106,7 +1106,7 @@
 					)
 				)
 			)
-			(property "Description" "Power symbol creates a global label with name \"+5V\""
+			(property "Description" "Power symbol creates a global label with name \"+12V\""
 				(at 0 0 0)
 				(show_name no)
 				(do_not_autoplace no)
@@ -1128,7 +1128,7 @@
 					)
 				)
 			)
-			(symbol "+5V_0_1"
+			(symbol "+12V_0_1"
 				(polyline
 					(pts
 						(xy -0.762 1.27) (xy 0 2.54)
@@ -1166,7 +1166,7 @@
 					)
 				)
 			)
-			(symbol "+5V_1_1"
+			(symbol "+12V_1_1"
 				(pin power_in line
 					(at 0 0 90)
 					(length 0)
@@ -1304,6 +1304,17 @@
 			(embedded_fonts no)
 		)
 	)
+	(text "A PCB NAO tem tensao de rede: o MOSFET liga a bobina de um rele/contator EXTERNO de 5 V (modulo de rele\nou rele interposto). Estado seguro: pull-down de 10 k em PUMP_DRV -> MOSFET cortado em reset/boot/pino\nflutuante (o GPIO1 do C3 e entrada em alta impedancia no boot). Diodo de roda livre na bobina.\nCorrente da bobina limitada pelo fusivel de entrada de 1,5 A (dividido com o buck); TODO(hw): dimensionar a bobina."
+		(exclude_from_sim no)
+		(at 15 22 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left top)
+		)
+		(uuid "58f6dc98-c961-4b4f-9e5d-efa741f2f6d3")
+	)
 	(text "SAIDA - comando de contator externo por contato seco (bornes)"
 		(exclude_from_sim no)
 		(at 15 12 0)
@@ -1313,38 +1324,7 @@
 			)
 			(justify left top)
 		)
-		(uuid "4ba83f06-77d9-4e1c-bcb1-6ef0e5d4968a")
-	)
-	(text "A PCB NAO tem tensao de rede: o MOSFET liga a bobina de um rele/contator EXTERNO de 5 V (modulo de rele\nou rele interposto). Estado seguro: pull-down de 10 k em PUMP_DRV -> MOSFET cortado em reset/boot/pino\nflutuante (o GPIO1 do C3 e entrada em alta impedancia no boot). Diodo de roda livre na bobina.\nCorrente da bobina limitada pelo fusivel de entrada de 1,5 A (dividido com o E220); TODO(hw)."
-		(exclude_from_sim no)
-		(at 15 22 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left top)
-		)
-		(uuid "d803db63-f14c-4761-92ac-15b8e21cbcfc")
-	)
-	(wire
-		(pts
-			(xy 351.79 129.54) (xy 346.71 129.54)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "039f0346-b272-4ac0-ad26-15f613d987a1")
-	)
-	(wire
-		(pts
-			(xy 320.04 95.25) (xy 320.04 90.17)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "123d711d-eeb4-4b1e-99a5-f1040ac81d9e")
+		(uuid "74a9dc13-fded-4be1-97ee-394d3229db6a")
 	)
 	(wire
 		(pts
@@ -1354,27 +1334,7 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "411a4ad7-c1f1-40fd-b928-8a414a245f70")
-	)
-	(wire
-		(pts
-			(xy 99.06 135.89) (xy 99.06 130.81)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "4e88e02e-711b-4f4f-8a57-afb2cec9de75")
-	)
-	(wire
-		(pts
-			(xy 60.96 115.57) (xy 60.96 110.49)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "55d47b2d-0811-48d0-b9cc-ee470721873e")
+		(uuid "2aa5e486-f023-4f2f-b1fc-106c07cc79eb")
 	)
 	(wire
 		(pts
@@ -1384,57 +1344,7 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "5dd2cbc2-2698-4c69-816c-f9b9192fe331")
-	)
-	(wire
-		(pts
-			(xy 233.68 132.08) (xy 228.6 132.08)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "6ffe886b-4f46-4ae8-b092-b3615bb0a153")
-	)
-	(wire
-		(pts
-			(xy 275.59 129.54) (xy 270.51 129.54)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "790bc02c-4a54-4c53-a002-7ad18310d91c")
-	)
-	(wire
-		(pts
-			(xy 359.41 129.54) (xy 364.49 129.54)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "865cca16-54ae-4464-ae9e-03421b5fb2e0")
-	)
-	(wire
-		(pts
-			(xy 162.56 134.62) (xy 162.56 139.7)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "b1d77d78-bee9-4304-b235-8bd21832039e")
-	)
-	(wire
-		(pts
-			(xy 162.56 124.46) (xy 162.56 119.38)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "d3b7b918-7732-43d0-b741-25e15c0a32ac")
+		(uuid "37971729-f589-4520-bdd7-a37c9151da89")
 	)
 	(wire
 		(pts
@@ -1444,7 +1354,47 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "dc88b505-dc4a-497f-9775-ac25029b8c7a")
+		(uuid "4b39cbda-3d42-4b93-b3b7-4ce8c9ca12d1")
+	)
+	(wire
+		(pts
+			(xy 99.06 135.89) (xy 99.06 130.81)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "54524109-a126-4a10-9189-902fb0fb2c24")
+	)
+	(wire
+		(pts
+			(xy 162.56 134.62) (xy 162.56 139.7)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "7e2a14cf-3ec3-4c69-80dd-921338a74b49")
+	)
+	(wire
+		(pts
+			(xy 351.79 129.54) (xy 346.71 129.54)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "91a82ab9-9c87-461f-8a4f-3fa2164697e2")
+	)
+	(wire
+		(pts
+			(xy 359.41 129.54) (xy 364.49 129.54)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "925289ba-275d-4246-9e32-922fda9e1ed3")
 	)
 	(wire
 		(pts
@@ -1454,17 +1404,7 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "e9225f37-0e12-4d1e-9987-491b096bd876")
-	)
-	(wire
-		(pts
-			(xy 60.96 123.19) (xy 60.96 128.27)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "f211a817-0d7e-4af4-986e-cdd56566ef76")
+		(uuid "9851b77f-1bfc-46ac-901a-87925da8fdb7")
 	)
 	(wire
 		(pts
@@ -1474,47 +1414,67 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "fd25ed7a-483b-4be3-8d2d-c573c6b842f8")
+		(uuid "9a6640b6-ae95-444f-ba17-73bda00cb271")
 	)
-	(label "LED_COIL"
-		(at 364.49 129.54 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
+	(wire
+		(pts
+			(xy 233.68 132.08) (xy 228.6 132.08)
 		)
-		(uuid "334139a3-c78d-4cf8-82cd-27df65652d03")
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "a4e9e266-5556-45a2-926d-17fabefad2d1")
 	)
-	(label "LED_COIL"
-		(at 320.04 107.95 270)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right bottom)
+	(wire
+		(pts
+			(xy 60.96 123.19) (xy 60.96 128.27)
 		)
-		(uuid "394c22d0-4af0-45fb-a794-929fbe38de6a")
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "b1bf592a-e221-4833-b6e9-5310ed277727")
 	)
-	(label "COIL_NEG"
-		(at 346.71 129.54 180)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right bottom)
+	(wire
+		(pts
+			(xy 162.56 124.46) (xy 162.56 119.38)
 		)
-		(uuid "45c4ae05-8fa0-4ce0-a12f-73bea3adf665")
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "d020dc2d-7dc8-4243-afff-00400703ef86")
 	)
-	(label "COIL_NEG"
-		(at 228.6 132.08 180)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right bottom)
+	(wire
+		(pts
+			(xy 275.59 129.54) (xy 270.51 129.54)
 		)
-		(uuid "4a9ba58e-b2ab-4d11-bc02-695714b1729b")
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "eed6d113-fe55-49ad-b226-f1792f15d719")
+	)
+	(wire
+		(pts
+			(xy 60.96 115.57) (xy 60.96 110.49)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "f7df7e2f-ff82-4ce5-beb2-376f4ff3d50b")
+	)
+	(wire
+		(pts
+			(xy 320.04 95.25) (xy 320.04 90.17)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "f94bb63d-3bbf-4531-80b8-ccf921c15f15")
 	)
 	(label "GATE"
 		(at 99.06 148.59 270)
@@ -1524,27 +1484,17 @@
 			)
 			(justify right bottom)
 		)
-		(uuid "a103b739-45ab-4382-abf4-4af48f71eb41")
+		(uuid "0ff0317f-5ce9-48d8-862f-644be05c1dc6")
 	)
 	(label "COIL_NEG"
-		(at 288.29 129.54 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "bf236733-d3aa-4824-8f57-8b9badf22126")
-	)
-	(label "GATE"
-		(at 149.86 129.54 180)
+		(at 346.71 129.54 180)
 		(effects
 			(font
 				(size 1.27 1.27)
 			)
 			(justify right bottom)
 		)
-		(uuid "cb7ac857-def4-4163-bae9-939657b60835")
+		(uuid "27a23bcb-719a-4ddd-871b-0a17baefbb6d")
 	)
 	(label "COIL_NEG"
 		(at 162.56 119.38 90)
@@ -1554,11 +1504,61 @@
 			)
 			(justify left bottom)
 		)
-		(uuid "ccbdb498-0db5-4a76-a367-26db848ade7e")
+		(uuid "32d1dba4-62b5-497d-9e25-22826586bcfc")
+	)
+	(label "GATE"
+		(at 149.86 129.54 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right bottom)
+		)
+		(uuid "37e1d863-148c-4383-9978-0f49eb9bdd0b")
+	)
+	(label "LED_COIL"
+		(at 320.04 107.95 270)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right bottom)
+		)
+		(uuid "4e400680-1916-4f44-bcfc-682e5e01f0ba")
+	)
+	(label "COIL_NEG"
+		(at 288.29 129.54 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "e2733187-83a4-40d6-a455-3c521522c8b0")
+	)
+	(label "LED_COIL"
+		(at 364.49 129.54 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "e6e54c52-3e1d-4b1a-8975-52eb48c57d07")
+	)
+	(label "COIL_NEG"
+		(at 228.6 132.08 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right bottom)
+		)
+		(uuid "f216354b-c029-490f-b2b8-99c4306f3d5f")
 	)
 	(global_label "PUMP_DRV"
 		(shape bidirectional)
-		(at 60.96 110.49 90)
+		(at 99.06 130.81 90)
 		(fields_autoplaced yes)
 		(effects
 			(font
@@ -1566,9 +1566,9 @@
 			)
 			(justify left bottom)
 		)
-		(uuid "73bb500c-f0e3-4b74-b03f-49f3bbcec646")
+		(uuid "7c907b7f-c8f7-4ac8-a480-927aa9a53f1c")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 60.96 110.49 0)
+			(at 99.06 130.81 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -1581,7 +1581,7 @@
 	)
 	(global_label "PUMP_DRV"
 		(shape bidirectional)
-		(at 99.06 130.81 90)
+		(at 60.96 110.49 90)
 		(fields_autoplaced yes)
 		(effects
 			(font
@@ -1589,15 +1589,163 @@
 			)
 			(justify left bottom)
 		)
-		(uuid "fbd84663-a267-4c82-825d-064213b70403")
+		(uuid "e6601760-1707-4070-938d-58f5ebb48698")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 99.06 130.81 0)
+			(at 60.96 110.49 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
 				(font
 					(size 1.27 1.27)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:GND")
+		(at 162.56 139.7 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom no)
+		(on_board no)
+		(in_pos_files yes)
+		(dnp no)
+		(uuid "0b01003b-24fc-4c8f-b163-4002cef54d5e")
+		(property "Reference" "#PWR131"
+			(at 162.56 139.7 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "GND"
+			(at 162.56 142.7 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 162.56 139.7 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 162.56 139.7 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" ""
+			(at 162.56 139.7 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "c7871bd0-90ed-4867-a6c1-5a2f35be6e4d")
+		)
+		(instances
+			(project "lora-pump"
+				(path "/7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f803001/7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f803104"
+					(reference "#PWR131")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:+12V")
+		(at 270.51 129.54 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom no)
+		(on_board no)
+		(in_pos_files yes)
+		(dnp no)
+		(uuid "3e5ee8be-a8b5-41f4-81fd-4dfe5fee8fff")
+		(property "Reference" "#PWR133"
+			(at 270.51 129.54 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "+12V"
+			(at 270.51 126.54 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 270.51 129.54 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 270.51 129.54 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" ""
+			(at 270.51 129.54 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "833678ad-16b2-463c-ac04-9cfa27d04f09")
+		)
+		(instances
+			(project "lora-pump"
+				(path "/7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f803001/7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f803104"
+					(reference "#PWR133")
+					(unit 1)
 				)
 			)
 		)
@@ -1612,7 +1760,7 @@
 		(on_board yes)
 		(in_pos_files yes)
 		(dnp no)
-		(uuid "18cb335f-9ff3-4c42-b0a2-3a6a619c5341")
+		(uuid "4b201c8b-e93c-4be2-9410-12c6619268c1")
 		(property "Reference" "J4"
 			(at 238.76 123.54 0)
 			(show_name no)
@@ -1623,7 +1771,7 @@
 				)
 			)
 		)
-		(property "Value" "BOBINA 5V"
+		(property "Value" "BOBINA 12V"
 			(at 238.76 135.54 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -1677,744 +1825,15 @@
 			)
 		)
 		(pin "1"
-			(uuid "c4c77548-303a-4aa0-921e-c9f037648f59")
+			(uuid "cf408fb9-8570-40bd-ab1a-5393bd08314a")
 		)
 		(pin "2"
-			(uuid "e09cb42f-1b64-498c-a0dc-e7778c4b737c")
+			(uuid "acc9ff13-5bdb-41a3-8f70-3902143772a0")
 		)
 		(instances
 			(project "lora-pump"
 				(path "/7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f803001/7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f803104"
 					(reference "J4")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Transistor_FET:AO3400A")
-		(at 160.02 129.54 0)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(in_pos_files yes)
-		(dnp no)
-		(uuid "27fb3e2f-ea93-41c9-9955-d1c6c0fc4bff")
-		(property "Reference" "Q1"
-			(at 160.02 123.54 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Value" "AO3400A"
-			(at 160.02 135.54 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "Package_TO_SOT_SMD:SOT-23"
-			(at 160.02 129.54 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Datasheet" ""
-			(at 160.02 129.54 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" ""
-			(at 160.02 129.54 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "MPN" "AO3400A"
-			(at 160.02 129.54 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "1"
-			(uuid "86f09db0-9d51-43a5-83bc-b5b227577536")
-		)
-		(pin "2"
-			(uuid "2820f567-8a23-45de-8d24-eb11c93a5a28")
-		)
-		(pin "3"
-			(uuid "d204e893-084e-4046-8413-0cbff9f59ad1")
-		)
-		(instances
-			(project "lora-pump"
-				(path "/7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f803001/7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f803104"
-					(reference "Q1")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "power:GND")
-		(at 60.96 128.27 0)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom no)
-		(on_board no)
-		(in_pos_files yes)
-		(dnp no)
-		(uuid "3bc6488c-49d3-4a15-9906-3b4251ed72ce")
-		(property "Reference" "#PWR112"
-			(at 60.96 128.27 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Value" "GND"
-			(at 60.96 131.27 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" ""
-			(at 60.96 128.27 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Datasheet" ""
-			(at 60.96 128.27 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" ""
-			(at 60.96 128.27 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "1"
-			(uuid "4968b78e-f7a1-4eff-ba30-9c76ad66b06d")
-		)
-		(instances
-			(project "lora-pump"
-				(path "/7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f803001/7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f803104"
-					(reference "#PWR112")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Diode:1N4148W")
-		(at 279.4 129.54 0)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(in_pos_files yes)
-		(dnp no)
-		(uuid "57ade861-455e-4c55-8f9b-1f12f4d4559a")
-		(property "Reference" "D5"
-			(at 279.4 123.54 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Value" "1N4148W"
-			(at 279.4 135.54 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "Diode_SMD:D_SOD-123"
-			(at 279.4 129.54 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Datasheet" ""
-			(at 279.4 129.54 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" ""
-			(at 279.4 129.54 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "MPN" "1N4148W"
-			(at 279.4 129.54 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "1"
-			(uuid "8d01ac1c-a32f-4136-ba1f-aee7535ed0a4")
-		)
-		(pin "2"
-			(uuid "6876e9e9-d893-4738-93a5-e993a22fd449")
-		)
-		(instances
-			(project "lora-pump"
-				(path "/7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f803001/7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f803104"
-					(reference "D5")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Device:R")
-		(at 60.96 119.38 0)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(in_pos_files yes)
-		(dnp no)
-		(uuid "7283dd2f-112b-4182-914c-333eda1476c3")
-		(property "Reference" "R15"
-			(at 60.96 113.38 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Value" "10k"
-			(at 60.96 125.38 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
-			(at 60.96 119.38 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Datasheet" ""
-			(at 60.96 119.38 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" ""
-			(at 60.96 119.38 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "MPN" "RC0603FR-0710KL"
-			(at 60.96 119.38 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "1"
-			(uuid "6c507b81-d128-4876-a6c7-d9ee499765fd")
-		)
-		(pin "2"
-			(uuid "b20a9bc4-f3f5-412e-8fba-dbe535bf11b9")
-		)
-		(instances
-			(project "lora-pump"
-				(path "/7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f803001/7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f803104"
-					(reference "R15")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "power:+5V")
-		(at 270.51 129.54 0)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom no)
-		(on_board no)
-		(in_pos_files yes)
-		(dnp no)
-		(uuid "7347c6fa-9be3-4f23-bbb6-9daeab745a86")
-		(property "Reference" "#PWR115"
-			(at 270.51 129.54 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Value" "+5V"
-			(at 270.51 126.54 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" ""
-			(at 270.51 129.54 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Datasheet" ""
-			(at 270.51 129.54 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" ""
-			(at 270.51 129.54 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "1"
-			(uuid "3e7ce68a-cd45-4f33-94fe-2761cf3869f4")
-		)
-		(instances
-			(project "lora-pump"
-				(path "/7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f803001/7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f803104"
-					(reference "#PWR115")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "power:GND")
-		(at 162.56 139.7 0)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom no)
-		(on_board no)
-		(in_pos_files yes)
-		(dnp no)
-		(uuid "a671a382-dd8f-4c4f-8ed5-5079eb6969bb")
-		(property "Reference" "#PWR113"
-			(at 162.56 139.7 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Value" "GND"
-			(at 162.56 142.7 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" ""
-			(at 162.56 139.7 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Datasheet" ""
-			(at 162.56 139.7 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" ""
-			(at 162.56 139.7 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "1"
-			(uuid "5dd70ee6-80c9-419a-a2ed-f7ae3006fbf7")
-		)
-		(instances
-			(project "lora-pump"
-				(path "/7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f803001/7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f803104"
-					(reference "#PWR113")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "power:+5V")
-		(at 320.04 90.17 0)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom no)
-		(on_board no)
-		(in_pos_files yes)
-		(dnp no)
-		(uuid "a7bd8000-efff-408f-bc95-f4bd07f76669")
-		(property "Reference" "#PWR116"
-			(at 320.04 90.17 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Value" "+5V"
-			(at 320.04 87.17 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" ""
-			(at 320.04 90.17 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Datasheet" ""
-			(at 320.04 90.17 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" ""
-			(at 320.04 90.17 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "1"
-			(uuid "ed520e20-035a-4119-8cc2-defb0ac48b70")
-		)
-		(instances
-			(project "lora-pump"
-				(path "/7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f803001/7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f803104"
-					(reference "#PWR116")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Device:R")
-		(at 99.06 139.7 0)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(in_pos_files yes)
-		(dnp no)
-		(uuid "b85d485c-4c75-4493-822f-d8b03c51eb72")
-		(property "Reference" "R16"
-			(at 99.06 133.7 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Value" "100R"
-			(at 99.06 145.7 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
-			(at 99.06 139.7 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Datasheet" ""
-			(at 99.06 139.7 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" ""
-			(at 99.06 139.7 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "MPN" "RC0603FR-07100RL"
-			(at 99.06 139.7 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "1"
-			(uuid "a2712254-90c6-484f-aaac-ade47e0a19f8")
-		)
-		(pin "2"
-			(uuid "57095fa7-dc4a-4ace-ba0e-f4dbde9f0281")
-		)
-		(instances
-			(project "lora-pump"
-				(path "/7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f803001/7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f803104"
-					(reference "R16")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "power:+5V")
-		(at 228.6 129.54 0)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom no)
-		(on_board no)
-		(in_pos_files yes)
-		(dnp no)
-		(uuid "c07115ca-170d-461e-8672-ba60d075b7db")
-		(property "Reference" "#PWR114"
-			(at 228.6 129.54 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Value" "+5V"
-			(at 228.6 126.54 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" ""
-			(at 228.6 129.54 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Datasheet" ""
-			(at 228.6 129.54 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" ""
-			(at 228.6 129.54 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "1"
-			(uuid "62147dc0-b04d-44ba-89e3-3f5a44c95ca9")
-		)
-		(instances
-			(project "lora-pump"
-				(path "/7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f803001/7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f803104"
-					(reference "#PWR114")
 					(unit 1)
 				)
 			)
@@ -2430,7 +1849,7 @@
 		(on_board yes)
 		(in_pos_files yes)
 		(dnp no)
-		(uuid "e022754b-d44e-484d-96fc-3607424d5bf6")
+		(uuid "56e6715c-58d8-44de-bad7-09227bded5dc")
 		(property "Reference" "D6"
 			(at 355.6 123.54 0)
 			(show_name no)
@@ -2495,15 +1914,104 @@
 			)
 		)
 		(pin "1"
-			(uuid "bdea4389-368b-487d-bea4-603d876d4881")
+			(uuid "d53260e8-5fb8-4b06-a0b5-71ce2d7c1870")
 		)
 		(pin "2"
-			(uuid "defb890d-e73f-4ae7-840c-26a673f6f401")
+			(uuid "66e133c5-a361-4324-89eb-285c06d45d69")
 		)
 		(instances
 			(project "lora-pump"
 				(path "/7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f803001/7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f803104"
 					(reference "D6")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Diode:1N4148W")
+		(at 279.4 129.54 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(uuid "5c3c0c2a-46c6-4afd-a16e-c4a09aa79cdf")
+		(property "Reference" "D5"
+			(at 279.4 123.54 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "1N4148W"
+			(at 279.4 135.54 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "Diode_SMD:D_SOD-123"
+			(at 279.4 129.54 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 279.4 129.54 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" ""
+			(at 279.4 129.54 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "MPN" "1N4148W"
+			(at 279.4 129.54 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "92c6f7d4-029b-46da-9bdf-0029c1b0482a")
+		)
+		(pin "2"
+			(uuid "4c892700-9484-4077-bcd8-55a1a22eac63")
+		)
+		(instances
+			(project "lora-pump"
+				(path "/7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f803001/7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f803104"
+					(reference "D5")
 					(unit 1)
 				)
 			)
@@ -2519,7 +2027,7 @@
 		(on_board yes)
 		(in_pos_files yes)
 		(dnp no)
-		(uuid "eb0dbd76-0dcf-49ef-9280-f199655af77c")
+		(uuid "7cff2c50-c91f-4150-8eca-f3e2b7bc4778")
 		(property "Reference" "R17"
 			(at 320.04 93.06 0)
 			(show_name no)
@@ -2530,7 +2038,7 @@
 				)
 			)
 		)
-		(property "Value" "1k"
+		(property "Value" "4k7"
 			(at 320.04 105.06 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -2572,7 +2080,7 @@
 				)
 			)
 		)
-		(property "MPN" "RC0603FR-071KL"
+		(property "MPN" "RC0603FR-074K7L"
 			(at 320.04 99.06 0)
 			(hide yes)
 			(show_name no)
@@ -2584,15 +2092,507 @@
 			)
 		)
 		(pin "1"
-			(uuid "9d6ed204-c9c3-477d-898e-bdbbb3a01963")
+			(uuid "8c41e19d-b4d1-4e40-9959-ff995a2adb93")
 		)
 		(pin "2"
-			(uuid "5fcf1fe7-2feb-487f-a62c-5fb0bed9d2ee")
+			(uuid "36424662-aa8a-434c-a4b1-0ac19368b413")
 		)
 		(instances
 			(project "lora-pump"
 				(path "/7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f803001/7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f803104"
 					(reference "R17")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:R")
+		(at 99.06 139.7 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(uuid "92088fbf-de85-4b13-b279-77125e7b275e")
+		(property "Reference" "R16"
+			(at 99.06 133.7 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "100R"
+			(at 99.06 145.7 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
+			(at 99.06 139.7 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 99.06 139.7 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" ""
+			(at 99.06 139.7 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "MPN" "RC0603FR-07100RL"
+			(at 99.06 139.7 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "58c257ab-8034-4817-a8b7-d1041321591f")
+		)
+		(pin "2"
+			(uuid "257843d6-87e0-4a9f-bc9e-5e07111cde2c")
+		)
+		(instances
+			(project "lora-pump"
+				(path "/7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f803001/7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f803104"
+					(reference "R16")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:GND")
+		(at 60.96 128.27 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom no)
+		(on_board no)
+		(in_pos_files yes)
+		(dnp no)
+		(uuid "92cb214d-a925-4722-bea8-8462726bcfcf")
+		(property "Reference" "#PWR130"
+			(at 60.96 128.27 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "GND"
+			(at 60.96 131.27 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 60.96 128.27 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 60.96 128.27 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" ""
+			(at 60.96 128.27 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "d7cedb6f-c906-4bf4-a469-aadef2e84b65")
+		)
+		(instances
+			(project "lora-pump"
+				(path "/7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f803001/7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f803104"
+					(reference "#PWR130")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:+12V")
+		(at 320.04 90.17 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom no)
+		(on_board no)
+		(in_pos_files yes)
+		(dnp no)
+		(uuid "a092fecb-20a9-4a27-a4d2-781e6e971821")
+		(property "Reference" "#PWR134"
+			(at 320.04 90.17 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "+12V"
+			(at 320.04 87.17 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 320.04 90.17 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 320.04 90.17 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" ""
+			(at 320.04 90.17 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "74519900-3365-4e73-b191-21623ef8520f")
+		)
+		(instances
+			(project "lora-pump"
+				(path "/7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f803001/7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f803104"
+					(reference "#PWR134")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:R")
+		(at 60.96 119.38 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(uuid "a09cc04c-5842-4a7c-8536-8ed3ecf037fe")
+		(property "Reference" "R15"
+			(at 60.96 113.38 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "10k"
+			(at 60.96 125.38 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
+			(at 60.96 119.38 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 60.96 119.38 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" ""
+			(at 60.96 119.38 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "MPN" "RC0603FR-0710KL"
+			(at 60.96 119.38 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "99b877ba-555b-4d6c-a86a-7de566889fda")
+		)
+		(pin "2"
+			(uuid "7bb20968-d61a-487f-91b4-1dac44b67378")
+		)
+		(instances
+			(project "lora-pump"
+				(path "/7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f803001/7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f803104"
+					(reference "R15")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Transistor_FET:AO3400A")
+		(at 160.02 129.54 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(uuid "a2d72ec6-d845-4ada-b77a-f5104509a5e7")
+		(property "Reference" "Q1"
+			(at 160.02 123.54 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "AO3400A"
+			(at 160.02 135.54 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "Package_TO_SOT_SMD:SOT-23"
+			(at 160.02 129.54 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 160.02 129.54 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" ""
+			(at 160.02 129.54 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "MPN" "AO3400A"
+			(at 160.02 129.54 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "79534cf4-eaea-4dcd-8e2d-de8abed7b554")
+		)
+		(pin "2"
+			(uuid "43b6996e-b895-46ba-8cd0-388e2e81314c")
+		)
+		(pin "3"
+			(uuid "7d8fc751-64db-4afc-bac0-d5b6bae16a64")
+		)
+		(instances
+			(project "lora-pump"
+				(path "/7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f803001/7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f803104"
+					(reference "Q1")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:+12V")
+		(at 228.6 129.54 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom no)
+		(on_board no)
+		(in_pos_files yes)
+		(dnp no)
+		(uuid "ac69634b-75b7-4efb-be6c-7a6bae8bf5ff")
+		(property "Reference" "#PWR132"
+			(at 228.6 129.54 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "+12V"
+			(at 228.6 126.54 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 228.6 129.54 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 228.6 129.54 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" ""
+			(at 228.6 129.54 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "cae52532-2a3c-4b58-8e4b-5b1042923c6d")
+		)
+		(instances
+			(project "lora-pump"
+				(path "/7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f803001/7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f803104"
+					(reference "#PWR132")
 					(unit 1)
 				)
 			)

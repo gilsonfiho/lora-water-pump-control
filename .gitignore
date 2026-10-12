@@ -50,3 +50,4 @@ hardware/.history/
 # Relatorios locais de ERC/DRC (resumo fica em hardware/docs/decisoes.md)
 hardware/*/erc.rpt
 hardware/*/drc.rpt
+hardware/**/.history/

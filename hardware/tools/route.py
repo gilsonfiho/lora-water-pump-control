@@ -6,6 +6,7 @@ face de cima cobre o resto. Nao e um roteador de uso geral: serve a estas placas
 resultado deve ser conferido no KiCad (RF, potencia, USB).
 """
 import heapq
+import random
 import math
 
 import numpy as np
@@ -39,6 +40,7 @@ class Router:
         self.own = [np.zeros((2, self.ny, self.nx), np.int32) for _ in MARGIN]
         self.flat = [a.reshape(-1) for a in self.own]
         self.failed = []
+        self.vias_xy = []
         self.n_tracks = self.n_vias = 0
 
     # ---- grade
@@ -202,11 +204,12 @@ class Router:
             for k in range(len(MARGIN)):
                 self.paint(k, layer, px, py, px, py, net, margin=w / 2 + MARGIN[k])
 
-    def add_via(self, x, y, net):
+    def add_via(self, x, y, net, d=VIA_D):
+        self.vias_xy.append((x, y))
         v = pcbnew.PCB_VIA(self.b)
         v.SetPosition(pcbnew.VECTOR2I(MM(x), MM(y)))
         v.SetViaType(pcbnew.VIATYPE_THROUGH)
-        v.SetWidth(MM(VIA_D))
+        v.SetWidth(MM(d))
         v.SetDrill(MM(VIA_DRILL))
         v.SetLayerPair(pcbnew.F_Cu, pcbnew.B_Cu)
         v.SetNetCode(net)
@@ -214,7 +217,7 @@ class Router:
         self.n_vias += 1
         for l in (0, 1):
             for k in range(len(MARGIN)):
-                self.paint(k, l, x, y, x, y, net, margin=VIA_D / 2 + MARGIN[k])
+                self.paint(k, l, x, y, x, y, net, margin=d / 2 + MARGIN[k])
 
     def commit(self, path, net, w, stub=None):
         """Converte o caminho de nos em trilhas e vias."""
@@ -249,7 +252,7 @@ class Router:
             self.add_track(l, px, py, n0[1], n0[2], w, net)
 
     # ---- roteamento de uma net
-    def route_net(self, net, name, pads):
+    def route_net(self, net, name, pads, seed=None):
         w = W_PWR if name in POWER else W_SIG
         k = PWR if name in POWER else SIG
         tree = set()
@@ -274,10 +277,17 @@ class Router:
                             return self.idx(l, yy, xx), cx, cy
             return None, cx, cy
 
-        first = pads[0]
-        add_tree(first[2], first[3])
-        tree_pads = [first]
-        rest = pads[1:]
+        if seed:
+            tree.update(seed)
+            sx, sy = self.node_xy(next(iter(seed)))[1:]
+            first = (None, None, (sx, sy, sx, sy), [])
+            tree_pads = []
+            rest = list(pads)
+        else:
+            first = pads[0]
+            add_tree(first[2], first[3])
+            tree_pads = [first]
+            rest = pads[1:]
         ok = True
         while rest:
             cx0 = (first[2][0] + first[2][2]) / 2
@@ -321,6 +331,48 @@ class Router:
                 self.add_track(l, x, y, (r[0] + r[2]) / 2, (r[1] + r[3]) / 2, w, net)
                 return
 
+    def preroute_usb(self):
+        """Escape do USB-C (passo 0,5 mm, D+ e D- intercalados): D+ junta por via + B.Cu, D- por F.Cu."""
+        j2 = next((f for f in self.b.GetFootprints() if f.GetReference() == "J2"), None)
+        seeds = {}
+        if j2 is None:
+            return seeds
+        pads = {p.GetNumber(): p for p in j2.Pads() if p.GetNumber() in ("A6", "B6", "A7", "B7")}
+        if len(pads) < 4:
+            return seeds
+        sign = 1 if mm(pads["A6"].GetY()) > mm(j2.GetY()) else -1
+        pos = {k: (mm(p.GetX()), mm(p.GetY())) for k, p in pads.items()}
+        y0 = pos["A6"][1]
+        dp, dm = pads["A6"].GetNetCode(), pads["A7"].GetNetCode()
+        w = W_SIG
+        cells = {dp: set(), dm: set()}
+
+        def mark(l, xa, ya, xb, yb, net):
+            n = max(1, int(math.hypot(xb - xa, yb - ya) / PITCH))
+            for i in range(n + 1):
+                px, py = xa + (xb - xa) * i / n, ya + (yb - ya) * i / n
+                cells[net].add(self.idx(l, self.cell(py), self.cell(px)))
+
+        vias = []
+        for k in ("B6", "A6"):                       # D+: stub, via 0,5 mm, B.Cu entre as vias
+            x, y = pos[k]
+            self.add_track(0, x, y, x, y + sign * 0.6, w, dp)
+            self.add_via(x, y + sign * 0.9, dp, d=0.5)
+            self.add_track(0, x, y + sign * 0.6, x, y + sign * 0.9, w, dp)
+            vias.append((x, y + sign * 0.9))
+            mark(0, x, y, x, y + sign * 0.9, dp)
+        (xa, ya), (xb, yb) = vias
+        self.add_track(1, xa, ya, xb, yb, w, dp)
+        mark(1, xa, ya, xb, yb, dp)
+        for k in ("A7", "B7"):                       # D-: stubs ate y0+1,4 e uniao em F.Cu
+            x, y = pos[k]
+            self.add_track(0, x, y, x, y + sign * 1.4, w, dm)
+            mark(0, x, y, x, y + sign * 1.4, dm)
+        xa, xb = pos["A7"][0], pos["B7"][0]
+        self.add_track(0, xa, y0 + sign * 1.4, xb, y0 + sign * 1.4, w, dm)
+        mark(0, xa, y0 + sign * 1.4, xb, y0 + sign * 1.4, dm)
+        return {dp: cells[dp], dm: cells[dm]}
+
     # ---- vias de GND
     def gnd_vias(self, pads, skip_refs):
         for p, fp, r, layers, net in pads:
@@ -328,6 +380,9 @@ class Router:
                 continue
             cx, cy = (r[0] + r[2]) / 2, (r[1] + r[3]) / 2
             x, y = self.cell(cx), self.cell(cy)
+            if not (0 <= x < self.nx and 0 <= y < self.ny):
+                print(f"AVISO: pad GND fora da grade: {fp.GetReference()}.{p.GetNumber()} em ({cx:.1f}, {cy:.1f})")
+                continue
             start = self.idx(0, y, x)
             if self.flat[SIG][start] not in (0, net):
                 continue
@@ -336,16 +391,24 @@ class Router:
                 l, nx_, ny_ = self.node_xy(n)
                 if l != 0 or math.hypot(nx_ - cx, ny_ - cy) < 0.9:
                     return False
+                if any(math.hypot(nx_ - vx, ny_ - vy) < 0.9 for vx, vy in self.vias_xy):
+                    return False
                 o = n + self.ny * self.nx
                 return self.flat[VIA][n] in (0, net) and self.flat[VIA][o] in (0, net)
 
             path = self.search(net, SIG, [start], goal, None)
             if not path:
-                self.failed.append(f"GND:{fp.GetReference()}.{p.GetNumber()}")
+                # ultimo recurso: via de 0,5 mm no proprio pad, se a folga permitir
+                if self.flat[PWR][start] in (0, net) and self.flat[PWR][start + self.ny * self.nx] in (0, net) and not any(
+                        math.hypot(cx - vx, cy - vy) < 0.8 for vx, vy in self.vias_xy):
+                    self.add_via(cx, cy, net, d=0.5)
+                else:
+                    self.failed.append(f"GND:{fp.GetReference()}.{p.GetNumber()}")
                 continue
             self.commit(path, net, W_SIG)
             l, vx, vy = self.node_xy(path[-1])
-            self.add_via(vx, vy, net)
+            if not any(math.hypot(vx - ax, vy - ay) < 0.05 for ax, ay in self.vias_xy):
+                self.add_via(vx, vy, net)
 
     def stitch_epad(self, fp, net):
         """Vias no EPAD (pads '49' da linha central do footprint) ligando os dois planos de GND."""
@@ -360,7 +423,7 @@ class Router:
                     self.add_via(*key, net)
 
 
-def run(board, W, H):
+def _attempt(board, W, H, priority, seed=0):
     r = Router(board, W, H)
     pads = r.load()
     gnd = board.FindNet("GND").GetNetCode()
@@ -376,14 +439,48 @@ def run(board, W, H):
         xs = [(q[2][0] + q[2][2]) / 2 for q in ps]
         ys = [(q[2][1] + q[2][3]) / 2 for q in ps]
         hp = (max(xs) - min(xs)) + (max(ys) - min(ys))
-        items.append((0 if name in POWER else 1, hp, net, name, ps))
-    items.sort()
+        items.append((0 if name in priority else 1, 0 if name in POWER else 1, hp, net, name, ps))
+    rnd = random.Random(seed)
+    items.sort(key=lambda t: (t[0], t[1], t[2] * (1.0 + (rnd.uniform(-0.4, 0.4) if seed else 0.0))))
     for fp in board.GetFootprints():
         if fp.GetReference() == "U1":
             r.stitch_epad(fp, gnd)
-    for _, hp, net, name, ps in items:
-        r.route_net(net, name, ps)
     gpads = [t for t in pads if t[4] == gnd]
     r.gnd_vias(gpads, skip_refs={"U1", "U2", "J2", "J1", "J3", "J4", "H1", "H2"})
-    print(f"roteador: {r.n_tracks} trilhas, {r.n_vias} vias; falhas: {r.failed or 'nenhuma'}")
+    seeds = r.preroute_usb()
+    for _, _, hp, net, name, ps in items:
+        if net in seeds:
+            ps = [q for q in ps if q[1].GetReference() != "J2"]
+            r.route_net(net, name, ps, seed=seeds[net])
+        else:
+            r.route_net(net, name, ps)
+    return r
+
+
+def _clear(board):
+    for t in list(board.GetTracks()):
+        board.Remove(t)
+
+
+def run(board, W, H, attempts=8):
+    """Roteia; refaz dando prioridade as nets que falharam, e fica com a melhor tentativa."""
+    priority, best = set(), None
+    for i in range(attempts):
+        r = _attempt(board, W, H, priority, seed=i)
+        bad = [f for f in r.failed if not f.startswith("GND:")]
+        score = len(r.failed) + 3 * len(bad)
+        print(f"tentativa {i + 1}: {r.n_tracks} trilhas, {r.n_vias} vias; falhas: {r.failed or 'nenhuma'}")
+        if best is None or score < best[0]:
+            best = (score, set(priority), i)
+        if not r.failed:
+            return r
+        if score > (best[0] if best else 99):
+            pass
+        priority |= set(bad)
+        if i < attempts - 1:
+            _clear(board)
+    if best[2] != attempts - 1:  # a ultima nao foi a melhor: refaz a melhor
+        _clear(board)
+        r = _attempt(board, W, H, best[1], seed=best[2])
+        print(f"melhor tentativa refeita: falhas: {r.failed or 'nenhuma'}")
     return r

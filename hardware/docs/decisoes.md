@@ -10,6 +10,53 @@ Formato: data, decisão, motivo. Mais recentes no topo.
   versionadas; backups, autosave e `*.kicad_prl` ficam no `.gitignore`.
 - Tags de hardware `hw-vX.Y`.
 
+## 2026-10-12: alimentacao por jack de 12 V, roteamento e layout v3
+
+Por pedido do autor: **a alimentacao e por jack de 12 V**, nao por borne de 5 V.
+
+- **Entrada:** jack DC (CUI PJ-102AH, centro positivo), fusivel rearmavel 1,5 A/16 V,
+  TVS SMBJ15A e Schottky SS34 em serie (protecao de polaridade, queda ~0,5 V).
+- **Buck 12 V -> 5 V: AP63205 (Diodes)**, 5,0 V fixo, 2 A, Vin 3,8-32 V, TSOT26 (Datasheet
+  DS41326 Rev. 3-2, p. 13, Tabela 3): L = 4,7 uH, C1 = 10 uF, C2 = 2 x 22 uF, bootstrap
+  100 nF. Os 5 V alimentam o E220 em 5,0 V (potencia plena do T30D) e o LDO de 3,3 V.
+  `TODO(hw)`: MPNs de indutor e capacitores nao verificados; validar corrente de pico
+  do T30D (620 mA) no buck e o aquecimento.
+- **USB-C so para gravar/depurar:** alimenta a logica pelo Schottky D2 (~4,6 V).
+- **Bobina do receptor agora de 12 V** (rele ou contator CC de 12 V), vinda do mesmo
+  +12 V protegido; o AO3400A (30 V) comuta. Continua sem tensao de rede na placa.
+  `TODO(hw)`: dimensionar corrente da bobina contra o fusivel de 1,5 A.
+- **Eletrolitico do VCC_RF trocado por 2 x 47 uF ceramicos (1210)**, baixos o bastante
+  para ficar sob o E220, junto ao pino VCC. `TODO(hw)`: X5R perde cerca de metade da
+  capacitancia a 5 V; o README recomenda 100 uF + 100 nF; validar em bancada.
+- **Layout v3 (76 x 46 mm):** C3 no canto superior esquerdo (antena para fora), USB-C na
+  borda de cima, jack na borda esquerda embaixo, borne J4 embaixo, bloco do buck no centro
+  de baixo, botoes e header I2C em uma faixa acima. As pecas baixas (<= 3 mm) ficam
+  **sob o E220**, que fica 4,2 mm acima da placa. `TODO(hw)`: confirmar que o lado de baixo
+  do modulo e liso.
+- **Roteamento:** `tools/route.py`, roteador proprio (A* em grade de 0,1 mm, 2 camadas,
+  vias, largura 0,2 mm sinal e 0,5 mm potencia), sem baixar o Freerouting. GND por vias
+  para o plano de baixo. O USB-C (passo 0,5 mm, D+ e D- intercalados) tem escape manual
+  com vias de 0,5 mm. Regras do projeto: folga 0,15 mm, trilha 0,2 mm, via 0,6/0,3 mm
+  (a JLCPCB trabalha com 0,127 mm; conferir no site).
+- **Resultado (checkpoint 2026-10-12):** receptor roteado por inteiro (0 conexoes abertas de
+  circuito; restam avisos de ilha de GND e de serigrafia na borda); emissor com 1 net
+  (USB_DM, 3 trechos curtos) ainda aberta. DRC: 0 erros de folga, curto ou courtyard.
+
+### Padrao de serigrafia (vale para as duas placas, `tools/silk.py`)
+
+- Texto de 0,8 mm e traco de 0,12 mm, MAIUSCULAS, sempre na horizontal.
+- Designador na serigrafia so para CI, conectores, chaves, jumper, LEDs, transistor e
+  indutor. Resistores, capacitores e diodos: designador na camada Fab (desenho de montagem).
+- Nada de texto sobre pad, corpo de componente, furo, modulo ou area da antena. Cada rotulo
+  vai para a vaga livre mais proxima do que descreve.
+- Avisos e identificacao (placa, versao, data) agrupados; funcao de cada borne escrita.
+
+### Pecas retiradas por nao terem funcao na hw-v0.1
+
+- Pull-ups de 10 k em TXD e AUX do E220 (so para MCU de 5 V; Tabela 4-1, p. 7).
+- Resistor de 0 ohm entre +5V e o VCC do E220 (o rail do radio e o proprio +5V).
+- Pull-down de BAT_ADC: sem bateria, o GPIO0 fica livre (marcado como sem uso).
+
 ## 2026-10-12: layout compacto (hw-v0.1, ainda sem trilhas)
 
 - **Placa de 86 x 52 mm** (era 100 x 76): -41 % de area, cantos arredondados de 2 mm.

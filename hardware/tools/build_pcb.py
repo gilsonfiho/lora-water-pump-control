@@ -16,13 +16,14 @@ import pcbnew
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import kicadgen as k  # noqa: E402
 import route  # noqa: E402
+import silk  # noqa: E402
 
 HW = Path(__file__).resolve().parent.parent
 KICAD = Path(r"C:\Program Files\KiCad\10.0")
 FP_DIRS = {"lora-pump": HW / "libs" / "footprints" / "lora-pump.pretty"}
 MM = pcbnew.FromMM
 
-W, H = 76.0, 44.0          # placa (mm)
+W, H = 76.0, 46.0          # placa (mm)
 E220_PIN1 = (W - 41.5, 21.1)  # pino 1 do E220: SMA rente a borda direita
 ESP_POS = (11.05, 7.6)        # antena do MINI-1 rente a borda esquerda
 
@@ -147,42 +148,40 @@ def main(role):
     fps["U1"].SetPosition(vec(*ESP_POS))
     fps["J2"].SetOrientationDegrees(180)
     fps["J2"].SetPosition(vec(25.0, 4.3))              # USB-C na borda de cima, junto ao C3
-    fps["J3"].SetPosition(vec(39.0, H - 5.6))          # bornes na borda de baixo
+    fps["J3"].SetOrientationDegrees(270)               # jack 12 V na borda esquerda, abertura para fora
+    fps["J3"].SetPosition(vec(14.2, 36.5))
     fps["J4"].SetPosition(vec(50.4, H - 5.6))
     fps["J1"].SetOrientationDegrees(270)               # header I2C deitado
-    fps["J1"].SetPosition(vec(14.5, 31.2))
+    fps["J1"].SetPosition(vec(27.5, 31.2))
     fps["C4"].SetPosition(vec(39.0, 6.2))              # bulk do VCC_RF junto ao pino 6 do E220
     fps["C11"].SetPosition(vec(39.0, 10.0))
     fps["U4"].SetPosition(vec(25.0, 13.0))             # ESD e CC logo abaixo do USB-C
     fps["R9"].SetPosition(vec(21.0, 13.0))
     fps["R10"].SetPosition(vec(29.0, 13.0))
-    px = E220_PIN1[0] - 3.2                            # desacoplamento ao lado dos pinos do E220
-    for ref, dy in (("C5", -15.0), ("R8", -10.0), ("R7", -6.0)):
-        fps[ref].SetOrientationDegrees(90)
-        fps[ref].SetPosition(vec(px, E220_PIN1[1] + dy))
-    fps["SW1"].SetPosition(vec(21.8, 31.0))
-    fps["SW2"].SetPosition(vec(31.0, 31.0))
-    fps["D1"].SetPosition(vec(42.0, 29.8))
-    fps["JP1"].SetPosition(vec(46.0, 29.8))
+    px = E220_PIN1[0] - 3.2                            # 100 nF ao lado do pino VCC do E220
+    fps["C5"].SetOrientationDegrees(90)
+    fps["C5"].SetPosition(vec(px, E220_PIN1[1] - 12.7))
+    fps["SW1"].SetPosition(vec(37.6, 31.4))
+    fps["SW2"].SetPosition(vec(47.2, 31.4))
+    fps["D1"].SetPosition(vec(31.5, 30.9))
+    fps["JP1"].SetPosition(vec(31.5, 33.4))
 
-    fixed = {"U1", "U2", "J1", "J2", "J3", "J4", "C4", "C11", "C5", "R7", "R8", "SW1", "SW2", "D1", "JP1", "U4", "R9", "R10"}
+    fixed = {"U1", "U2", "J1", "J2", "J3", "J4", "C4", "C11", "C5", "SW1", "SW2", "D1", "JP1", "U4", "R9", "R10"}
     groups = {
         # junto aos pinos do C3: desacoplamento, EN, pull-ups
-        (17.5, 16.5, 29.8, 28.5): ["C1", "C2", "R1", "C3", "R2", "R3", "R4", "R5", "R6"],
+        (17.5, 15.5, 30.2, 28.6): ["C1", "C2", "R1", "C3", "R2", "R3", "R4", "R5", "R6"],
         # sob o E220 (4,2 mm de vao): so pecas baixas
-        (43.0, 2.0, 63.5, 25.0): ["D2", "U5", "C6", "C7", "C8", "R13", "R14",
-                                  "D4", "D3", "F1", "R11", "R12", "D5", "D6", "R15", "R16", "R17",
-                                  "C9", "C10", "Q1"],
+        # bloco do buck 12 V -> 5 V, no centro de baixo
+        (17.8, 34.9, 46.5, 45.6): ["U6", "L1", "C6", "C14", "C12", "C13"],
+        (43.0, 2.0, 64.5, 15.0): ["D2", "U5", "C7", "C8", "D4", "D3", "F1", "R11", "R12"],
+        # filtro/protecao das E/S: na parte de baixo do vao sob o E220, mais perto do borne J4
+        (43.0, 16.0, 63.5, 25.0): ["D5", "D6", "R15", "R16", "R17", "C9", "C10", "Q1"],
     }
     for region, refs in groups.items():
         pack([fps[r] for r in refs if r in fps], region, gap=0.7)
     left = [r for r in fps if r not in fixed and not any(r in v for v in groups.values())]
     if left:
         print("sem posicao:", left)
-    for fp in fps.values():                            # referencias pequenas e finas
-        fp.Reference().SetTextSize(vec(0.8, 0.8))
-        fp.Reference().SetTextThickness(MM(0.12))
-
     # Contorno com cantos arredondados (raio 2 mm).
     r = 2.0
     c = [(r, 0, W - r, 0), (W, r, W, H - r), (W - r, H, r, H), (0, H - r, 0, r)]
@@ -210,7 +209,7 @@ def main(role):
         board.Add(a_)
 
     # Furos de fixacao M3 (nos cantos de baixo; os de cima ficam sob o modulo / a antena).
-    for i, (x, y) in enumerate([(3.5, H - 3.5), (W - 3.5, H - 3.5)]):
+    for i, (x, y) in enumerate([(W - 3.5, H - 3.5)]):
         mh = load_fp("MountingHole:MountingHole_3.2mm_M3")
         mh.SetReference(f"H{i + 1}")
         mh.SetPosition(vec(x, y))
@@ -232,15 +231,21 @@ def main(role):
             o.Append(MM(x), MM(y))
         board.Add(z)
 
-    # Serigrafia.
+    # Serigrafia padronizada (ver silk.py): refs so nas pecas principais e rotulos em vaga livre.
     emi = role == "emissor"
-    text(board, "NAO LIGAR O E220 SEM ANTENA!", 52, 26.5, 0.8)
-    text(board, "ENTRADA 5V APENAS - NAO LIGAR 12V", 52, 28.0, 0.8)
-    text(board, "EMISSOR" if emi else "RECEPTOR", 6, 36.0, 1.0)
-    text(board, "hw-v0.1", 6, 38.0, 0.8)
-    text(board, "JP1 PAPEL: " + ("ABERTO=RESERV." if emi else "FECHADO=BOMBA"), 60, 30.2, 0.7)
-    text(board, "J3: 5V+ | GND", 43.0, 31.4, 0.7)
-    text(board, "J4: BOIA-B|GND|BOIA-A|GND" if emi else "J4: BOBINA 5V+ | -", 59.0, 31.4, 0.7)
+    sk = silk.Silk(board, fps, W, H)
+    sk.refs()
+    sk.label("NAO LIGAR O E220 SEM ANTENA!", 50.0, 27.2)
+    sk.label("ENTRADA 12V DC", 22.0, 29.8)
+    sk.label("CENTRO POSITIVO", 22.0, 31.0)
+    sk.label("J4: BOIA-B|GND|BOIA-A|GND" if emi else "J4: BOBINA 12V + | -", 58.0, 33.6)
+    sk.label("I2C: 3V3 SDA SCL GND", 26.0, 28.9)
+    sk.label("RESET", 37.6, 34.7)
+    sk.label("BOOT", 47.2, 34.7)
+    sk.label("JP1 PAPEL:", 31.5, 36.2)
+    sk.label("ABERTO=RESERV." if emi else "FECHADO=BOMBA", 31.5, 37.4)
+    sk.label("EMISSOR" if emi else "RECEPTOR", 40.0, 43.6)
+    sk.label("HW-V0.1  2026-10-12", 40.0, 44.8)
 
     if "--sem-trilhas" not in sys.argv:
         route.run(board, W, H)
