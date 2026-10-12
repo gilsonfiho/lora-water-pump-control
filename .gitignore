@@ -36,3 +36,10 @@ hardware/**/*.lck
 hardware/**/*.bak
 hardware/**/*.kicad_sch-bak
 hardware/**/*.kicad_pcb-bak
+
+# Arquivos baixados de terceiros (STEP, footprints, datasheets de fabricante):
+# nao versionar; a origem de cada um fica registrada no SOURCES.md.
+hardware/libs/vendor/*
+!hardware/libs/vendor/SOURCES.md
+hardware/docs/datasheets/*
+!hardware/docs/datasheets/SOURCES.md

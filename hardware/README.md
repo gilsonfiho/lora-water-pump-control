@@ -23,3 +23,11 @@ componentes marcados DNP conforme o papel (reservatório ou bomba).
 - Pinagem do ESP32-C3 final só vai ao `PinConfig.h` depois de aprovada, em
   commit separado.
 - **O E220 transmite logo no boot e nunca pode ficar sem antena.**
+
+## O que não vai ao Git
+
+- `libs/vendor/` e `docs/datasheets/`: arquivos baixados de terceiros (STEP,
+  footprints, datasheets). A origem de cada um fica no `SOURCES.md` da pasta.
+  Os datasheets do E220, já no repositório, ficam em `../docs/datasheets/`.
+- Versionados: o projeto KiCad e as bibliotecas **próprias** (`libs/symbols`,
+  `libs/footprints`), que usam caminhos relativos (`${KIPRJMOD}`).
