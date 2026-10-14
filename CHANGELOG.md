@@ -20,7 +20,7 @@ e o projeto adota o [Versionamento Semântico](https://semver.org/lang/pt-BR/).
   esquemático hierárquico (MCU, rádio E220-900T30D, alimentação, E/S), footprints e
   modelos 3D próprios, posicionamento em placa de 100 x 76 mm e renders/STEP em
   `hardware/fab/`. Ainda sem roteamento e sem tag `hw-v0.1`.
-- E220 em soquete fêmea 1x07 (módulo plugável), USB-C afastado do ESP32-C3, chave liga/desliga
+- E220 em soquete fêmea 1x07 (módulo plugável), USB-C afastado do ESP32-C3, chave liga/desliga (placa de 74 x 46 mm; 3D do C3 corrigido)
   na entrada de 12 V e layout reorganizado para aproveitar os cantos da placa.
 
 Nada mergeado aguardando versão. O backlog aberto está abaixo.

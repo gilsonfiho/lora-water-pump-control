@@ -305,3 +305,18 @@ Escolhas e consequências:
   roteador é aleatório por semente: emissor fechou com `ROUTE_SEED=32`, receptor com `24`.
   Para reproduzir o mesmo cobre, rodar `build_pcb.py` com essa variável.
 - **Identificação (nome, versão, data) em duas faces:** frente e trás, esta numa linha embaixo.
+
+## 2026-10-14: modelo 3D do C3 corrigido e placa 2 mm mais curta
+
+- **Erro corrigido no 3D do ESP32-C3-MINI-1.** O offset do modelo estava `y = -11,07` (sinal do ajuste
+  invertido) e desenhava o módulo 5,4 mm para dentro da placa. O certo é `-5,67`: o offset oficial da
+  Espressif (`-8,37`, `libs/vendor/espressif`) mais 2,7 mm de diferença de origem em relação ao nosso
+  footprint (o offset y do 3D do KiCad é invertido em relação à tela). **O footprint nunca esteve
+  errado:** o contorno do C3 vai de x = 0 a 16,7 mm, ou seja, a antena já ficava rente à borda esquerda.
+  Só o desenho 3D e o render mostravam uma faixa vazia ali.
+- **Placa 74 x 46 mm** (era 76): tudo o que fica à direita do C3 recuou 2,0 mm (`DX` em `build_pcb.py`).
+  Com 3,5 mm o bloco do buck não coube entre a SW3 e o J4 (sobrou 1,7 mm); 2,0 mm devolve a largura
+  com que ele já tinha fechado. A altura (46 mm) não foi mexida.
+- **Resultado:** ERC emissor 0 / receptor 1 aviso (AO3400A, como antes). DRC das duas placas: só
+  3 avisos de serigrafia na borda por placa. Sementes do roteador: emissor `ROUTE_SEED=40`,
+  receptor `96`.
