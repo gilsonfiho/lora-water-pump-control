@@ -320,3 +320,17 @@ Escolhas e consequências:
 - **Resultado:** ERC emissor 0 / receptor 1 aviso (AO3400A, como antes). DRC das duas placas: só
   3 avisos de serigrafia na borda por placa. Sementes do roteador: emissor `ROUTE_SEED=40`,
   receptor `96`.
+
+## 2026-10-14 (2): antena do C3 para fora da borda; placa 70,5 x 46 mm
+
+- **Antena do ESP32-C3-MINI-1 pendurada para fora da placa** (como no devkit ESP32-S3): os 5,2 mm
+  da região da antena ficam além da borda esquerda, sem cobre nem placa embaixo. `ESP_POS` x = 5,85;
+  o ajuste de 0,25 mm acima do rente mantém os pads de GND do módulo a 0,5 mm da borda (regra de
+  borda do projeto). `TODO(hw)`: o módulo fica preso só pelos pads e pelo estanho; conferir se a
+  JLCPCB monta módulo com a antena fora do contorno (pode exigir fresa/painelização).
+- **Placa 70,5 x 46 mm** (`DX = 5,5` em `build_pcb.py`; era 74): tudo à direita do C3 recuou 5,5 mm.
+  Jack, SW3 e o furo M3 de cima ficam presos à borda esquerda; o bloco do buck passou a usar a faixa
+  y = 31,5 a 45,6 mm, entre a SW3 e o J4.
+- **Resultado:** ERC emissor 0 / receptor 1 aviso (AO3400A, como antes). DRC das duas placas: só 3
+  avisos de serigrafia na borda por placa. Sementes do roteador: emissor `ROUTE_SEED=96`, receptor `0`.
+  Substitui as sementes e a largura da seção anterior.
