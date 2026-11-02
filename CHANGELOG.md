@@ -22,6 +22,8 @@ e o projeto adota o [Versionamento Semântico](https://semver.org/lang/pt-BR/).
   `hardware/fab/`. Placas roteadas, ERC/DRC sem erros, tag `hw-v0.1`.
 - E220 em soquete fêmea 1x07 (módulo plugável), USB-C afastado do ESP32-C3, chave liga/desliga (placa de 70,5 x 46 mm; antena do C3 para fora da borda; 3D do C3 corrigido)
   na entrada de 12 V e layout reorganizado para aproveitar os cantos da placa.
+- LED âmbar de RSSI (D7 + R18 330 Ω) no GPIO0 do C3, nas duas placas (issue #18); passivos do
+  C3 em grade alinhada; 3D do indutor L1 (modelo de envelope, aproximado).
 
 Nada mergeado aguardando versão. O backlog aberto está abaixo.
 

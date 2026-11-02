@@ -345,3 +345,19 @@ Escolhas e consequências:
 - **Tag `hw-v0.1`** marca a primeira revisão das placas (emissor e receptor): esquemático, PCB
   roteada, ERC/DRC sem erros, 3D e STEP em `fab/`. Pendências de revisão: corrente da chave SW3,
   folga lateral da zona da antena, montagem com a antena fora do contorno (`TODO(hw)`).
+
+## 2026-11-02 (2): LED de RSSI (issue #18), grade alinhada, 3D do L1
+
+- **LED de RSSI nas duas placas (issue #18):** D7 âmbar 0603 + R18 330 Ω no **GPIO0** do C3 (rede
+  `LED_RSSI_DRV`), único pino livre: GPIO0..10 e 18..21 já estão em uso. Corrente estimada
+  ~3,9 mA com Vf ~2,0 V típico. `TODO(hw)`: Vf e MPN do LED não vêm de datasheet; a ligação do
+  GPIO0 ao firmware (`PinConfig.h`, issue #17) fica para commit separado, depois da aprovação.
+- **Layout:** D7/R18 acima da chave SW3; J1 centralizado acima do LED; USB-C J2 mais à esquerda;
+  passivos do C3 em grade 3 x 3 alinhada às colunas de R9, U4 e R10.
+- **3D do L1:** o footprint `L_Taiyo-Yuden_NR-60xx` aponta para um `.step` que não existe na
+  instalação do KiCad 10. Usado o envelope `L_APV_ANR6045.step` (6 x 6 x 4,5 mm). É aproximado:
+  não é o NR6045 real; footprint elétrico inalterado.
+- **Trilha de +3V3 entre os pinos 4 e 5 do soquete do E220:** 0,5 mm, folga de 0,16–0,18 mm aos
+  anéis (mínimo do projeto 0,15 mm). Aceita pelo autor; apertado para solda manual.
+- **Resultado:** ERC emissor 0 / receptor 1 aviso (AO3400A). DRC das duas placas: só 3 avisos de
+  serigrafia na borda por placa. Sementes: emissor 48, receptor 16.
