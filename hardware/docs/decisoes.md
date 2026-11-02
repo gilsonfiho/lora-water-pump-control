@@ -361,3 +361,8 @@ Escolhas e consequências:
   anéis (mínimo do projeto 0,15 mm). Aceita pelo autor; apertado para solda manual.
 - **Resultado:** ERC emissor 0 / receptor 1 aviso (AO3400A). DRC das duas placas: só 3 avisos de
   serigrafia na borda por placa. Sementes: emissor 48, receptor 16.
+- **Versão `hw-v0.2`:** inclui o LED de RSSI e o que está acima. Verso das placas e revisão do
+  esquemático passam a `HW-V0.2 2026-11-02`. A tag `hw-v0.1` fica onde está (commit `4f7309b`).
+- **Modelos 3D de terceiros continuam fora do Git** (`libs/vendor/`, ~22 MB): licença não declarada
+  (Espressif) ou de terceiros (EBYTE, EasyEDA), e a regra do projeto é não redistribuir. A origem de
+  cada arquivo está em `libs/vendor/SOURCES.md`. Quem clonar vê esses componentes sem corpo 3D.

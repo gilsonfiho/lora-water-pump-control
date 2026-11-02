@@ -6,8 +6,8 @@
 	(paper "A3")
 	(title_block
 		(title "Controle de bomba d'agua LoRa")
-		(date "2026-10-11")
-		(rev "0.1")
+		(date "2026-11-02")
+		(rev "0.2")
 		(company "gilsonfiho")
 		(comment 1 "Folha raiz: um bloco por subfolha")
 	)

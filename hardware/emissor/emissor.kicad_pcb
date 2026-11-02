@@ -11800,7 +11800,7 @@
 			(justify mirror)
 		)
 	)
-	(gr_text "EMISSOR  HW-V0.1  2026-10-12"
+	(gr_text "EMISSOR  HW-V0.2  2026-11-02"
 		(at 30 44.2 0)
 		(layer "B.SilkS")
 		(uuid "ec2665f6-2f15-43d8-a2e9-63c8bbcafd54")

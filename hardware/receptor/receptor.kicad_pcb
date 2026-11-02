@@ -11745,7 +11745,7 @@
 			(justify mirror)
 		)
 	)
-	(gr_text "RECEPTOR  HW-V0.1  2026-10-12"
+	(gr_text "RECEPTOR  HW-V0.2  2026-11-02"
 		(at 30 44.2 0)
 		(layer "B.SilkS")
 		(uuid "71f54e2f-7dff-4d58-b31b-4ba08d514415")

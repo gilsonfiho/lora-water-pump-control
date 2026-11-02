@@ -6,8 +6,8 @@
 	(paper "A3")
 	(title_block
 		(title "MCU - Receptor (bomba)")
-		(date "2026-10-11")
-		(rev "0.1")
+		(date "2026-11-02")
+		(rev "0.2")
 		(company "gilsonfiho")
 	)
 	(lib_symbols
