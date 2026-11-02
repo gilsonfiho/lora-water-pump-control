@@ -165,6 +165,16 @@ void LinkLayer::handleDecoded(const Packet& pkt) {
         return;
     }
 
+    // Passou por CRC, MAC e frescor: so aqui o RSSI e confiavel para o indicador.
+    {
+        LinkEvent ev{};
+        ev.type = LinkEvent::Type::kRxValid;
+        ev.src = pkt.src;
+        ev.seq = pkt.seq;
+        ev.rssiDbm = radio_.lastRssiDbm();
+        emitEvent(ev);
+    }
+
     // Um ACK conclui a transacao pendente se o SEQ casar.
     if (pkt.isAck()) {
         if (hasPending_ && pkt.seq == pending_.seq) {

@@ -42,6 +42,21 @@ Nada mergeado aguardando versão. O backlog aberto está abaixo.
 - **Validação em hardware** pendente em todas as versões `0.0.x`: até aqui tudo
   foi verificado por compilação (ESP-IDF v6.1) e pela suíte Unity no QEMU.
 
+## [0.0.6] - 2026-11-02
+
+LED de RSSI para teste de distância e posicionamento de antena. Compila com ESP-IDF v6.1
+para o ESP32-C3; 76/76 testes no QEMU. **Não validado em hardware.**
+
+### Adicionado
+- **LED de RSSI ([#17]):** o LED pisca conforme o RSSI do último pacote válido (forte = rápido,
+  fraco = lento, sem pacote pelo tempo do failsafe = apagado), nos dois nós. Novos `hw::ISignalIndicator`
+  (+ `GpioSignalIndicator`) e `core::RssiIndicator`; evento `LinkEvent::kRxValid` com o RSSI,
+  emitido só após CRC, MAC e anti-replay; `appendRssi` ligado. Faixas e tempos em `cfg::Indicator`.
+- **Pinos alinhados à PCB hw-v0.2:** LED de RSSI no GPIO0 (`IndicatorPins::kRssiLed`) e saída da
+  bomba (`PumpPins::kRelay`) movida do GPIO0 para o GPIO1. **Na bancada, o LED da bomba precisa ir
+  para o GPIO1** (compartilha o pino com a chave de nível, que só o reservatório usa).
+- **Atenção:** `appendRssi` muda a configuração gravada no E220; **regrave os dois nós juntos**.
+
 ## [0.0.5] - 2026-10-11
 
 Autenticação e anti-replay do enlace. Compila com ESP-IDF v6.1 para o ESP32-C3;
@@ -258,9 +273,11 @@ documentação. Compila via PlatformIO, porém ainda **não validado em hardware
 [#6]: https://github.com/gilsonfiho/lora-water-pump-control/issues/6
 [#7]: https://github.com/gilsonfiho/lora-water-pump-control/issues/7
 [#9]: https://github.com/gilsonfiho/lora-water-pump-control/issues/9
+[#17]: https://github.com/gilsonfiho/lora-water-pump-control/issues/17
 
 <!-- Links de comparação entre versões -->
-[Não lançado]: https://github.com/gilsonfiho/lora-water-pump-control/compare/v0.0.5...HEAD
+[Não lançado]: https://github.com/gilsonfiho/lora-water-pump-control/compare/v0.0.6...HEAD
+[0.0.6]: https://github.com/gilsonfiho/lora-water-pump-control/compare/v0.0.5...v0.0.6
 [0.0.5]: https://github.com/gilsonfiho/lora-water-pump-control/compare/v0.0.4...v0.0.5
 [0.0.4]: https://github.com/gilsonfiho/lora-water-pump-control/compare/v0.0.3...v0.0.4
 [0.0.3]: https://github.com/gilsonfiho/lora-water-pump-control/compare/v0.0.2...v0.0.3

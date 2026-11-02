@@ -4,8 +4,8 @@
 
 ## Versão atual
 
-`v0.0.5` (pré-alpha). Fase `0.0.x` de estruturação: arquitetura, protocolo (com
-autenticação e anti-replay), drivers e os dois failsafes implementados e
+`v0.0.6` (pré-alpha). Fase `0.0.x` de estruturação: arquitetura, protocolo (com
+autenticação e anti-replay), drivers, LED de RSSI e os dois failsafes implementados e
 cobertos por testes no QEMU. Ainda **não validado em hardware real** — o próximo
 marco é a `0.1.0` (comunicação validada em bancada). Histórico completo das
 versões no [`CHANGELOG.md`](../../CHANGELOG.md).
@@ -76,6 +76,13 @@ versões no [`CHANGELOG.md`](../../CHANGELOG.md).
   68/68 no QEMU (SipHash com vetores oficiais, MAC, chave errada, replay,
   retransmissão, `src` errado). Firmware compila no v6.1 (0x35f10 B, 79% livre).
   **Não validado em hardware.**
+
+- **LED de RSSI (2026-11-02, issue #17):** `core::RssiIndicator` pisca um LED conforme o RSSI do
+  último pacote **válido** (após CRC, MAC e anti-replay, via `LinkEvent::kRxValid`), nos dois nós;
+  apaga sem pacote por `kLinkLostTimeoutMs`. Pinos alinhados à PCB hw-v0.2: RSSI no GPIO0, bomba no
+  GPIO1. `appendRssi` ligado (regravar os dois nós). Testes: 76/76 no QEMU (8 novos). Firmware
+  compila no v6.1 (0x37a60 B, 78% livre). **Não validado em hardware**: roteiro nos passos 11–13 de
+  `bancada.md`; os limiares de RSSI são valores de partida (`TODO(hw)`).
 
 ## Em andamento
 

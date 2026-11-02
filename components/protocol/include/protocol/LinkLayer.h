@@ -36,6 +36,7 @@ struct LinkEvent {
         kNotForMe,  // pacote valido, mas endereçado a outro no
         kAuthFail,  // MAC invalido: adulteracao ou chave errada (#5/#8)
         kReplay,    // contador <= ultimo visto desta origem: reproducao (#7)
+        kRxValid,   // pacote para este no que passou por CRC, MAC e anti-replay (#17)
     };
     Type     type;
     uint8_t  seq         = 0;
@@ -45,6 +46,7 @@ struct LinkEvent {
     uint8_t  retriesLeft = 0;   // kRetry
     uint32_t rttMs       = 0;   // kAckOk
     uint32_t counter     = 0;   // kReplay: o contador rejeitado
+    int16_t  rssiDbm     = 0;   // kRxValid: forca do quadro, em dBm
 };
 
 class LinkLayer {

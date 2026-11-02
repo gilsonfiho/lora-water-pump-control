@@ -31,7 +31,8 @@ Os dois nós gravam **o mesmo binário**; o papel vem do strap.
 | E220 `VCC` | pino **5V** (VBUS) | 1000 µF + 100 nF junto ao módulo |
 | E220 `GND` | GND | |
 | Chave de nível (só reservatório) | 1 | outro lado no GND |
-| LED (só bomba) | 0 | LED + 330 Ω para o GND |
+| LED da bomba (só bomba) | 1 | LED + 330 Ω para o GND; mesmo pino da chave de nível, que só o reservatório usa (como na PCB hw-v0.2) |
+| LED de RSSI (os dois nós) | 0 | LED + 330 Ω para o GND; pisca conforme o RSSI do último pacote válido |
 
 ### Pinos que não dá para usar no C3
 
@@ -44,7 +45,9 @@ Isto restringiu as escolhas acima e vale relembrar antes de remapear:
 - **2, 8, 9:** straps de boot. Um sinal externo segurando-os no nível errado no
   reset impede o ESP de subir. O 9 é o botão BOOT.
 
-Sobram 0, 1, 3, 4, 5, 6, 7 e 10 — exatamente os oito que o protótipo usa.
+Sobram 0, 1, 3, 4, 5, 6, 7 e 10 — exatamente os oito que o protótipo usa. O GPIO1 é
+compartilhado entre a chave de nível (reservatório) e o LED da bomba (bomba), como na PCB hw-v0.2:
+os papéis são exclusivos.
 
 > Duas pendências herdadas, sem efeito na bancada mas registradas em
 > `PinConfig.h` com `TODO(hw)`: `kFloatHigh` está no GPIO 2 (strap) e
@@ -129,6 +132,19 @@ logs esperados, no [README](../../README.md#roteiro-de-validação-do-tempo-máx
 10. **Sobrevive à queda do enlace.** Com a bomba bloqueada e a chave fechada,
     desligue e religue o reservatório. O LED **não** pode acender. Se acender, o
     latch virou estado e o limite é burlável por um silêncio de rádio.
+
+### LED de RSSI (issue #17)
+
+Com o LED + 330 Ω no GPIO 0 de cada nó, o LED pisca conforme o RSSI do **último pacote
+válido** (passou por CRC, MAC e anti-replay). Forte (≥ −80 dBm) pisca a cada 300 ms, médio
+(≥ −100 dBm) a cada 700 ms, fraco a cada 1,5 s; sem pacote válido pelo tempo do failsafe
+(15 s na bancada), apaga. Os limiares são valores de partida (`TODO(hw)`).
+
+11. **Pisca.** Com o enlace no ar, os dois LEDs de RSSI piscam. O log mostra
+    `RX valido de 0x.. seq=.. RSSI -.. dBm` a cada pacote.
+12. **Distância.** Afaste um nó (sempre ≥ 3 m) ou cubra a antena com a mão: o RSSI no log cai e o
+    pisca desacelera.
+13. **Apaga.** Tire a alimentação de um nó: no outro, o LED apaga em ~15 s.
 
 ## O que a bancada ainda não prova
 

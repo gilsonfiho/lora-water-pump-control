@@ -26,6 +26,26 @@ criação deste arquivo foram extraídas de [`../ARCHITECTURE.md`](../ARCHITECTU
 - **SKUs:** (1) padrão E220-T22D; (2) longo alcance E22-T30D, *pin-compatible*;
   (3) repetidor, planejado.
 
+## LED de RSSI (decidido em 2026-11-02)
+
+Resposta à [issue #17](https://github.com/gilsonfiho/lora-water-pump-control/issues/17), parte
+elétrica na #18 (hw-v0.2).
+
+- **RSSI do último pacote válido**, não o ambiente: é a qualidade do enlace que importa para
+  posicionar a antena, e o byte anexado do E220 (`appendRssi`) já entrega isso sem comando extra.
+- **Só conta pacote que passou por CRC, MAC e anti-replay.** O `LinkLayer` emite `kRxValid` depois
+  desses três filtros, então tráfego forjado, replay ou quadro corrompido não mexe no LED.
+- **Nos dois nós.** As duas PCBs têm o LED; o reservatório indica pelo ACK e `BOMBA_STATUS`.
+- **Cadência por três faixas** (forte ≥ −80 dBm, médio ≥ −100 dBm, fraco), pulso de 100 ms; sem
+  suavização (valor cru). Limiares são de partida (`TODO(hw)`), a calibrar em campo.
+- **Apaga após `kLinkLostTimeoutMs`** sem pacote válido: o LED não pode mostrar sinal se a bomba já
+  considera o enlace perdido. Com heartbeat de 15 s o LED fica "velho" entre pacotes (aceito); um
+  modo de ajuste com heartbeat rápido fica para depois.
+- **Pinos como na PCB hw-v0.2:** LED de RSSI no GPIO0 e bomba no GPIO1 (era GPIO0). Na bancada o LED
+  da bomba passa para o GPIO1, que a chave de nível (só reservatório) já usa: os papéis são
+  exclusivos. A bateria (`kBatteryAdc`, GPIO0) sai de cena na hw-v0.1 e colide com o LED se voltar.
+- **`appendRssi` ligado** muda o REG3 do E220: regravar os dois nós juntos.
+
 ## Autenticação e anti-replay no enlace (decidido em 2026-10-11)
 
 Resposta às [issue #5](https://github.com/gilsonfiho/lora-water-pump-control/issues/5)
