@@ -44,8 +44,9 @@ acento e **sem trailer de co-autor**, marcacao `TODO(hw)`, tags de hardware `hw-
 
 ## Fluxo e verificacao (sempre)
 
-1. Esquematico e PCB saem dos scripts em `hardware/tools/` (`build_sch.py`,
-   `build_pcb.py`). Alterar o script, nao o arquivo gerado, enquanto o layout for gerado.
+1. Os arquivos KiCad em `hardware/` sao a fonte (editar no KiCad). Os scripts geradores
+   em `hardware/tools/` nao sao versionados (`.gitignore`): se existirem localmente, nao
+   rodar o `build_pcb.py` sobre placa editada a mao, pois sobrescreve o roteamento.
 2. `kicad-cli sch erc` e `kicad-cli pcb drc` **a cada etapa**; so avancar com zero erros e
    cada aviso explicado. Netlist exportada para conferir pino a pino.
 3. Gerar render 3D (`kicad-cli pcb render`) e olhar a imagem: sobreposicao, orientacao

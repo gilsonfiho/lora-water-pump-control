@@ -51,3 +51,6 @@ hardware/.history/
 hardware/*/erc.rpt
 hardware/*/drc.rpt
 hardware/**/.history/
+
+# Scripts que geraram o projeto KiCad inicial: uso local, nao versionar.
+hardware/tools/

@@ -38,16 +38,9 @@ componentes marcados DNP conforme o papel (reservatório ou bomba).
 - No editor de PCB, **View > 3D Viewer** (Alt+3) mostra a placa em 3D.
 - Imagens e STEP prontos em `fab/emissor/` e `fab/receptor/`.
 
-## Como regenerar (os arquivos KiCad saem dos scripts em `tools/`)
+## Edicao
 
-```powershell
-python hardware/tools/gen_symbols.py      # simbolos proprios
-python hardware/tools/gen_footprints.py   # footprints e STEP proprios
-python hardware/tools/build_sch.py        # esquematicos das duas placas
-$py = "C:\Program Files\KiCad\10.0\bin\python.exe"   # Python do proprio KiCad (modulo pcbnew)
-& $py hardware/tools/build_pcb.py emissor
-& $py hardware/tools/build_pcb.py receptor
-```
-
-Regenerar **sobrescreve** o que for editado no KiCad. Quando o layout passar a ser
-editado a mao (roteamento), parar de rodar o `build_pcb.py`.
+Os arquivos KiCad (`*.kicad_sch`, `*.kicad_pcb`, `libs/`) sao a fonte: edite direto no KiCad.
+Os scripts que geraram o projeto inicial (`hardware/tools/`) **nao sao versionados**
+(estao no `.gitignore`); quem os tiver localmente nao deve rodar o `build_pcb.py`
+sobre uma placa editada a mao, porque ele sobrescreve o roteamento.

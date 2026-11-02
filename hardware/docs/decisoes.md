@@ -334,3 +334,14 @@ Escolhas e consequências:
 - **Resultado:** ERC emissor 0 / receptor 1 aviso (AO3400A, como antes). DRC das duas placas: só 3
   avisos de serigrafia na borda por placa. Sementes do roteador: emissor `ROUTE_SEED=96`, receptor `0`.
   Substitui as sementes e a largura da seção anterior.
+
+## 2026-11-02: scripts geradores fora do Git; versão hw-v0.1 da PCB
+
+- **`hardware/tools/` deixou de ser versionado** por decisão do autor: foi removido de todos os
+  commits da `feature/pcb` (histórico reescrito, force push) e entrou no `.gitignore`. Os arquivos
+  KiCad passam a ser a fonte: editar direto no KiCad. Os menções a `tools/` nas seções acima
+  descrevem como o projeto foi gerado e ficam como registro; os scripts existem só na máquina de
+  quem os gerou.
+- **Tag `hw-v0.1`** marca a primeira revisão das placas (emissor e receptor): esquemático, PCB
+  roteada, ERC/DRC sem erros, 3D e STEP em `fab/`. Pendências de revisão: corrente da chave SW3,
+  folga lateral da zona da antena, montagem com a antena fora do contorno (`TODO(hw)`).
