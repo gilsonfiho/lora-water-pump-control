@@ -4,8 +4,8 @@
 
 ## Versão atual
 
-`v0.0.5` (pré-alpha). Fase `0.0.x` de estruturação: arquitetura, protocolo (com
-autenticação e anti-replay), drivers e os dois failsafes implementados e
+`v0.0.6` (pré-alpha). Fase `0.0.x` de estruturação: arquitetura, protocolo (com
+autenticação e anti-replay), drivers, LED de RSSI e os dois failsafes implementados e
 cobertos por testes no QEMU. Ainda **não validado em hardware real** — o próximo
 marco é a `0.1.0` (comunicação validada em bancada). Histórico completo das
 versões no [`CHANGELOG.md`](../../CHANGELOG.md).
