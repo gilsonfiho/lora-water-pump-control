@@ -15,6 +15,16 @@ e o projeto adota o [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
 ## [Não lançado]
 
+### Firmware
+- **LED de RSSI ([#17]):** o LED pisca conforme o RSSI do último pacote válido (forte = rápido,
+  fraco = lento, sem pacote pelo tempo do failsafe = apagado), nos dois nós. Novos `hw::ISignalIndicator`
+  (+ `GpioSignalIndicator`) e `core::RssiIndicator`; evento `LinkEvent::kRxValid` com o RSSI,
+  emitido só após CRC, MAC e anti-replay; `appendRssi` ligado. Faixas e tempos em `cfg::Indicator`.
+- **Pinos alinhados à PCB hw-v0.2:** LED de RSSI no GPIO0 (`IndicatorPins::kRssiLed`) e saída da
+  bomba (`PumpPins::kRelay`) movida do GPIO0 para o GPIO1. **Na bancada, o LED da bomba precisa ir
+  para o GPIO1** (compartilha o pino com a chave de nível, que só o reservatório usa).
+- **Atenção:** `appendRssi` muda a configuração gravada no E220; **regrave os dois nós juntos**.
+
 ### Hardware (hw-v0.2)
 - LED âmbar de RSSI (D7 + R18 330 Ω) no GPIO0 do C3, nas duas placas (issue #18); passivos do
   C3 em grade alinhada; 3D do indutor L1 (modelo de envelope, aproximado); identificação no

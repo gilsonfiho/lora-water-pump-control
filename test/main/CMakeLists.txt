@@ -5,6 +5,7 @@ idf_component_register(
                 "test_link_layer.cpp"
                 "test_pump_controller.cpp"
                 "test_reservoir_controller.cpp"
+                "test_rssi_indicator.cpp"
     INCLUDE_DIRS "."
     REQUIRES    unity config platform protocol core hw
     # Os TEST_CASE se registram por __attribute__((constructor)). Sem

@@ -13,7 +13,9 @@
 #include "config/PinConfig.h"
 #include "config/RadioConfig.h"
 #include "core/PumpController.h"
+#include "core/RssiIndicator.h"
 #include "hw/E220Radio.h"
+#include "hw/GpioSignalIndicator.h"
 #include "hw/RelayPumpActuator.h"
 #include "node_app.h"
 #include "platform/Clock.h"
@@ -58,6 +60,8 @@ cfg::LoraProfile makeProfile() {
     static hw::RelayPumpActuator  pump;
     static protocol::LinkLayer     link(radio, cfg::kAddrPump);
     static core::PumpController    controller(link, pump, cfg::kAddrReservoir);
+    static hw::GpioSignalIndicator   rssiLed;
+    static core::RssiIndicator       rssiIndicator(rssiLed);
 
     // Estado seguro primeiro: o controlador ja forca a bomba DESLIGADA.
     controller.begin();
@@ -68,7 +72,14 @@ cfg::LoraProfile makeProfile() {
     }
 
     // Diagnostico do enlace: RX de outro no, CRC invalido, etc. no monitor.
-    link.onEvent([](const protocol::LinkEvent& e) { logLinkEvent(kTag, e); });
+    // LED de RSSI (#17): so pacote valido (apos CRC/MAC/anti-replay) mexe nele.
+    if (!rssiLed.begin()) ESP_LOGE(kTag, "FALHA ao iniciar o LED de RSSI");
+    link.onEvent([](const protocol::LinkEvent& e) {
+        logLinkEvent(kTag, e);
+        if (e.type == protocol::LinkEvent::Type::kRxValid) {
+            rssiIndicator.onValidPacket(e.rssiDbm);
+        }
+    });
 
     ESP_LOGI(kTag,
              "pronto (bancada: LED no GPIO %d, failsafe em %lu ms, "
@@ -103,6 +114,7 @@ cfg::LoraProfile makeProfile() {
             }
         }
 
+        rssiIndicator.poll();
         platform::delayMs(kLoopPeriodMs);
     }
 }

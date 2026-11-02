@@ -78,6 +78,32 @@ struct Timing {
                   "tempo maximo de bombeamento menor que o failsafe de enlace");
 };
 
+// ---- LED indicador de RSSI (issue #17) --------------------------------------
+// O LED pisca em cadencia que cresce com a forca do ULTIMO pacote valido:
+// forte = pisca rapido, fraco = pisca devagar, sem pacote por kNoSignalTimeoutMs
+// = apagado. So pacotes que passaram por CRC, MAC e anti-replay contam.
+struct Indicator {
+    // Limiares de RSSI em dBm (>= limiar). TODO(hw): valores de partida, a
+    // calibrar com o teste de campo (sensibilidade do E220 a 2,4 kbps ~ -120 dBm).
+    static constexpr int16_t kStrongDbm = -80;
+    static constexpr int16_t kMediumDbm = -100;
+
+    // Periodo do pisca por faixa, e quanto o LED fica aceso em cada pisca.
+    static constexpr uint32_t kStrongPeriodMs = 300;
+    static constexpr uint32_t kMediumPeriodMs = 700;
+    static constexpr uint32_t kWeakPeriodMs   = 1'500;
+    static constexpr uint32_t kPulseMs        = 100;
+
+    // Sem pacote valido por este tempo o indicador apaga. Segue o failsafe de
+    // enlace: se a bomba ja considera o enlace perdido, o LED nao pode mentir.
+    static constexpr uint32_t kNoSignalTimeoutMs = Timing::kLinkLostTimeoutMs;
+
+    static_assert(kStrongDbm > kMediumDbm, "limiares de RSSI fora de ordem");
+    static_assert(kStrongPeriodMs < kMediumPeriodMs && kMediumPeriodMs < kWeakPeriodMs,
+                  "forte deve piscar mais rapido que fraco");
+    static_assert(kPulseMs < kStrongPeriodMs, "pulso maior que o periodo mais curto");
+};
+
 // ---- Deep sleep (reservatorio, alimentado por bateria) --------------------
 struct SleepPolicy {
     // Dorme entre ciclos apenas quando em bateria. Quando 0, o no permanece

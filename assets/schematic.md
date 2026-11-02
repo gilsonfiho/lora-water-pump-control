@@ -70,7 +70,8 @@ está presente — usado para reportar `PowerSource` e decidir dormir.
   GPIO1 ◄── boia BAIXA  ── GND
   GPIO2 ◄── boia ALTA   ── GND
 
-  Energia: ver seção 1 (ADC em GPIO0, 'externa presente' em GPIO18,
+  Energia: ver seção 1 (ADC antes em GPIO0, hoje LED de RSSI na PCB hw-v0.2;
+           'externa presente' em GPIO18,
            I2C opcional SDA=GPIO8 / SCL=GPIO9).
 ```
 

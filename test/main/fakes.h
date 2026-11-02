@@ -14,6 +14,7 @@
 #include "hw/ILevelSensor.h"
 #include "hw/ILoRaRadio.h"
 #include "hw/IPumpActuator.h"
+#include "hw/ISignalIndicator.h"
 #include "platform/Clock.h"
 
 namespace test {
@@ -63,7 +64,7 @@ public:
         return n;
     }
 
-    int16_t lastRssiDbm() override { return -70; }
+    int16_t lastRssiDbm() override { return rssiDbm; }
     bool isBusy() override { return busy; }
     void poll() override { ++pollCount; }
     void sleep() override { sleeping = true; }
@@ -87,6 +88,7 @@ public:
     bool deliverToPeer = true;  // false simula enlace cortado
     bool sleeping = false;
     int pollCount = 0;
+    int16_t rssiDbm = -70;
 
 private:
     FakeRadio* peer_ = nullptr;
@@ -116,6 +118,19 @@ public:
 
 private:
     bool on_ = false;
+};
+
+// ---- Indicador falso -------------------------------------------------------
+class FakeIndicator : public hw::ISignalIndicator {
+public:
+    bool begin() override { on = false; return true; }
+    void set(bool value) override {
+        if (value && !on) ++risingEdges;
+        on = value;
+    }
+
+    bool on = false;
+    int risingEdges = 0;  // quantas vezes acendeu
 };
 
 // ---- Sensor de nivel falso -------------------------------------------------

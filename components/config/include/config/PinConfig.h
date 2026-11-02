@@ -13,7 +13,8 @@
 //    GPIO 2, 8, 9 pinos de strap de boot. Um sinal externo segurando-os no
 //                 nivel errado no reset impede o boot. GPIO 9 e o botao BOOT.
 //
-//  Sobram, livres de ressalva: GPIO 0, 1, 3, 4, 5, 6, 7 e 10 -- 
+//  Sobram, livres de ressalva: GPIO 0, 1, 3, 4, 5, 6, 7 e 10 -- todos usados:
+//  1 = chave de nivel (reservatorio) ou LED da bomba (bomba); 0 = LED de RSSI.
 // ============================================================================
 
 #include <cstdint>
@@ -72,8 +73,19 @@ struct BenchPins {
 // Na bancada este pino aciona um LED (+ resistor de ~330R para o GND) em vez do
 // contator: valida o caminho inteiro sem carga AC. Ativo alto.
 struct PumpPins {
-    static constexpr int kRelay       = 0;     // bancada: LED; campo: bobina do contator  TODO(hw)
+    // GPIO1, como na PCB hw-v0.2: a net e compartilhada com a boia baixa do
+    // reservatorio (FLOAT_LOW), e os papeis sao exclusivos (strap do GPIO3).
+    static constexpr int kRelay       = 1;     // bancada: LED; campo: bobina do contator  TODO(hw)
     static constexpr bool kActiveHigh = true;  // nivel logico do modulo rele              TODO(hw)
+};
+
+// ---- LED indicador de RSSI (ambos os nos) ----------------------------------
+// Pisca conforme a forca do ultimo pacote valido (issue #17). GPIO0 da PCB
+// hw-v0.2: LED ambar + resistor de 330R para o GND. Ativo alto. Na bancada, ligar
+// o mesmo LED + 330R neste pino.
+struct IndicatorPins {
+    static constexpr int kRssiLed = 0;  // TODO(hw): confirmar na PCB montada
+    static constexpr bool kActiveHigh = true;
 };
 
 // ---- Subsistema de energia (ambos os nos) ---------------------------------
@@ -83,8 +95,9 @@ struct PumpPins {
 // NAO USADOS NA BANCADA: o prototipo roda com StubBatteryMonitor, entao nenhum
 // destes pinos e configurado. Dois conflitos precisam ser resolvidos antes de
 // reativar o AdcBatteryMonitor:  TODO(hw)
-//   * kBatteryAdc (0) colide com PumpPins::kRelay. Hoje nao da problema porque
-//     cada um vive num no diferente, mas e uma armadilha esperando acontecer.
+//   * kBatteryAdc (0) colide com IndicatorPins::kRssiLed (o GPIO0 da PCB hw-v0.2
+//     e o LED de RSSI, e a bateria saiu da hw-v0.1). Reativar a bateria exige
+//     escolher outro pino ou abrir mao do LED.
 //   * kExternalPresent (18) e o USB D-. Usa-lo derruba o USB Serial/JTAG.
 struct PowerPins {
     static constexpr int kBatteryAdc      = 0;   // ADC1_CH0, via divisor        TODO(hw)

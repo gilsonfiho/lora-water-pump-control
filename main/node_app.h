@@ -47,6 +47,11 @@ inline void logLinkEvent(const char* tag, const protocol::LinkEvent& e) {
         case T::kAuthFail:
             ESP_LOGW(tag, "RX com MAC invalido -- descartado (adulteracao/chave?)");
             break;
+        case T::kRxValid:
+            ESP_LOGI(tag, "RX valido de 0x%02x seq=%u RSSI %d dBm",
+                     static_cast<unsigned>(e.src), static_cast<unsigned>(e.seq),
+                     static_cast<int>(e.rssiDbm));
+            break;
         case T::kReplay:
             ESP_LOGW(tag, "RX replay de 0x%02x (contador=%lu) -- descartado",
                      static_cast<unsigned>(e.src),

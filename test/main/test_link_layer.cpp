@@ -536,3 +536,50 @@ TEST_CASE("retransmissao nao cai como replay (nonce novo por TX)", "[protocol]")
     TEST_ASSERT_EQUAL_INT(2, deliveredB);
     FakeClock::uninstall();
 }
+
+TEST_CASE("kRxValid so sai para pacote autentico e inedito, com o RSSI do radio", "[protocol]")
+{
+    FakeClock::install();
+    FakeRadio radio;
+    radio.rssiDbm = -93;
+    LinkLayer link(radio, kMe);
+
+    std::vector<LinkEvent> events;
+    link.onEvent([&](const LinkEvent& e) { events.push_back(e); });
+
+    auto countValid = [&] {
+        int n = 0;
+        for (const auto& e : events) n += (e.type == LinkEvent::Type::kRxValid);
+        return n;
+    };
+
+    // Pacote valido: um kRxValid com src e RSSI.
+    injectPacket(radio, makeHeartbeat(kPeer, kMe, 0), /*counter=*/10);
+    link.poll();
+    TEST_ASSERT_EQUAL_INT(1, countValid());
+    for (const auto& e : events) {
+        if (e.type != LinkEvent::Type::kRxValid) continue;
+        TEST_ASSERT_EQUAL_UINT8(kPeer, e.src);
+        TEST_ASSERT_EQUAL_INT16(-93, e.rssiDbm);
+    }
+
+    // Replay (mesmo contador): nao conta.
+    injectPacket(radio, makeHeartbeat(kPeer, kMe, 0), /*counter=*/10);
+    link.poll();
+    TEST_ASSERT_EQUAL_INT(1, countValid());
+
+    // Endereçado a outro no: nao conta.
+    injectPacket(radio, makeHeartbeat(kPeer, 0x7E, 0), /*counter=*/11);
+    link.poll();
+    TEST_ASSERT_EQUAL_INT(1, countValid());
+
+    // MAC invalido (byte do MAC adulterado): nao conta.
+    Packet p = makeHeartbeat(kPeer, kMe, 0);
+    p.counter = 12;
+    uint8_t wire[kMaxPacketSize];
+    const size_t n = encodePacket(p, key(), wire, sizeof(wire));
+    wire[n - 3] ^= 0xFF;  // dentro do MAC/CRC
+    radio.inject(wire, n);
+    link.poll();
+    TEST_ASSERT_EQUAL_INT(1, countValid());
+}

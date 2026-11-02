@@ -177,7 +177,8 @@ As duas placas recebem **o mesmo binário**. O que decide o papel é só o fio n
 | | Reservatório (transmissor) | Bomba (receptor) |
 |---|---|---|
 | GPIO 3 | **aberto** (nada ligado) | **ligado ao GND** |
-| Periférico | chave de nível no GPIO 1 | LED + 330 Ω no GPIO 0 |
+| Periférico | chave de nível no GPIO 1 | LED + 330 Ω no GPIO 1 |
+| LED de RSSI (opcional) | LED + 330 Ω no GPIO 0 | LED + 330 Ω no GPIO 0 |
 | Tag no log | `reservatorio` | `bomba` |
 
 #### 0. Antes de ligar qualquer placa
@@ -233,7 +234,7 @@ vai para `build/` e serve às duas placas.
    ```text
    I (…) main: strap em GND -> papel BOMBA
    I (…) bomba: iniciando...
-   I (…) bomba: pronto (bancada: LED no GPIO 0, failsafe em 15000 ms)
+   I (…) bomba: pronto (bancada: LED no GPIO 1, failsafe em 15000 ms)
    I (…) bomba: estado -> OCIOSO (saida=DESLIGADA)
    ```
 
@@ -395,7 +396,8 @@ As duas placas recebem **o mesmo binário**; só o strap muda.
 | E220 `GND` | GND | |
 | Strap de papel | 3 | aberto = reservatório · GND = bomba |
 | Chave de nível (só reservatório) | 1 | outro lado no GND |
-| LED (só bomba) | 0 | LED + 330 Ω para o GND |
+| LED da bomba (só bomba) | 1 | LED + 330 Ω para o GND |
+| LED de RSSI (os dois nós) | 0 | LED + 330 Ω para o GND |
 
 ### Antes de energizar
 

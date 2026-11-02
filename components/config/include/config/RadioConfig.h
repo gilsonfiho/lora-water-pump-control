@@ -91,7 +91,7 @@ struct LoraProfile {
     LoraPowerLevel power      = kTxPower;
     E220Variant    variant    = E220Variant::kT30D;  // TODO(hw): por no
     bool           enableLbt  = true;   // listen-before-talk (LBT)
-    bool           appendRssi = false;  // anexa byte de RSSI ao payload RX
+    bool           appendRssi = true;   // anexa byte de RSSI ao payload RX (LED de RSSI, #17)
 };
 
 }  // namespace cfg

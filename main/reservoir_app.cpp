@@ -21,8 +21,10 @@
 #include "config/PinConfig.h"
 #include "config/RadioConfig.h"
 #include "core/ReservoirController.h"
+#include "core/RssiIndicator.h"
 #include "hw/BenchSwitchLevelSensor.h"
 #include "hw/E220Radio.h"
+#include "hw/GpioSignalIndicator.h"
 #include "hw/ILevelSensor.h"
 #include "hw/StubBatteryMonitor.h"
 #include "node_app.h"
@@ -75,6 +77,8 @@ cfg::LoraProfile makeProfile() {
     static protocol::LinkLayer       link(radio, cfg::kAddrReservoir);
     static core::ReservoirController controller(link, sensor, battery, cfg::kAddrPump);
     static power::PowerManager       powerMgr(battery);
+    static hw::GpioSignalIndicator   rssiLed;
+    static core::RssiIndicator       rssiIndicator(rssiLed);
 
     if (!radio.begin()) {
         ESP_LOGE(kTag, "FALHA ao iniciar o radio E220");
@@ -105,7 +109,14 @@ cfg::LoraProfile makeProfile() {
     });
 
     // Diagnostico do enlace: TX/ACK/retry/timeout aparecem no monitor.
-    link.onEvent([](const protocol::LinkEvent& e) { logLinkEvent(kTag, e); });
+    // LED de RSSI (#17): so pacote valido (apos CRC/MAC/anti-replay) mexe nele.
+    if (!rssiLed.begin()) ESP_LOGE(kTag, "FALHA ao iniciar o LED de RSSI");
+    link.onEvent([](const protocol::LinkEvent& e) {
+        logLinkEvent(kTag, e);
+        if (e.type == protocol::LinkEvent::Type::kRxValid) {
+            rssiIndicator.onValidPacket(e.rssiDbm);
+        }
+    });
 
     ESP_LOGI(kTag, "pronto (bancada: chave no GPIO %d, ciclo de %lu ms)",
              cfg::BenchPins::kLevelSwitch,
@@ -123,6 +134,7 @@ cfg::LoraProfile makeProfile() {
             powerMgr.deepSleepFor(cfg::SleepPolicy::kDeepSleepMs);  // reinicia ao acordar
         }
 
+        rssiIndicator.poll();
         platform::delayMs(kLoopPeriodMs);
     }
 }

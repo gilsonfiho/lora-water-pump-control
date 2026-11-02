@@ -77,6 +77,13 @@ versões no [`CHANGELOG.md`](../../CHANGELOG.md).
   retransmissão, `src` errado). Firmware compila no v6.1 (0x35f10 B, 79% livre).
   **Não validado em hardware.**
 
+- **LED de RSSI (2026-11-02, issue #17):** `core::RssiIndicator` pisca um LED conforme o RSSI do
+  último pacote **válido** (após CRC, MAC e anti-replay, via `LinkEvent::kRxValid`), nos dois nós;
+  apaga sem pacote por `kLinkLostTimeoutMs`. Pinos alinhados à PCB hw-v0.2: RSSI no GPIO0, bomba no
+  GPIO1. `appendRssi` ligado (regravar os dois nós). Testes: 76/76 no QEMU (8 novos). Firmware
+  compila no v6.1 (0x37a60 B, 78% livre). **Não validado em hardware**: roteiro nos passos 11–13 de
+  `bancada.md`; os limiares de RSSI são valores de partida (`TODO(hw)`).
+
 ## Em andamento
 
 - Diagnóstico do "não comunica" na bancada: forte suspeita de saturação do RX
