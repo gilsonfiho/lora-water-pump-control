@@ -1,0 +1,1398 @@
+(kicad_sch
+	(version 20250114)
+	(generator "eeschema")
+	(generator_version "9.0")
+	(uuid "7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f803104")
+	(paper "A3")
+	(title_block
+		(title "E/S - Receptor (bomba)")
+		(date "2026-11-02")
+		(rev "0.2")
+		(company "gilsonfiho")
+	)
+	(lib_symbols
+		(symbol "Device:R"
+			(pin_numbers
+				(hide yes)
+			)
+			(pin_names
+				(offset 0)
+			)
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(in_pos_files yes)
+			(duplicate_pin_numbers_are_jumpers no)
+			(property "Reference" "R"
+				(at 2.032 0 90)
+				(show_name no)
+				(do_not_autoplace no)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Value" "R"
+				(at 0 0 90)
+				(show_name no)
+				(do_not_autoplace no)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" ""
+				(at -1.778 0 90)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Datasheet" ""
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Description" "Resistor"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "ki_keywords" "R res resistor"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "ki_fp_filters" "R_*"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(symbol "R_0_1"
+				(rectangle
+					(start -1.016 -2.54)
+					(end 1.016 2.54)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+			)
+			(symbol "R_1_1"
+				(pin passive line
+					(at 0 3.81 270)
+					(length 1.27)
+					(name ""
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at 0 -3.81 90)
+					(length 1.27)
+					(name ""
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
+		(symbol "power:GND"
+			(power global)
+			(pin_numbers
+				(hide yes)
+			)
+			(pin_names
+				(offset 0)
+				(hide yes)
+			)
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(in_pos_files yes)
+			(duplicate_pin_numbers_are_jumpers no)
+			(property "Reference" "#PWR"
+				(at 0 -6.35 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Value" "GND"
+				(at 0 -3.81 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" ""
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Datasheet" ""
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "ki_keywords" "global power"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(symbol "GND_0_1"
+				(polyline
+					(pts
+						(xy 0 0)
+						(xy 0 -1.27)
+						(xy 1.27 -1.27)
+						(xy 0 -2.54)
+						(xy -1.27 -1.27)
+						(xy 0 -1.27)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+			)
+			(symbol "GND_1_1"
+				(pin power_in line
+					(at 0 0 270)
+					(length 0)
+					(name ""
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
+		(symbol "Transistor_FET:AO3400A"
+			(pin_names
+				(offset 0)
+				(hide yes)
+			)
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(in_pos_files yes)
+			(duplicate_pin_numbers_are_jumpers no)
+			(property "Reference" "Q"
+				(at 5.08 1.905 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(justify left)
+				)
+			)
+			(property "Value" "AO3400A"
+				(at 5.08 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(justify left)
+				)
+			)
+			(property "Footprint" "Package_TO_SOT_SMD:SOT-23"
+				(at 5.08 -1.905 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+						(italic yes)
+					)
+					(justify left)
+				)
+			)
+			(property "Datasheet" "http://www.aosmd.com/pdfs/datasheet/AO3400A.pdf"
+				(at 5.08 -3.81 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(justify left)
+				)
+			)
+			(property "Description" "30V Vds, 5.7A Id, N-Channel MOSFET, SOT-23"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "ki_keywords" "N-Channel MOSFET"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(symbol "AO3400A_0_1"
+				(polyline
+					(pts
+						(xy 0.254 1.905)
+						(xy 0.254 -1.905)
+					)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 0.254 0)
+						(xy -2.54 0)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 0.762 2.286)
+						(xy 0.762 1.27)
+					)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 0.762 0.508)
+						(xy 0.762 -0.508)
+					)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 0.762 -1.27)
+						(xy 0.762 -2.286)
+					)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 0.762 -1.778)
+						(xy 3.302 -1.778)
+						(xy 3.302 1.778)
+						(xy 0.762 1.778)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 1.016 0)
+						(xy 2.032 0.381)
+						(xy 2.032 -0.381)
+						(xy 1.016 0)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type outline)
+					)
+				)
+				(circle
+					(center 1.651 0)
+					(radius 2.794)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 2.54 2.54)
+						(xy 2.54 1.778)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(circle
+					(center 2.54 1.778)
+					(radius 0.254)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type outline)
+					)
+				)
+				(circle
+					(center 2.54 -1.778)
+					(radius 0.254)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type outline)
+					)
+				)
+				(polyline
+					(pts
+						(xy 2.54 -2.54)
+						(xy 2.54 0)
+						(xy 0.762 0)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 2.921 0.381)
+						(xy 3.683 0.381)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 3.302 0.381)
+						(xy 2.921 -0.254)
+						(xy 3.683 -0.254)
+						(xy 3.302 0.381)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+			)
+			(symbol "AO3400A_1_1"
+				(pin input line
+					(at -5.08 0 0)
+					(length 2.54)
+					(name "G"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at 2.54 -5.08 90)
+					(length 2.54)
+					(name "S"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at 2.54 5.08 270)
+					(length 2.54)
+					(name "D"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "3"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
+		(symbol "Connector:Screw_Terminal_01x02"
+			(pin_names
+				(offset 1.016)
+				(hide yes)
+			)
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(in_pos_files yes)
+			(duplicate_pin_numbers_are_jumpers no)
+			(property "Reference" "J"
+				(at 0 2.54 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Value" "Screw_Terminal_01x02"
+				(at 0 -5.08 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" ""
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Datasheet" ""
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Description" "Generic screw terminal, single row, 01x02, script generated (kicad-library-utils/schlib/autogen/connector/)"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "ki_keywords" "screw terminal"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "ki_fp_filters" "TerminalBlock*:*"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(symbol "Screw_Terminal_01x02_1_1"
+				(rectangle
+					(start -1.27 1.27)
+					(end 1.27 -3.81)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type background)
+					)
+				)
+				(polyline
+					(pts
+						(xy -0.5334 0.3302)
+						(xy 0.3302 -0.508)
+					)
+					(stroke
+						(width 0.1524)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy -0.5334 -2.2098)
+						(xy 0.3302 -3.048)
+					)
+					(stroke
+						(width 0.1524)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy -0.3556 0.508)
+						(xy 0.508 -0.3302)
+					)
+					(stroke
+						(width 0.1524)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy -0.3556 -2.032)
+						(xy 0.508 -2.8702)
+					)
+					(stroke
+						(width 0.1524)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(circle
+					(center 0 0)
+					(radius 0.635)
+					(stroke
+						(width 0.1524)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(circle
+					(center 0 -2.54)
+					(radius 0.635)
+					(stroke
+						(width 0.1524)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(pin passive line
+					(at -5.08 0 0)
+					(length 3.81)
+					(name "Pin_1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at -5.08 -2.54 0)
+					(length 3.81)
+					(name "Pin_2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
+		(symbol "power:+12V"
+			(power global)
+			(pin_numbers
+				(hide yes)
+			)
+			(pin_names
+				(offset 0)
+				(hide yes)
+			)
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(in_pos_files yes)
+			(duplicate_pin_numbers_are_jumpers no)
+			(property "Reference" "#PWR"
+				(at 0 -3.81 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Value" "+12V"
+				(at 0 3.556 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" ""
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Datasheet" ""
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Description" "Power symbol creates a global label with name \"+12V\""
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "ki_keywords" "global power"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(symbol "+12V_0_1"
+				(polyline
+					(pts
+						(xy -0.762 1.27)
+						(xy 0 2.54)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 0 2.54)
+						(xy 0.762 1.27)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 0 0)
+						(xy 0 2.54)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+			)
+			(symbol "+12V_1_1"
+				(pin power_in line
+					(at 0 0 90)
+					(length 0)
+					(name ""
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
+		(symbol "Diode:1N4148W"
+			(pin_numbers
+				(hide yes)
+			)
+			(pin_names
+				(hide yes)
+			)
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(in_pos_files yes)
+			(duplicate_pin_numbers_are_jumpers no)
+			(property "Reference" "D"
+				(at 0 2.54 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Value" "1N4148W"
+				(at 0 -2.54 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" "Diode_SMD:D_SOD-123"
+				(at 0 -4.445 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Datasheet" "https://www.vishay.com/docs/85748/1n4148w.pdf"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Description" "75V 0.15A Fast Switching Diode, SOD-123"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Sim.Device" "D"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Sim.Pins" "1=K 2=A"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "ki_keywords" "diode"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "ki_fp_filters" "D*SOD?123*"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(symbol "1N4148W_0_1"
+				(polyline
+					(pts
+						(xy -1.27 1.27)
+						(xy -1.27 -1.27)
+					)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 1.27 1.27)
+						(xy 1.27 -1.27)
+						(xy -1.27 0)
+						(xy 1.27 1.27)
+					)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 1.27 0)
+						(xy -1.27 0)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+			)
+			(symbol "1N4148W_1_1"
+				(pin passive line
+					(at -3.81 0 0)
+					(length 2.54)
+					(name "K"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at 3.81 0 180)
+					(length 2.54)
+					(name "A"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
+		(symbol "Device:LED"
+			(pin_numbers
+				(hide yes)
+			)
+			(pin_names
+				(offset 1.016)
+				(hide yes)
+			)
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(in_pos_files yes)
+			(duplicate_pin_numbers_are_jumpers no)
+			(property "Reference" "D"
+				(at 0 2.54 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Value" "LED"
+				(at 0 -2.54 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" ""
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Datasheet" ""
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Description" "Light emitting diode"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Sim.Pins" "1=K 2=A"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "ki_keywords" "LED diode"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "ki_fp_filters" "LED* LED_SMD:* LED_THT:*"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(symbol "LED_0_1"
+				(polyline
+					(pts
+						(xy -3.048 -0.762)
+						(xy -4.572 -2.286)
+						(xy -3.81 -2.286)
+						(xy -4.572 -2.286)
+						(xy -4.572 -1.524)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy -1.778 -0.762)
+						(xy -3.302 -2.286)
+						(xy -2.54 -2.286)
+						(xy -3.302 -2.286)
+						(xy -3.302 -1.524)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy -1.27 0)
+						(xy 1.27 0)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy -1.27 -1.27)
+						(xy -1.27 1.27)
+					)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 1.27 -1.27)
+						(xy 1.27 1.27)
+						(xy -1.27 0)
+						(xy 1.27 -1.27)
+					)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+			)
+			(symbol "LED_1_1"
+				(pin passive line
+					(at -3.81 0 0)
+					(length 2.54)
+					(name "K"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at 3.81 0 180)
+					(length 2.54)
+					(name "A"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
+	)
+	(text "SAIDA - comando de contator externo por contato seco (bornes)" (exclude_from_sim no) (at 15 12 0) (effects (font (size 2.5 2.5)) (justify left top)) (uuid "a57ec145-e13b-4991-9ed5-d74e5e37ff5a"))
+	(text "A PCB NAO tem tensao de rede: o MOSFET liga a bobina de um rele/contator EXTERNO de 5 V (modulo de rele\nou rele interposto). Estado seguro: pull-down de 10 k em PUMP_DRV -> MOSFET cortado em reset/boot/pino\nflutuante (o GPIO1 do C3 e entrada em alta impedancia no boot). Diodo de roda livre na bobina.\nCorrente da bobina limitada pelo fusivel de entrada de 1,5 A (dividido com o buck); TODO(hw): dimensionar a bobina." (exclude_from_sim no) (at 15 22 0) (effects (font (size 1.27 1.27)) (justify left top)) (uuid "8df1ec1b-3ffe-4594-abc2-d69b8bd1ffcd"))
+	(symbol (lib_id "Device:R") (at 60.96 119.38 0) (unit 1) (exclude_from_sim no) (in_bom yes) (on_board yes) (dnp no) (uuid "c3508130-e07a-4bb6-b6e5-7bb0bcf93ac0") (property "Reference" "R15" (at 60.96 113.38 0) (effects (font (size 1.27 1.27)))) (property "Value" "10k" (at 60.96 125.38 0) (effects (font (size 1.27 1.27)))) (property "Footprint" "Resistor_SMD:R_0603_1608Metric" (at 60.96 119.38 0) (effects (font (size 1.27 1.27)) hide)) (property "Datasheet" "" (at 60.96 119.38 0) (effects (font (size 1.27 1.27)) hide)) (property "MPN" "RC0603FR-0710KL" (at 60.96 119.38 0) (effects (font (size 1.27 1.27)) hide)) (pin "1" (uuid "dbc08b4f-943c-4390-8ea1-92b25b26d4f5")) (pin "2" (uuid "312a0c63-8784-406b-ae88-fbd3897062d3")) (instances (project "lora-pump" (path "/7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f803001/7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f803104" (reference "R15") (unit 1)))))
+	(wire (pts (xy 60.96 115.57) (xy 60.96 110.49)) (stroke (width 0) (type default)) (uuid "9d40a72a-f873-4b58-87b3-f752d5b97c11"))
+	(global_label "PUMP_DRV" (shape bidirectional) (at 60.96 110.49 90) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify left bottom)) (uuid "26c25a9a-fed9-41eb-9226-ebf0364aa8fb") (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 60.96 110.49 0) (effects (font (size 1.27 1.27)) hide)))
+	(wire (pts (xy 60.96 123.19) (xy 60.96 128.27)) (stroke (width 0) (type default)) (uuid "7a432ce5-d42c-4c4f-9e1c-7f343a0f1f05"))
+	(symbol (lib_id "power:GND") (at 60.96 128.27 0) (unit 1) (exclude_from_sim no) (in_bom no) (on_board no) (dnp no) (uuid "1e5ff0e9-3147-4ab1-b896-c04229bd7c67") (property "Reference" "#PWR132" (at 60.96 128.27 0) (effects (font (size 1.27 1.27)) hide)) (property "Value" "GND" (at 60.96 131.27 0) (effects (font (size 1.27 1.27)))) (pin "1" (uuid "e87802c7-0d7d-4dc0-9e55-f186941c5bd5")) (instances (project "lora-pump" (path "/7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f803001/7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f803104" (reference "#PWR132") (unit 1)))))
+	(symbol (lib_id "Device:R") (at 99.06 139.70 0) (unit 1) (exclude_from_sim no) (in_bom yes) (on_board yes) (dnp no) (uuid "f3849682-8d4e-48da-add3-1622297f098a") (property "Reference" "R16" (at 99.06 133.70 0) (effects (font (size 1.27 1.27)))) (property "Value" "100R" (at 99.06 145.70 0) (effects (font (size 1.27 1.27)))) (property "Footprint" "Resistor_SMD:R_0603_1608Metric" (at 99.06 139.70 0) (effects (font (size 1.27 1.27)) hide)) (property "Datasheet" "" (at 99.06 139.70 0) (effects (font (size 1.27 1.27)) hide)) (property "MPN" "RC0603FR-07100RL" (at 99.06 139.70 0) (effects (font (size 1.27 1.27)) hide)) (pin "1" (uuid "16bceb5c-2733-4e8d-8532-661ea70164ce")) (pin "2" (uuid "595cc017-7273-41f9-bdf4-f73cdaaaafea")) (instances (project "lora-pump" (path "/7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f803001/7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f803104" (reference "R16") (unit 1)))))
+	(wire (pts (xy 99.06 135.89) (xy 99.06 130.81)) (stroke (width 0) (type default)) (uuid "d5345124-031b-4abd-bbc6-49d3cf33368f"))
+	(global_label "PUMP_DRV" (shape bidirectional) (at 99.06 130.81 90) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify left bottom)) (uuid "40d3b043-9b61-4d11-b65e-90e9a3cd7751") (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 99.06 130.81 0) (effects (font (size 1.27 1.27)) hide)))
+	(wire (pts (xy 99.06 143.51) (xy 99.06 148.59)) (stroke (width 0) (type default)) (uuid "3b9b5b26-00bb-46b5-bbb6-747bd87543a5"))
+	(label "GATE" (at 99.06 148.59 270) (effects (font (size 1.27 1.27)) (justify right bottom)) (uuid "1851f50e-aca2-4db8-b8a8-8a8888917ce2"))
+	(symbol (lib_id "Transistor_FET:AO3400A") (at 160.02 129.54 0) (unit 1) (exclude_from_sim no) (in_bom yes) (on_board yes) (dnp no) (uuid "ebc7172c-37d6-432e-ad2f-aadb8b67a527") (property "Reference" "Q1" (at 160.02 123.54 0) (effects (font (size 1.27 1.27)))) (property "Value" "AO3400A" (at 160.02 135.54 0) (effects (font (size 1.27 1.27)))) (property "Footprint" "Package_TO_SOT_SMD:SOT-23" (at 160.02 129.54 0) (effects (font (size 1.27 1.27)) hide)) (property "Datasheet" "" (at 160.02 129.54 0) (effects (font (size 1.27 1.27)) hide)) (property "MPN" "AO3400A" (at 160.02 129.54 0) (effects (font (size 1.27 1.27)) hide)) (pin "1" (uuid "56d83fdb-ee08-4c0d-aa0e-c00af7d9e8b8")) (pin "2" (uuid "fe4d7fc8-3428-4fab-9e28-7bf9c0cb94ee")) (pin "3" (uuid "b52e9f30-9f83-4e1a-937d-e5620631bf37")) (instances (project "lora-pump" (path "/7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f803001/7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f803104" (reference "Q1") (unit 1)))))
+	(wire (pts (xy 154.94 129.54) (xy 149.86 129.54)) (stroke (width 0) (type default)) (uuid "46258fd0-0c44-4c15-bcf9-9a0c95d59b1e"))
+	(label "GATE" (at 149.86 129.54 180) (effects (font (size 1.27 1.27)) (justify right bottom)) (uuid "19b9ac3f-4a04-49bd-8cde-faf5f0e09109"))
+	(wire (pts (xy 162.56 134.62) (xy 162.56 139.70)) (stroke (width 0) (type default)) (uuid "9265b0cc-ff24-4a0a-ba50-16a62b1a0b7e"))
+	(symbol (lib_id "power:GND") (at 162.56 139.70 0) (unit 1) (exclude_from_sim no) (in_bom no) (on_board no) (dnp no) (uuid "ace387af-b625-48f1-b4be-cd923ed5659f") (property "Reference" "#PWR133" (at 162.56 139.70 0) (effects (font (size 1.27 1.27)) hide)) (property "Value" "GND" (at 162.56 142.70 0) (effects (font (size 1.27 1.27)))) (pin "1" (uuid "85c24c22-4344-43f8-b7b6-4110c93ddf42")) (instances (project "lora-pump" (path "/7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f803001/7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f803104" (reference "#PWR133") (unit 1)))))
+	(wire (pts (xy 162.56 124.46) (xy 162.56 119.38)) (stroke (width 0) (type default)) (uuid "0ee0ab5d-d4b8-4963-90bc-eb5c5e7ea063"))
+	(label "COIL_NEG" (at 162.56 119.38 90) (effects (font (size 1.27 1.27)) (justify left bottom)) (uuid "da24e2e4-819a-4e0e-a4db-ed34455e34d6"))
+	(symbol (lib_id "Connector:Screw_Terminal_01x02") (at 238.76 129.54 0) (unit 1) (exclude_from_sim no) (in_bom yes) (on_board yes) (dnp no) (uuid "56a54f56-d05f-431a-b23e-66c164ef6f3b") (property "Reference" "J4" (at 238.76 123.54 0) (effects (font (size 1.27 1.27)))) (property "Value" "BOBINA 12V" (at 238.76 135.54 0) (effects (font (size 1.27 1.27)))) (property "Footprint" "TerminalBlock_Phoenix:TerminalBlock_Phoenix_MKDS-1,5-2-5.08_1x02_P5.08mm_Horizontal" (at 238.76 129.54 0) (effects (font (size 1.27 1.27)) hide)) (property "Datasheet" "" (at 238.76 129.54 0) (effects (font (size 1.27 1.27)) hide)) (property "MPN" "MKDS 1,5/2-5,08" (at 238.76 129.54 0) (effects (font (size 1.27 1.27)) hide)) (pin "1" (uuid "20ee4fd9-8b40-4353-86c1-4387ca958e72")) (pin "2" (uuid "eb11a4c4-e61e-4c0d-a17a-15a7e16abd84")) (instances (project "lora-pump" (path "/7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f803001/7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f803104" (reference "J4") (unit 1)))))
+	(wire (pts (xy 233.68 129.54) (xy 228.60 129.54)) (stroke (width 0) (type default)) (uuid "1b4d6c50-005d-48c7-bb40-452773568687"))
+	(symbol (lib_id "power:+12V") (at 228.60 129.54 0) (unit 1) (exclude_from_sim no) (in_bom no) (on_board no) (dnp no) (uuid "91b79557-41cd-4efe-9162-c50d89d6e6ef") (property "Reference" "#PWR134" (at 228.60 129.54 0) (effects (font (size 1.27 1.27)) hide)) (property "Value" "+12V" (at 228.60 126.54 0) (effects (font (size 1.27 1.27)))) (pin "1" (uuid "d3c31eaf-8e07-4015-b5b4-7ad3c98c1a0c")) (instances (project "lora-pump" (path "/7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f803001/7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f803104" (reference "#PWR134") (unit 1)))))
+	(wire (pts (xy 233.68 132.08) (xy 228.60 132.08)) (stroke (width 0) (type default)) (uuid "872399fc-e2aa-4875-92ad-3cb3f02d778d"))
+	(label "COIL_NEG" (at 228.60 132.08 180) (effects (font (size 1.27 1.27)) (justify right bottom)) (uuid "5a6f664a-e280-4677-84c6-3e08ba16c393"))
+	(symbol (lib_id "Diode:1N4148W") (at 279.40 129.54 0) (unit 1) (exclude_from_sim no) (in_bom yes) (on_board yes) (dnp no) (uuid "a9bbacdf-4ac9-4962-8ff1-34dbea5d4923") (property "Reference" "D5" (at 279.40 123.54 0) (effects (font (size 1.27 1.27)))) (property "Value" "1N4148W" (at 279.40 135.54 0) (effects (font (size 1.27 1.27)))) (property "Footprint" "Diode_SMD:D_SOD-123" (at 279.40 129.54 0) (effects (font (size 1.27 1.27)) hide)) (property "Datasheet" "" (at 279.40 129.54 0) (effects (font (size 1.27 1.27)) hide)) (property "MPN" "1N4148W" (at 279.40 129.54 0) (effects (font (size 1.27 1.27)) hide)) (pin "1" (uuid "9753f4ac-abe3-4cf9-8837-5a6d8e531ac0")) (pin "2" (uuid "8b751a45-4a91-4be4-a0a7-764e5216537f")) (instances (project "lora-pump" (path "/7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f803001/7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f803104" (reference "D5") (unit 1)))))
+	(wire (pts (xy 275.59 129.54) (xy 270.51 129.54)) (stroke (width 0) (type default)) (uuid "235bb9d8-a3c6-401e-bb02-121e87ab0ac3"))
+	(symbol (lib_id "power:+12V") (at 270.51 129.54 0) (unit 1) (exclude_from_sim no) (in_bom no) (on_board no) (dnp no) (uuid "f70693d6-c13d-4dce-a02e-59c88d1f181c") (property "Reference" "#PWR135" (at 270.51 129.54 0) (effects (font (size 1.27 1.27)) hide)) (property "Value" "+12V" (at 270.51 126.54 0) (effects (font (size 1.27 1.27)))) (pin "1" (uuid "0bb51321-b000-4395-9fc9-e01a482f49bb")) (instances (project "lora-pump" (path "/7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f803001/7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f803104" (reference "#PWR135") (unit 1)))))
+	(wire (pts (xy 283.21 129.54) (xy 288.29 129.54)) (stroke (width 0) (type default)) (uuid "327b5c99-900a-4582-a90d-e8715e0717a0"))
+	(label "COIL_NEG" (at 288.29 129.54 0) (effects (font (size 1.27 1.27)) (justify left bottom)) (uuid "c28297ef-4290-427c-b5d1-20ffdbdde446"))
+	(symbol (lib_id "Device:R") (at 320.04 99.06 0) (unit 1) (exclude_from_sim no) (in_bom yes) (on_board yes) (dnp no) (uuid "d38f107a-6a41-4abf-b738-1b8412f8be59") (property "Reference" "R17" (at 320.04 93.06 0) (effects (font (size 1.27 1.27)))) (property "Value" "4k7" (at 320.04 105.06 0) (effects (font (size 1.27 1.27)))) (property "Footprint" "Resistor_SMD:R_0603_1608Metric" (at 320.04 99.06 0) (effects (font (size 1.27 1.27)) hide)) (property "Datasheet" "" (at 320.04 99.06 0) (effects (font (size 1.27 1.27)) hide)) (property "MPN" "RC0603FR-074K7L" (at 320.04 99.06 0) (effects (font (size 1.27 1.27)) hide)) (pin "1" (uuid "3b8dd04c-b549-408f-a48a-c03a2908d2be")) (pin "2" (uuid "9e3c0101-81e9-43c1-b4d6-8041e3761c7f")) (instances (project "lora-pump" (path "/7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f803001/7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f803104" (reference "R17") (unit 1)))))
+	(wire (pts (xy 320.04 95.25) (xy 320.04 90.17)) (stroke (width 0) (type default)) (uuid "aac0d725-62ea-4004-8890-cd62a20d5dd8"))
+	(symbol (lib_id "power:+12V") (at 320.04 90.17 0) (unit 1) (exclude_from_sim no) (in_bom no) (on_board no) (dnp no) (uuid "690faf71-1e92-437f-9a53-cadc61cbabc0") (property "Reference" "#PWR136" (at 320.04 90.17 0) (effects (font (size 1.27 1.27)) hide)) (property "Value" "+12V" (at 320.04 87.17 0) (effects (font (size 1.27 1.27)))) (pin "1" (uuid "9eddf9df-3147-4b74-8065-b18c52d1a554")) (instances (project "lora-pump" (path "/7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f803001/7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f803104" (reference "#PWR136") (unit 1)))))
+	(wire (pts (xy 320.04 102.87) (xy 320.04 107.95)) (stroke (width 0) (type default)) (uuid "76ceb059-1869-4fbb-8c8a-f71e08339eae"))
+	(label "LED_COIL" (at 320.04 107.95 270) (effects (font (size 1.27 1.27)) (justify right bottom)) (uuid "2525d151-a6f6-42f0-82ea-4e59d8a3b652"))
+	(symbol (lib_id "Device:LED") (at 355.60 129.54 0) (unit 1) (exclude_from_sim no) (in_bom yes) (on_board yes) (dnp no) (uuid "ca923c65-e08b-44a1-8d50-c01539c408ec") (property "Reference" "D6" (at 355.60 123.54 0) (effects (font (size 1.27 1.27)))) (property "Value" "SAIDA ON" (at 355.60 135.54 0) (effects (font (size 1.27 1.27)))) (property "Footprint" "LED_SMD:LED_0603_1608Metric" (at 355.60 129.54 0) (effects (font (size 1.27 1.27)) hide)) (property "Datasheet" "" (at 355.60 129.54 0) (effects (font (size 1.27 1.27)) hide)) (property "MPN" "APT1608SGC" (at 355.60 129.54 0) (effects (font (size 1.27 1.27)) hide)) (pin "1" (uuid "b1ed02a0-3488-4f69-8003-2ba70b9213cd")) (pin "2" (uuid "0816c119-3868-49e4-af2f-4a913003c7ed")) (instances (project "lora-pump" (path "/7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f803001/7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f803104" (reference "D6") (unit 1)))))
+	(wire (pts (xy 351.79 129.54) (xy 346.71 129.54)) (stroke (width 0) (type default)) (uuid "7788779c-401d-4ce8-9e01-8325d993ffad"))
+	(label "COIL_NEG" (at 346.71 129.54 180) (effects (font (size 1.27 1.27)) (justify right bottom)) (uuid "0c20c9c0-552f-43d5-96d7-b245c7e6ef4b"))
+	(wire (pts (xy 359.41 129.54) (xy 364.49 129.54)) (stroke (width 0) (type default)) (uuid "d3d63787-87ff-4a03-9012-927f91f3dc45"))
+	(label "LED_COIL" (at 364.49 129.54 0) (effects (font (size 1.27 1.27)) (justify left bottom)) (uuid "154124fc-6618-49c0-984b-593939676493"))
+	(sheet_instances
+		(path "/" (page "1"))
+	)
+	(embedded_fonts no)
+)

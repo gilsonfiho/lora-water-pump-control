@@ -42,6 +42,8 @@ globais de mesmo nome ao trabalhar neste repositório.
 - `.claude/skills/engenheiro-software-senior/SKILL.md` — persona de engenheiro sênior
   C++17/ESP-IDF/firmware embarcado (RAII, sem exceções/RTTI, sem alocação dinâmica em runtime,
   máquinas de estado não bloqueantes), SOLID/Clean Code balanceado com simplicidade.
+- `.claude/skills/pcb-design/SKILL.md` — regras e fluxo para as PCBs em `hardware/` (KiCad 10):
+  estado seguro da bomba, antena/RF, layout compacto, ERC/DRC a cada etapa, sem inventar dado.
 
 Ambas as personas partiram de agentes genéricos em Python/FastAPI; aqui trocam o domínio para
 C++/ESP-IDF e removem referências a `.specify/memory/constitution.md`, que não existe neste
