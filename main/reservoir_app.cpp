@@ -21,8 +21,10 @@
 #include "config/PinConfig.h"
 #include "config/RadioConfig.h"
 #include "core/ReservoirController.h"
+#include "core/RssiIndicator.h"
 #include "hw/BenchSwitchLevelSensor.h"
 #include "hw/E220Radio.h"
+#include "hw/GpioSignalIndicator.h"
 #include "hw/ILevelSensor.h"
 #include "hw/StubBatteryMonitor.h"
 #include "node_app.h"
@@ -52,7 +54,7 @@ const char* levelName(hw::LevelState s) {
 
 cfg::LoraProfile makeProfile() {
     cfg::LoraProfile p;
-    p.variant = cfg::E220Variant::kT22D;  // TODO(hw): confirmar o par do prototipo
+    p.variant = cfg::E220Variant::kT30D;  // par do prototipo (T22D: comparacao em campo)
     p.airRate = cfg::LoraAirRate::k2_4k;   // maior alcance
     return p;
 }
@@ -75,6 +77,8 @@ cfg::LoraProfile makeProfile() {
     static protocol::LinkLayer       link(radio, cfg::kAddrReservoir);
     static core::ReservoirController controller(link, sensor, battery, cfg::kAddrPump);
     static power::PowerManager       powerMgr(battery);
+    static hw::GpioSignalIndicator   rssiLed;
+    static core::RssiIndicator       rssiIndicator(rssiLed);
 
     if (!radio.begin()) {
         ESP_LOGE(kTag, "FALHA ao iniciar o radio E220");
@@ -89,6 +93,29 @@ cfg::LoraProfile makeProfile() {
     controller.onLevelChanged().subscribe([](const core::LevelChangedEvent& e) {
         ESP_LOGI(kTag, "chave: %s -> %s",
                  levelName(e.previous), levelName(e.current));
+    });
+
+    // Status reportado pela bomba (BOMBA_STATUS): so log, sem mudar a decisao.
+    controller.onPumpStatus().subscribe([](const protocol::PumpStatusPayload& s) {
+        if (s.overrunLatched) {
+            ESP_LOGW(kTag, "bomba BLOQUEADA por tempo maximo (saida=%s)",
+                     s.outputOn ? "LIGADA" : "DESLIGADA");
+            return;
+        }
+        ESP_LOGI(kTag, "bomba: estado=%u saida=%s ligada ha %us",
+                 static_cast<unsigned>(s.state),
+                 s.outputOn ? "LIGADA" : "DESLIGADA",
+                 static_cast<unsigned>(s.runSeconds));
+    });
+
+    // Diagnostico do enlace: TX/ACK/retry/timeout aparecem no monitor.
+    // LED de RSSI (#17): so pacote valido (apos CRC/MAC/anti-replay) mexe nele.
+    if (!rssiLed.begin()) ESP_LOGE(kTag, "FALHA ao iniciar o LED de RSSI");
+    link.onEvent([](const protocol::LinkEvent& e) {
+        logLinkEvent(kTag, e);
+        if (e.type == protocol::LinkEvent::Type::kRxValid) {
+            rssiIndicator.onValidPacket(e.rssiDbm);
+        }
     });
 
     ESP_LOGI(kTag, "pronto (bancada: chave no GPIO %d, ciclo de %lu ms)",
@@ -107,6 +134,7 @@ cfg::LoraProfile makeProfile() {
             powerMgr.deepSleepFor(cfg::SleepPolicy::kDeepSleepMs);  // reinicia ao acordar
         }
 
+        rssiIndicator.poll();
         platform::delayMs(kLoopPeriodMs);
     }
 }

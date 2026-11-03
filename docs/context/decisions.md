@@ -26,6 +26,108 @@ criação deste arquivo foram extraídas de [`../ARCHITECTURE.md`](../ARCHITECTU
 - **SKUs:** (1) padrão E220-T22D; (2) longo alcance E22-T30D, *pin-compatible*;
   (3) repetidor, planejado.
 
+## LED de RSSI (decidido em 2026-11-02)
+
+Resposta à [issue #17](https://github.com/gilsonfiho/lora-water-pump-control/issues/17), parte
+elétrica na #18 (hw-v0.2).
+
+- **RSSI do último pacote válido**, não o ambiente: é a qualidade do enlace que importa para
+  posicionar a antena, e o byte anexado do E220 (`appendRssi`) já entrega isso sem comando extra.
+- **Só conta pacote que passou por CRC, MAC e anti-replay.** O `LinkLayer` emite `kRxValid` depois
+  desses três filtros, então tráfego forjado, replay ou quadro corrompido não mexe no LED.
+- **Nos dois nós.** As duas PCBs têm o LED; o reservatório indica pelo ACK e `BOMBA_STATUS`.
+- **Cadência por três faixas** (forte ≥ −80 dBm, médio ≥ −100 dBm, fraco), pulso de 100 ms; sem
+  suavização (valor cru). Limiares são de partida (`TODO(hw)`), a calibrar em campo.
+- **Apaga após `kLinkLostTimeoutMs`** sem pacote válido: o LED não pode mostrar sinal se a bomba já
+  considera o enlace perdido. Com heartbeat de 15 s o LED fica "velho" entre pacotes (aceito); um
+  modo de ajuste com heartbeat rápido fica para depois.
+- **Pinos como na PCB hw-v0.2:** LED de RSSI no GPIO0 e bomba no GPIO1 (era GPIO0). Na bancada o LED
+  da bomba passa para o GPIO1, que a chave de nível (só reservatório) já usa: os papéis são
+  exclusivos. A bateria (`kBatteryAdc`, GPIO0) sai de cena na hw-v0.1 e colide com o LED se voltar.
+- **`appendRssi` ligado** muda o REG3 do E220: regravar os dois nós juntos.
+
+## Autenticação e anti-replay no enlace (decidido em 2026-10-11)
+
+Resposta às [issue #5](https://github.com/gilsonfiho/lora-water-pump-control/issues/5)
+(autenticar o comando) e [issue #7](https://github.com/gilsonfiho/lora-water-pump-control/issues/7)
+(impedir replay). O failsafe #9 só **limitava** o dano de tráfego forjado; aqui
+ele passa a ser **rejeitado**.
+
+- **MAC por quadro, não cifra.** O conteúdo (liga/desliga) não é segredo; o que
+  importa é **autenticidade** e **integridade**. Um MAC resolve isso com uma
+  fração do custo de cifrar, e mantém o quadro legível no log de diagnóstico.
+- **SipHash-2-4, implementado à mão em `protocol/SipHash.h`.** PRF com chave,
+  saída de 64 bits, rápido em MCU de 32 bits e sem dependência externa —
+  `protocol/` não pode depender de mbedTLS nem do ESP-IDF. HMAC-SHA256 seria
+  grande demais no ar (2,4 kbps) e no código para o que o enlace precisa.
+  Truncado para **8 bytes** no quadro: suficiente para este volume de tráfego.
+- **Chave pré-compartilhada de 128 bits** em `config/SecurityConfig.h`, igual
+  nos dois nós. Placeholder com `TODO(hw)`: a chave real é injetada fora do
+  controle de versão (provisão de fábrica por SKU). Rotação/derivação de chave
+  é a issue #6, deixada para depois.
+- **Anti-replay por contador monotônico de 32 bits, por `src`.** O receptor
+  guarda o último contador visto de cada origem e exige avanço estrito. Escolhido
+  em vez de *timestamp* (não há relógio sincronizado) ou *challenge-response*
+  (custa um ida-e-volta a 2,4 kbps e trava o caminho do comando).
+- **Contador por transmissão física, não por transação.** Atribuído em
+  `LinkLayer::transmit()` via `platform::nextNonce()`. Assim a **retransmissão**
+  de um `COMANDO_BOMBA` (mesmo SEQ) carrega um contador **novo** e não é
+  confundida com replay — os comandos são idempotentes, então reaplicar não tem
+  efeito colateral. O ACK casa pelo SEQ, que não mudou.
+- **Persistência do contador em NVS, estilo *frame counter* do LoRaWAN**
+  (`main/nonce_store`). A cada boot salta um bloco de reserva e persiste antes de
+  usar, para **nunca reusar** um valor após reset/brownout. Só a `main/` toca
+  NVS; `platform::nextNonce()` default é um contador em RAM (para os testes).
+- **Validação de `src` no `PumpController`.** Além do MAC, a bomba descarta
+  qualquer pacote cujo `src` não seja o reservatório esperado — defesa em
+  profundidade e parte da issue #5.
+- **Não cobre #6** (gestão/rotação de chave): a chave é única e estática por ora.
+
+## Failsafe de tempo máximo de bombeamento (decidido em 2026-10-10)
+
+Resposta à [issue #9](https://github.com/gilsonfiho/lora-water-pump-control/issues/9).
+O failsafe de enlace só age quando o rádio cala; boia travada, comando preso ou
+tráfego forjado mantêm a bomba ligada sem limite.
+
+- **O nó da bomba mede o tempo ligada por conta própria** e desliga ao passar de
+  `kMaxPumpRunMs`. Independe do reservatório — é o ponto da defesa em
+  profundidade.
+- **Tempos: 60 s na bancada, 30 min em campo (`TODO(hw)`).** O valor de campo é
+  palpite conservador: o real sai do volume da caixa dividido pela vazão. Curto
+  demais bloqueia a bomba em operação normal.
+- **O bloqueio é um latch, não um estado.** Se fosse só o estado `kOverrun`, um
+  silêncio de rádio levaria a `kLinkLost` e o `LIGAR` seguinte religaria a
+  bomba — ou seja, cair o enlace seria um jeito trivial de burlar o limite. O
+  latch sobrevive a qualquer transição.
+- **Rearme só por `COMANDO_BOMBA = desligar`.** Escolhido em vez de cooldown
+  automático (que ciclaria para sempre com a boia travada) e em vez de travar
+  até o reset (que exigiria ida ao local). Na prática, o rearme acontece quando
+  a caixa enche ou a boia é consertada.
+- **Mensagem nova `BOMBA_STATUS` (0x06), bomba → reservatório.** Informativa, sem
+  ACK, enviada a cada troca de estado. O reservatório apenas loga: deixar a
+  decisão reagir ao bloqueio é uma decisão à parte.
+- **Não resolve a falta de autenticação** (issues #5, #6, #7). Só limita o dano.
+
+## Par T30D no protótipo (decidido em 2026-09-19)
+
+Substitui a decisão anterior "Par do protótipo: T22D".
+
+- **Os dois nós usam E220-900T30D.** O par T22D passa a ser a **comparação no
+  teste de campo**, que mede na prática os 8 dB de diferença e alimenta a
+  decisão do SKU padrão.
+- **Alimentação na bancada: pino 5V (VBUS) do devkit.** É um improviso aceito
+  conscientemente. A porta USB 2.0 fornece 500 mA, e o T30D puxa 620 mA de pico
+  a 30 dBm (menos em `kLow`). Exige eletrolítico de 1000 µF junto ao VCC do
+  módulo. Se houver reset ou queda da porta USB durante TX, o próximo passo é
+  uma fonte de 5 V externa com GND comum.
+- **Potência na bancada: `kLow` = 21 dBm, com os nós a ≥ 3 m.** O T30D não
+  desce abaixo de 21 dBm. O manual limita a entrada do receptor a **+10 dBm, sob
+  risco de queimar o módulo**. A 3 m chegam cerca de −15 dBm.
+- **Regulatório:** a 30 dBm, a ANATEL exige salto de frequência em ≥ 35 canais,
+  e o E220 só tem 19 canais legais. O teste de campo a 30 dBm fica **fora da
+  conformidade**, e vale como medição de engenharia, não como configuração de
+  produto (ver [`hardware.md`](hardware.md#regulatório-anatel-faixa-e-potência)).
+
 ## Canal 55 (905,125 MHz) (decidido em 2026-09-19)
 
 - **Motivo:** o canal de fábrica do E220 (23 → 873,125 MHz) cai no downlink
@@ -58,7 +160,8 @@ controle; as decisões de produto acima ficam para a versão seguinte.
 - **Toolchain: extensão ESP-IDF do VS Code**, em vez do PlatformIO.
 - **Módulos disponíveis:** 2× E220-900T22D e 2× E220-900T30D. Datasheets em
   [`../datasheets/`](../datasheets/).
-- **Par do protótipo: T22D.** Valida o SKU padrão e é viável com bateria. O par
+- ~~**Par do protótipo: T22D.**~~ *Substituído pelo par T30D (ver acima).*
+  Valida o SKU padrão e é viável com bateria. O par
   T30D fica para comparação no teste de campo, o que mede na prática o ganho dos
   8 dB a mais e alimenta a decisão do SKU longo alcance.
 - **Papéis por strap de GPIO, já no protótipo.** Um binário só para os dois nós:
@@ -72,7 +175,7 @@ controle; as decisões de produto acima ficam para a versão seguinte.
 | Build | PlatformIO + Arduino | **ESP-IDF** (migrado em 2026-09-19) |
 | MCU | ESP32-C3 | ESP32-C3 (coincide) |
 | Alcance | "até ~5 km" | 5 km (coincide) |
-| Módulo | T30D ou T22D em aberto | **Par T22D** |
+| Módulo | T30D ou T22D em aberto | **Par T30D** (T22D na comparação de campo) |
 | Papéis | Dois ambientes de build | **Binário único com strap de GPIO** |
 
 ### Escopo do protótipo de bancada (decidido em 2026-09-19)

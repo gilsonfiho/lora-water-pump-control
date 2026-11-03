@@ -42,11 +42,21 @@ struct Timing {
     // Cadencia do heartbeat do reservatorio -> bomba para manter o enlace vivo
     // mesmo quando o estado desejado da bomba nao mudou.
     static constexpr uint32_t kHeartbeatPeriodMs = 5'000;        // campo: 15'000
+
+    // Bomba: tempo maximo LIGADA DE FORMA CONTINUA, decidido no proprio no da
+    // bomba. Defesa em profundidade: vale mesmo com o enlace perfeito e o
+    // reservatorio insistindo em LIGAR (boia travada, bug, comando forjado).
+    static constexpr uint32_t kMaxPumpRunMs = 60'000;            // campo: 1'800'000
 #else
     static constexpr uint32_t kReservoirCyclePeriodMs = 10'000;
     static constexpr uint32_t kBatteryReportPeriodMs  = 60'000;
     static constexpr uint32_t kLinkLostTimeoutMs      = 45'000;
     static constexpr uint32_t kHeartbeatPeriodMs      = 15'000;
+
+    // TODO(hw): 30 min e um palpite conservador. O valor real sai do volume da
+    // caixa dividido pela vazao da bomba, com margem. Curto demais bloqueia a
+    // bomba em operacao normal; longo demais enfraquece o failsafe.
+    static constexpr uint32_t kMaxPumpRunMs           = 1'800'000;  // 30 min
 #endif
 
     // Camada de enlace: espera por um ACK antes de retransmitir. Igual nos dois
@@ -61,6 +71,37 @@ struct Timing {
     // heartbeat antes de desistir do enlace.
     static_assert(kLinkLostTimeoutMs >= 3 * kHeartbeatPeriodMs,
                   "janela de failsafe curta demais para a cadencia do heartbeat");
+
+    // O limite de bombeamento e a ULTIMA linha de defesa: em falhas curtas de
+    // radio, quem deve agir primeiro e o failsafe de enlace.
+    static_assert(kMaxPumpRunMs > kLinkLostTimeoutMs,
+                  "tempo maximo de bombeamento menor que o failsafe de enlace");
+};
+
+// ---- LED indicador de RSSI (issue #17) --------------------------------------
+// O LED pisca em cadencia que cresce com a forca do ULTIMO pacote valido:
+// forte = pisca rapido, fraco = pisca devagar, sem pacote por kNoSignalTimeoutMs
+// = apagado. So pacotes que passaram por CRC, MAC e anti-replay contam.
+struct Indicator {
+    // Limiares de RSSI em dBm (>= limiar). TODO(hw): valores de partida, a
+    // calibrar com o teste de campo (sensibilidade do E220 a 2,4 kbps ~ -120 dBm).
+    static constexpr int16_t kStrongDbm = -80;
+    static constexpr int16_t kMediumDbm = -100;
+
+    // Periodo do pisca por faixa, e quanto o LED fica aceso em cada pisca.
+    static constexpr uint32_t kStrongPeriodMs = 300;
+    static constexpr uint32_t kMediumPeriodMs = 700;
+    static constexpr uint32_t kWeakPeriodMs   = 1'500;
+    static constexpr uint32_t kPulseMs        = 100;
+
+    // Sem pacote valido por este tempo o indicador apaga. Segue o failsafe de
+    // enlace: se a bomba ja considera o enlace perdido, o LED nao pode mentir.
+    static constexpr uint32_t kNoSignalTimeoutMs = Timing::kLinkLostTimeoutMs;
+
+    static_assert(kStrongDbm > kMediumDbm, "limiares de RSSI fora de ordem");
+    static_assert(kStrongPeriodMs < kMediumPeriodMs && kMediumPeriodMs < kWeakPeriodMs,
+                  "forte deve piscar mais rapido que fraco");
+    static_assert(kPulseMs < kStrongPeriodMs, "pulso maior que o periodo mais curto");
 };
 
 // ---- Deep sleep (reservatorio, alimentado por bateria) --------------------

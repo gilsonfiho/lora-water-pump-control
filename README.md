@@ -24,6 +24,7 @@ LoRa, o nó da bomba na captação — com confirmação (ACK), retransmissão e
 - [Hardware necessário](#hardware-necessário)
 - [Estrutura do repositório](#estrutura-do-repositório)
 - [Como compilar e gravar](#como-compilar-e-gravar)
+- [Testes automatizados](#testes-automatizados)
 - [Protótipo de bancada](#protótipo-de-bancada)
 - [Configuração](#configuração)
 - [Protocolo de comunicação](#protocolo-de-comunicação)
@@ -51,6 +52,8 @@ LoRa, o nó da bomba na captação — com confirmação (ACK), retransmissão e
 - 2× **ESP32-C3** (RISC-V, Wi-Fi + BLE, baixo consumo).
 - 2× módulo LoRa **EBYTE E220-900T30D** (30 dBm / 1 W) **ou** **E220-900T22D**
   (22 dBm / 160 mW) — o firmware suporta ambos (só muda a tabela de potência).
+  O protótipo usa o **par T30D**, e o T22D entra como comparação no teste de
+  campo.
   > ⚠️ Os E220 são **UART/TTL**, não SPI. A camada HAL abstrai isso; um driver
   > SPI SX1276/RFM95 existe como **segunda estratégia** (esqueleto).
 - Sensor de nível: **boia** (padrão) — 1 ou 2 boias para histerese.
@@ -147,7 +150,7 @@ Trocar o alvo recria o `sdkconfig` a partir do `sdkconfig.defaults`. A porta
 aparece no Gerenciador de Dispositivos (o USB Serial/JTAG do C3 costuma se
 chamar "Dispositivo serial USB").
 
-### Compilar, gravar e monitorar
+### Comandos da extensão
 
 | Ação | Atalho | Comando da paleta |
 |------|--------|-------------------|
@@ -155,20 +158,120 @@ chamar "Dispositivo serial USB").
 | Gravar | `Ctrl+E F` | ESP-IDF: Flash your Project |
 | Monitor serial | `Ctrl+E M` | ESP-IDF: Monitor Device |
 | **Tudo de uma vez** | `Ctrl+E D` | ESP-IDF: Build, Flash and Start a Monitor on your Device |
+| Terminal com o ambiente do IDF | — | ESP-IDF: Open ESP-IDF Terminal |
 | Opções do `sdkconfig` | `Ctrl+E G` | ESP-IDF: SDK Configuration Editor |
 | Limpar o build | — | ESP-IDF: Full Clean Project |
 
 Os mesmos botões aparecem na barra de status (chave inglesa = compilar, raio =
 gravar, tela = monitor). Para sair do monitor, use `Ctrl+]`.
 
-**Gravando as duas placas:** grave a primeira, troque a porta em *Select Port
-to Use* e grave a segunda. O binário é o mesmo. Para ver os dois logs ao mesmo
-tempo, abra o segundo monitor em **ESP-IDF: Open ESP-IDF Terminal** com
-`idf.py -p COMx monitor`.
-
 Depois de criar, renomear ou apagar um componente, ou de mexer em `REQUIRES`,
 rode **Full Clean Project** antes de compilar. O CMake só descobre os
 componentes na configuração.
+
+### Passo a passo: gravar o reservatório e a bomba
+
+As duas placas recebem **o mesmo binário**. O que decide o papel é só o fio no
+**GPIO 3**, lido **uma vez, no boot**:
+
+| | Reservatório (transmissor) | Bomba (receptor) |
+|---|---|---|
+| GPIO 3 | **aberto** (nada ligado) | **ligado ao GND** |
+| Periférico | chave de nível no GPIO 1 | LED + 330 Ω no GPIO 1 |
+| LED de RSSI (opcional) | LED + 330 Ω no GPIO 0 | LED + 330 Ω no GPIO 0 |
+| Tag no log | `reservatorio` | `bomba` |
+
+#### 0. Antes de ligar qualquer placa
+
+- **Antena rosqueada em cada E220.** O firmware transmite logo depois de
+  gravar, e sem antena o PA do módulo pode queimar.
+- **Strap já no lugar.** Na placa da bomba, jumper do GPIO 3 ao GND **antes**
+  de ligar o USB. O pino só é lido no boot: mudar o strap com a placa ligada não
+  tem efeito até o próximo reset.
+- **Nós a ≥ 3 m um do outro** (T30D, ver
+  [Protótipo de bancada](#protótipo-de-bancada)). Isso vale também durante a
+  gravação, porque cada placa começa a transmitir assim que o firmware sobe.
+- **Etiquete as placas** ("R" e "B"). Com o mesmo binário, só o strap e a
+  etiqueta diferenciam uma da outra.
+
+#### 1. Descobrir a porta de cada placa
+
+Conecte **só a placa do reservatório** e veja qual COM aparece em
+**ESP-IDF: Select Port to Use** (ou no Gerenciador de Dispositivos, em
+"Portas (COM e LPT)"). Anote. Depois conecte a da bomba e anote a COM nova.
+Exemplo usado abaixo: reservatório = `COM3`, bomba = `COM4`.
+
+> A porta não aparece? Quase sempre é cabo USB só de carga. Troque por um
+> cabo de dados.
+
+#### 2. Compilar (uma vez para as duas)
+
+`Ctrl+E B`. O terminal deve terminar com `Project build complete`. O binário
+vai para `build/` e serve às duas placas.
+
+#### 3. Gravar e conferir o reservatório (transmissor)
+
+1. **Select Port to Use** → `COM3` (reservatório).
+2. `Ctrl+E F` para gravar. No fim, a placa reinicia sozinha.
+3. `Ctrl+E M` para abrir o monitor. O boot deve mostrar:
+
+   ```text
+   I (…) main: strap aberto -> papel RESERVATORIO
+   I (…) reservatorio: iniciando...
+   I (…) reservatorio: pronto (bancada: chave no GPIO 1, ciclo de 2000 ms)
+   ```
+
+4. Mexa na chave. Deve aparecer uma linha como
+   `reservatorio: chave: CHEIA (para) -> BAIXA (pedindo agua)`.
+5. `Ctrl+]` para fechar o monitor antes de ir para a outra placa.
+
+#### 4. Gravar e conferir a bomba (receptor)
+
+1. **Select Port to Use** → `COM4` (bomba).
+2. `Ctrl+E F` para gravar.
+3. `Ctrl+E M` para abrir o monitor. O boot deve mostrar:
+
+   ```text
+   I (…) main: strap em GND -> papel BOMBA
+   I (…) bomba: iniciando...
+   I (…) bomba: pronto (bancada: LED no GPIO 1, failsafe em 15000 ms)
+   I (…) bomba: estado -> OCIOSO (saida=DESLIGADA)
+   ```
+
+   Se o reservatório estiver desligado, em ~15 s aparece
+   `estado -> ENLACE PERDIDO (failsafe)`. **É o esperado:** sem tráfego, a
+   bomba desliga.
+
+Se aparecer `papel RESERVATORIO` na placa da bomba, o GPIO 3 não está no GND.
+Corrija o jumper e aperte **RST**.
+
+#### 5. Ver os dois logs ao mesmo tempo
+
+O monitor da extensão acompanha uma porta por vez. Para o segundo nó:
+
+1. **ESP-IDF: Open ESP-IDF Terminal** (abre um terminal com o ambiente
+   ativado).
+2. Rode `idf.py -p COM3 monitor` (reservatório).
+3. Deixe o monitor da extensão na `COM4` (bomba).
+
+Cada monitor reinicia a placa ao abrir. Isso é normal.
+
+#### 6. Conferir que os dois conversam
+
+Com os dois monitores abertos, feche a chave do reservatório. Em ~2 s a bomba
+loga `estado -> BOMBEANDO (saida=LIGADA)` e o LED acende. A partir daí, siga o
+[roteiro de validação](#roteiro-de-validação).
+
+#### Problemas comuns
+
+| Sintoma | Causa provável | O que fazer |
+|---|---|---|
+| Gravação falha com `Failed to connect` | Placa não entrou em modo de gravação | Segure **BOOT**, aperte e solte **RST**, solte **BOOT** e grave de novo |
+| Os dois nós logam `RESERVATORIO` | GPIO 3 da bomba solto | Jumper ao GND e **RST** |
+| `FALHA ao iniciar o radio E220` | Módulo sem alimentação, TX/RX invertidos ou `AUX` solto | VCC em 5 V, TXD do E220 → GPIO 4, RXD → GPIO 5, AUX → GPIO 10 |
+| Placa reinicia ou a COM some a cada transmissão | Pico de corrente do T30D derruba a USB | Confira o 1000 µF junto ao VCC; se persistir, fonte de 5 V externa |
+| Bomba sempre em `ENLACE PERDIDO` com o reservatório ligado | Nós com firmwares ou canais diferentes, ou antena solta | Regrave **as duas** placas com o mesmo build |
+| Porta COM não aparece | Cabo só de carga | Cabo USB de dados |
 
 > Pelo terminal (CI, scripts): ative o ambiente com
 > `. C:\Espressif\tools\Microsoft.v6.1.PowerShell_profile.ps1` e use
@@ -178,6 +281,62 @@ componentes na configuração.
 > Ao mudar algo em `RadioConfig.h`, **regrave as duas placas**: em
 > configurações diferentes elas não se comunicam, e o sintoma é o mesmo de um
 > enlace caído.
+
+## Testes automatizados
+
+A suíte roda **no QEMU, sem placa nenhuma**, em poucos segundos. São 60 casos
+(Unity) sobre `protocol/` e `core/`, com rádio, atuador, sensor e bateria
+falsos, e um **relógio controlado pelo teste** — por isso um failsafe de 45 s ou
+um bloqueio de 30 min são verificados sem esperar nada.
+
+```powershell
+# Uma vez por máquina:
+python $env:IDF_PATH\tools\idf_tools.py install qemu-riscv32
+
+# A cada rodada, da raiz do repositório:
+.\test\run-tests.ps1            # saída completa (inclui o boot do IDF)
+.\test\run-tests.ps1 -Quiet     # só os casos e o resumo
+```
+
+Uma rodada leva cerca de 12 s. A saída sai **ao vivo**, caso por caso:
+
+```text
+== compilando os testes...
+== rodando no QEMU...
+./main/test_packet.cpp:29:CRC-16/CCITT-FALSE confere com o vetor conhecido:PASS
+...
+60 Tests 0 Failures 0 Ignored
+==== FIM DOS TESTES: 0 falha(s) ====
+== todos os testes passaram
+```
+
+Falha aparece em vermelho, com arquivo, linha, nome do caso e o que era
+esperado:
+
+```text
+./main/test_pump_controller.cpp:186:nao bloqueia pouco antes do limite:FAIL: Expected 2 Was 3
+```
+
+**O script devolve código de saída** (0 se tudo passou, 1 se houve falha ou
+travamento), então serve para CI ou para um hook de pre-commit. Ele também
+cuida de três armadilhas do ambiente: acrescenta o QEMU ao PATH (o perfil do
+EIM é gerado antes de o QEMU existir), encerra o emulador junto com o processo
+pai (senão sobra um `qemu-system-riscv32` órfão segurando a porta 5555, e a
+rodada seguinte não sobe) e, em caso de falha, imprime as últimas linhas do log
+e onde ele está.
+
+Para rodar na placa em vez do QEMU: `idf.py -C test -p COMx flash monitor`.
+
+| Arquivo | Cobre |
+|---------|-------|
+| [`test/main/test_packet.cpp`](test/main/test_packet.cpp) | CRC-16 (vetor conhecido), ida e volta do quadro, CRC corrompido, truncamento, SYNC/versão inválidos, payload máximo |
+| [`test/main/test_messages.cpp`](test/main/test_messages.cpp) | Builders e parsers de cada tipo, incluindo `BOMBA_STATUS` |
+| [`test/main/test_link_layer.cpp`](test/main/test_link_layer.cpp) | ACK, retransmissão com o mesmo SEQ, timeout, auto-ACK, filtro de endereço, broadcast, ressincronização por SYNC, par de nós em loopback, e a regressão do relógio de retransmissão |
+| [`test/main/test_pump_controller.cpp`](test/main/test_pump_controller.cpp) | Os dois failsafes, e o latch da issue #9 (inclusive sobrevivendo à queda do enlace) |
+| [`test/main/test_reservoir_controller.cpp`](test/main/test_reservoir_controller.cpp) | Decisão de nível com histerese, sensor falho, heartbeat, telemetria |
+
+Os testes **não substituem a bancada**: nada aqui exercita o E220, os GPIOs, a
+alimentação ou o alcance. Eles cobrem a lógica; o hardware é a bancada.
 
 ## Protótipo de bancada
 
@@ -193,7 +352,7 @@ Roteiro completo em [`docs/context/bancada.md`](docs/context/bancada.md).
 | Contator + bomba | **LED + resistor de 330 Ω** | `RelayPumpActuator` (mesmo driver) |
 | Bateria + divisor | **Stub fixo** (fonte externa, 100%) | `StubBatteryMonitor` |
 | Tempos de campo | **Tempos curtos** | `BENCH_PROFILE` em `NodeConfig.h` |
-| TX a 22 dBm | **TX a 10 dBm** | `cfg::kTxPower` em `RadioConfig.h` |
+| TX a 30 dBm | **TX a 21 dBm** (mínimo do T30D) | `cfg::kTxPower` em `RadioConfig.h` |
 
 Controladores, protocolo e `LinkLayer` **não mudam**: só trocam as
 implementações de `ILevelSensor` e `IBatteryMonitor`. O `BENCH_PROFILE` vem
@@ -207,17 +366,21 @@ cria uma variável do CMake, não um `#define` do compilador.)
 | Heartbeat | 5 s | 15 s |
 | Failsafe (perda de enlace) | 15 s | 45 s |
 | Telemetria de bateria | 15 s | 60 s |
-| Potência de TX (T22D) | 10 dBm | 22 dBm |
+| Potência de TX (T30D) | 21 dBm | 30 dBm |
 
 ### Material
 
-- 2× devkit ESP32-C3 e 2× **E220-900T22D**, cada módulo com a **sua antena**
-  de 900 MHz.
+- 2× devkit ESP32-C3 e 2× **E220-900T30D**, cada módulo com a **sua antena**
+  de 900 MHz (conector SMA).
 - 2× protoboard, jumpers e 2 cabos USB de dados.
+- 2× eletrolítico de **1000 µF** (≥ 10 V) + 2× cerâmico de 100 nF, um par junto
+  ao VCC de cada E220. **Obrigatório**: o T30D puxa picos de corrente que a USB
+  sozinha não segura.
 - 1× chave que trava (não serve botão momentâneo: a leitura é uma vez por
   ciclo).
 - 1× LED + resistor de 330 Ω.
-- Recomendado: 100 µF + 100 nF junto ao VCC de cada E220.
+
+O par T22D fica para o teste de campo, como comparação.
 
 ### Ligações
 
@@ -229,17 +392,27 @@ As duas placas recebem **o mesmo binário**; só o strap muda.
 | E220 `RXD` | 5 (TX do ESP) | |
 | E220 `M0` / `M1` | 6 / 7 | |
 | E220 `AUX` | 10 | |
-| E220 `VCC` / `GND` | 3V3 / GND | |
+| E220 `VCC` | pino **5V** (VBUS) | 1000 µF + 100 nF junto ao módulo |
+| E220 `GND` | GND | |
 | Strap de papel | 3 | aberto = reservatório · GND = bomba |
 | Chave de nível (só reservatório) | 1 | outro lado no GND |
-| LED (só bomba) | 0 | LED + 330 Ω para o GND |
+| LED da bomba (só bomba) | 1 | LED + 330 Ω para o GND |
+| LED de RSSI (os dois nós) | 0 | LED + 330 Ω para o GND |
 
 ### Antes de energizar
 
 - **Nunca ligue um E220 sem antena.** O firmware transmite logo no boot, e sem
   carga a potência refletida pode danificar o PA.
-- **Mantenha ≥ 1 m entre as antenas.** Mesmo a 10 dBm, módulos colados saturam
-  o receptor e geram erros de CRC que não vêm do protocolo.
+- **Nós a ≥ 3 m um do outro, obrigatoriamente.** O T30D não desce abaixo de
+  21 dBm, e o receptor **pode queimar** com mais de +10 dBm na entrada. A 10 cm
+  chegam ~+13 dBm; a 3 m, ~−15 dBm. Pontas opostas da sala ou salas
+  diferentes.
+- **VCC em 5 V, sinais em 3,3 V.** O T30D precisa de 5 V para a potência
+  nominal, mas UART, M0, M1 e AUX vão direto ao ESP32-C3. O manual avisa que
+  TTL de 5 V pode queimar o módulo.
+- **A alimentação pela USB é um improviso.** Se o ESP resetar ou a porta USB
+  cair a cada transmissão, alimente o E220 com uma fonte de 5 V externa
+  (≥ 1 A), com GND comum ao devkit.
 - **Canal 55 (905,125 MHz)**, dentro da faixa permitida pela ANATEL. O canal de
   fábrica do E220 (873,125 MHz) não é permitido no Brasil. Detalhes em
   [`docs/context/hardware.md`](docs/context/hardware.md).
@@ -253,6 +426,39 @@ As duas placas recebem **o mesmo binário**; só o strap muda.
 5. **Failsafe:** com o LED aceso, desligue o reservatório. Em ~15 s o LED deve
    apagar sozinho (`ENLACE PERDIDO (failsafe)`). **É o teste que mais importa.**
 6. **Recuperação:** religue o reservatório; o enlace volta e o LED reacende.
+
+### Roteiro de validação do tempo máximo de bombeamento
+
+Este failsafe é **local do nó da bomba** e independe do reservatório: vale mesmo
+com o enlace perfeito e com o reservatório insistindo em LIGAR. É a defesa
+contra boia travada, comando `ON` preso por bug e comando forjado
+([issue #9](https://github.com/gilsonfiho/lora-water-pump-control/issues/9)).
+
+Na bancada o limite é de **60 s** (`kMaxPumpRunMs`); em campo, 30 min.
+
+1. **Dispara.** Feche a chave. O LED acende. Agora **não toque em nada** por
+   60 s. O LED deve apagar **sozinho**, e a bomba deve logar:
+
+   ```text
+   W (…) bomba: BLOQUEIO por tempo maximo (60000 ms ligada): LIGAR sera ignorado ate chegar um DESLIGAR
+   I (…) bomba: estado -> BLOQUEADA POR TEMPO MAXIMO (saida=DESLIGADA)
+   ```
+
+   No monitor do reservatório aparece `bomba BLOQUEADA por tempo maximo`, que
+   chega pela mensagem `BOMBA_STATUS`.
+2. **Não religa sozinha.** Com a chave **ainda fechada**, espere mais um minuto.
+   O LED não pode acender. O reservatório continua reenviando LIGAR a cada
+   ciclo, e a bomba tem de ignorar.
+3. **Rearma.** Abra a chave. O log mostra `bloqueio rearmado por DESLIGAR` e o
+   estado vai para `OCIOSO`.
+4. **Volta a funcionar.** Feche a chave de novo: o LED acende e o cronômetro
+   começa do zero.
+5. **O bloqueio sobrevive à queda do enlace.** Este é o teste mais importante
+   dos cinco. Repita o passo 1 e, com a bomba já bloqueada e a chave fechada,
+   **desligue o reservatório** e espere o `ENLACE PERDIDO (failsafe)`. Religue o
+   reservatório: o enlace volta, mas **o LED não pode acender**. Se acender, o
+   bloqueio virou apenas um estado, e um silêncio de rádio passou a ser um jeito
+   de burlar o limite.
 
 ### O que a bancada não prova
 
@@ -297,7 +503,10 @@ Protocolo próprio, ponto-a-ponto, com quadro de 8 bytes de cabeçalho + payload
 Decisões que dependem do hardware final estão marcadas com `TODO(hw)` no código:
 
 - [ ] Pinagem exata do ESP32-C3 (UART, M0/M1/AUX, relé, boias, ADC, I2C).
-- [ ] Modelo do módulo por nó: **E220-900T30D** ou **E220-900T22D**.
+- [x] Modelo do módulo por nó: **par E220-900T30D** no protótipo (T22D como
+  comparação de campo).
+- [ ] Alimentação do T30D pelo VBUS do devkit: validar ou migrar para fonte de
+  5 V externa.
 - [ ] Nível lógico do módulo relé (ativo alto/baixo) e da(s) boia(s).
 - [ ] Razão do divisor resistivo do ADC de bateria (ou adoção do INA219/226).
 - [ ] Habilitar/validar o deep sleep e a chave de acordar por evento.

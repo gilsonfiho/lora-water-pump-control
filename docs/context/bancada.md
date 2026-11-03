@@ -28,8 +28,11 @@ Os dois nós gravam **o mesmo binário**; o papel vem do strap.
 | E220 `M0` | 6 | |
 | E220 `M1` | 7 | |
 | E220 `AUX` | 10 | |
+| E220 `VCC` | pino **5V** (VBUS) | 1000 µF + 100 nF junto ao módulo |
+| E220 `GND` | GND | |
 | Chave de nível (só reservatório) | 1 | outro lado no GND |
-| LED (só bomba) | 0 | LED + 330 Ω para o GND |
+| LED da bomba (só bomba) | 1 | LED + 330 Ω para o GND; mesmo pino da chave de nível, que só o reservatório usa (como na PCB hw-v0.2) |
+| LED de RSSI (os dois nós) | 0 | LED + 330 Ω para o GND; pisca conforme o RSSI do último pacote válido |
 
 ### Pinos que não dá para usar no C3
 
@@ -42,7 +45,9 @@ Isto restringiu as escolhas acima e vale relembrar antes de remapear:
 - **2, 8, 9:** straps de boot. Um sinal externo segurando-os no nível errado no
   reset impede o ESP de subir. O 9 é o botão BOOT.
 
-Sobram 0, 1, 3, 4, 5, 6, 7 e 10 — exatamente os oito que o protótipo usa.
+Sobram 0, 1, 3, 4, 5, 6, 7 e 10 — exatamente os oito que o protótipo usa. O GPIO1 é
+compartilhado entre a chave de nível (reservatório) e o LED da bomba (bomba), como na PCB hw-v0.2:
+os papéis são exclusivos.
 
 > Duas pendências herdadas, sem efeito na bancada mas registradas em
 > `PinConfig.h` com `TODO(hw)`: `kFloatHigh` está no GPIO 2 (strap) e
@@ -62,28 +67,49 @@ espera, e nada mais. Para os tempos de campo, troque
 | Ciclo do reservatório | 2 s | 10 s |
 | Heartbeat | 5 s | 15 s |
 | Failsafe (perda de enlace) | 15 s | 45 s |
+| Tempo máximo bombeando | 60 s | 30 min `TODO(hw)` |
 | Telemetria de bateria | 15 s | 60 s |
-| Potência de TX (`cfg::kTxPower`) | `kLow` = 10 dBm | `kMax` = 22 dBm |
+| Potência de TX (`cfg::kTxPower`, T30D) | `kLow` = 21 dBm | `kMax` = 30 dBm |
 
 A proporção failsafe ÷ heartbeat continua 3:1 nos dois perfis — são três
 heartbeats perdidos antes de desligar. Um `static_assert` trava isso.
 
-A potência cai na bancada porque os módulos ficam a centímetros um do outro.
-A 22 dBm e ~30 cm de distância, chegam de +1 a +5 dBm no receptor, perto do
-máximo de entrada do LLCC68 (~+10 dBm). O front-end satura e aparecem erros de
-CRC que não vêm do protocolo. Mesmo a 10 dBm, mantenha ≥ 1 m entre as antenas.
+### T30D: potência, distância e alimentação
+
+O protótipo usa o **par E220-900T30D**. Três cuidados que o T22D não exigia:
+
+- **Nós a ≥ 3 m um do outro, obrigatoriamente.** O T30D não desce abaixo de
+  21 dBm (`kLow`), e o manual limita a entrada do receptor a **+10 dBm, sob
+  risco de queimar o módulo**. Com antenas de ~2 dBi:
+
+  | Distância | Chega no receptor (21 dBm) | |
+  |---|---|---|
+  | 10 cm | ~+13 dBm | **dano** |
+  | 30 cm | ~+4 dBm | satura, CRC falha |
+  | 3 m | ~−15 dBm | seguro |
+
+  Pontas opostas da sala ou salas diferentes. Nunca as duas placas lado a lado
+  na mesma protoboard ou mesa.
+- **VCC do E220 no pino 5V (VBUS) do devkit.** O T30D precisa de ≥ 5 V para a
+  potência nominal e puxa até 620 mA de pico (a 30 dBm; menos em `kLow`). A
+  USB 2.0 fornece 500 mA, então é um improviso: 1000 µF + 100 nF junto ao VCC
+  do módulo e fios curtos. **Se o ESP resetar ou a porta USB cair a cada
+  transmissão**, troque por uma fonte de 5 V externa (≥ 1 A) com GND comum.
+- **Os sinais continuam em 3,3 V.** UART, M0, M1 e AUX vão direto ao ESP32-C3.
+  O manual avisa que TTL de 5 V pode queimar o módulo.
 
 O `kAckTimeoutMs` (800 ms) **não** muda: depende do tempo de ar, não da
 conveniência de quem está testando.
 
 ## Roteiro de validação
 
-Grave o mesmo binário nas duas placas e mude só o strap.
+Grave o mesmo binário nas duas placas e mude só o strap. Antes de energizar,
+confira que **cada E220 tem a sua antena** e que os nós estão **a ≥ 3 m**.
 
 1. **Boot.** Cada nó deve logar o papel que assumiu. Se os dois disserem
    "RESERVATORIO", o strap da bomba não está no GND.
 2. **Rádio.** Nenhum nó pode logar `FALHA ao iniciar o radio E220`. Se logar,
-   confira alimentação do módulo, o par TX/RX cruzado e o `AUX`.
+   confira alimentação do módulo (5 V no VCC), o par TX/RX cruzado e o `AUX`.
 3. **Liga.** Feche a chave. Em até ~2 s o LED da bomba acende e o receptor loga
    `estado -> BOMBEANDO`.
 4. **Desliga.** Abra a chave. O LED apaga e o log vai para `OCIOSO`.
@@ -92,9 +118,39 @@ Grave o mesmo binário nas duas placas e mude só o strap.
    `ENLACE PERDIDO (failsafe)`. Este é o teste que mais importa.
 6. **Recuperação.** Religue o reservatório: o enlace volta e o LED reacende.
 
+### Tempo máximo de bombeamento (failsafe local)
+
+Independe do reservatório: vale com o enlace perfeito. Roteiro detalhado, com os
+logs esperados, no [README](../../README.md#roteiro-de-validação-do-tempo-máximo-de-bombeamento).
+
+7. **Dispara.** Chave fechada, sem tocar em nada por 60 s: o LED apaga sozinho e
+   a bomba loga `BLOQUEIO por tempo maximo`.
+8. **Não religa.** Com a chave ainda fechada, o LED não volta, mesmo com o
+   reservatório reenviando LIGAR a cada ciclo.
+9. **Rearma.** Abra a chave: `bloqueio rearmado por DESLIGAR`. Fechar de novo
+   liga a bomba e reinicia o cronômetro.
+10. **Sobrevive à queda do enlace.** Com a bomba bloqueada e a chave fechada,
+    desligue e religue o reservatório. O LED **não** pode acender. Se acender, o
+    latch virou estado e o limite é burlável por um silêncio de rádio.
+
+### LED de RSSI (issue #17)
+
+Com o LED + 330 Ω no GPIO 0 de cada nó, o LED pisca conforme o RSSI do **último pacote
+válido** (passou por CRC, MAC e anti-replay). Forte (≥ −80 dBm) pisca a cada 300 ms, médio
+(≥ −100 dBm) a cada 700 ms, fraco a cada 1,5 s; sem pacote válido pelo tempo do failsafe
+(15 s na bancada), apaga. Os limiares são valores de partida (`TODO(hw)`).
+
+11. **Pisca.** Com o enlace no ar, os dois LEDs de RSSI piscam. O log mostra
+    `RX valido de 0x.. seq=.. RSSI -.. dBm` a cada pacote.
+12. **Distância.** Afaste um nó (sempre ≥ 3 m) ou cubra a antena com a mão: o RSSI no log cai e o
+    pisca desacelera.
+13. **Apaga.** Tire a alimentação de um nó: no outro, o LED apaga em ~15 s.
+
 ## O que a bancada ainda não prova
 
 - Alcance e margem de enlace. O teste de campo é outro.
 - Comportamento com a carga AC real: surto do contator, transientes, ruído.
 - Consumo e autonomia (não há bateria nem medição).
 - Comportamento da boia de verdade (chave travada, fiação invertida, `kMid`).
+- O tempo máximo de bombeamento **de campo** (30 min): a bancada valida o
+  mecanismo com 60 s, não o valor real, que depende do volume da caixa.

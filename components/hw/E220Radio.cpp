@@ -217,6 +217,8 @@ bool E220Radio::writeConfigRegisters() {
 bool E220Radio::send(const uint8_t* data, size_t length) {
     if (length == 0 || length > kMaxRadioFrame) return false;
     if (isBusy()) return false;  // AUX baixo: buffer cheio / TX em andamento
+    ESP_LOGD(kTag, "TX %u B", static_cast<unsigned>(length));
+    ESP_LOG_BUFFER_HEX_LEVEL(kTag, data, length, ESP_LOG_DEBUG);
     return uart_write_bytes(port_, data, length) == static_cast<int>(length);
 }
 
@@ -253,6 +255,8 @@ void E220Radio::drainUartToRxBuffer() {
             rxLength_--;  // remove o byte de RSSI do payload
         }
         frameReady_ = true;
+        ESP_LOGD(kTag, "RX %u B", static_cast<unsigned>(rxLength_));
+        ESP_LOG_BUFFER_HEX_LEVEL(kTag, rxBuffer_, rxLength_, ESP_LOG_DEBUG);
     }
 }
 

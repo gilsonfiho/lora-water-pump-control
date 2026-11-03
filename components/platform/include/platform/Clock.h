@@ -23,4 +23,15 @@ uint32_t millis();
 // chamadora; nao usar no caminho critico com valores grandes.
 void delayMs(uint32_t ms);
 
+// ---- Fonte de tempo substituivel (TESTES) ---------------------------------
+// Troca de onde millis() le o tempo. Existe para os testes: um failsafe de
+// 45 s ou um bloqueio de 30 min nao podem ser verificados esperando de
+// verdade. O teste instala um contador que ele mesmo avanca e, com isso,
+// exercita prazos longos em microssegundos de execucao.
+//
+// Em producao ninguem chama isto, e millis() usa o esp_timer. Passar nullptr
+// restaura o relogio real.
+using TimeSourceMs = uint32_t (*)();
+void setTimeSource(TimeSourceMs source);
+
 }  // namespace platform

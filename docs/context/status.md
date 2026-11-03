@@ -1,11 +1,14 @@
 # Status
 
-Última atualização: 2026-09-19
+Última atualização: 2026-10-11
 
 ## Versão atual
 
-`v0.0.1` (pré-alpha). Esqueleto funcional: arquitetura, protocolo e drivers
-principais implementados. Ainda não validado em hardware real.
+`v0.0.6` (pré-alpha). Fase `0.0.x` de estruturação: arquitetura, protocolo (com
+autenticação e anti-replay), drivers, LED de RSSI e os dois failsafes implementados e
+cobertos por testes no QEMU. Ainda **não validado em hardware real** — o próximo
+marco é a `0.1.0` (comunicação validada em bancada). Histórico completo das
+versões no [`CHANGELOG.md`](../../CHANGELOG.md).
 
 ## Feito
 
@@ -25,25 +28,83 @@ principais implementados. Ainda não validado em hardware real.
     o `driver` não reexporta mais `driver/uart.h` e `driver/gpio.h`).
 
 - **Potência de TX no `BENCH_PROFILE` (2026-09-19):** `cfg::kTxPower` em
-  `RadioConfig.h` vale `kLow` (10 dBm) na bancada e `kMax` em campo. Evita
-  saturar o LLCC68 com os módulos próximos. Compila sem warnings.
+  `RadioConfig.h` vale `kLow` na bancada e `kMax` em campo.
+- **Par T30D no protótipo (2026-09-19):** `makeProfile()` dos dois nós usa
+  `kT30D`. Na bancada: `kLow` = 21 dBm (mínimo do T30D), nós a ≥ 3 m (o RX
+  queima acima de +10 dBm), VCC no pino 5V do devkit com 1000 µF. O par T22D
+  fica para a comparação de campo. Compila sem warnings.
+
+- **Log de diagnóstico do enlace (2026-09-20):** a comunicação não logava nada,
+  o que deixava a bancada cega. Adicionados: bytes crus (hex, `DEBUG`) no
+  `E220Radio` e eventos tipados do `LinkLayer` (`onEvent` → TX/ACK+rtt/retry/
+  timeout/crc/notforme) logados na `main/`. `protocol/`/`core/` seguem sem
+  ESP-IDF. Compila no v6.1 (0x2f980 B, 81% livre). Para ver o hex, subir o nível
+  do tag: `esp_log_level_set("e220", ESP_LOG_DEBUG)`.
+
+- **Failsafe de tempo máximo de bombeamento (2026-10-10, issue #9):** o nó da
+  bomba desliga sozinho ao passar de `kMaxPumpRunMs` ligada (60 s na bancada,
+  30 min em campo com `TODO(hw)`), mesmo com o enlace perfeito. Novo estado
+  `kOverrun` e latch `overrunLatched_`, que sobrevive à queda do enlace e só
+  rearma com um `DESLIGAR`. Mensagem nova `BOMBA_STATUS` (0x06), bomba →
+  reservatório, só para log. Compila no v6.1 (0x2f7a0 B, 81% livre).
+  **Não validado em hardware**: roteiro no README.
+
+- **Testes automatizados (2026-10-10):** 60 casos Unity rodando **no QEMU, sem
+  placa** (`.\test\run-tests.ps1`), cobrindo `protocol/` e `core/`. Relógio
+  substituível (`platform::setTimeSource`) permite verificar prazos longos sem
+  esperar. Todos passando. Acharam um bug real no `LinkLayer` (ver abaixo).
+- **Correção no `LinkLayer` (2026-10-10):** `transmit()` atualizava o
+  `lastTxMs_`, que é o relógio da transação confiável em voo. Assim, qualquer
+  heartbeat (`sendOnce`) ou auto-ACK adiava a retransmissão do comando
+  pendente — na cadência de bancada, indefinidamente. Agora só
+  `sendReliable()` e a retransmissão tocam esse relógio. Três testes de
+  regressão cobrem os dois caminhos.
+- **Ajustes no nó da bomba (2026-10-10):** `begin()` não transmite mais (a app o
+  chama antes de `radio.begin()`, e o status ia por uma UART não instalada, com
+  `uart driver error` em todo boot); o `src` do `BOMBA_STATUS` passa a vir do
+  `LinkLayer`; e o tempo ligada também é reportado em `kOverrun`.
+
+- **Autenticação + anti-replay no enlace (2026-10-11, issues #5 e #7):** quadro
+  `VER 0x02` com **MAC de 8 B** (SipHash-2-4, chave pré-compartilhada de 128 b em
+  `config/SecurityConfig.h`) e **contador monotônico de 4 B**. O receptor só
+  aceita se o MAC confere e o contador avança para aquele `src`; `decodePacket()`
+  devolve o motivo da recusa (`DecodeError`). O contador é por **transmissão
+  física** (`platform::nextNonce()`), então retransmissão legítima não vira
+  replay; no app ele é persistido em NVS (`main/nonce_store`) com salto de
+  reserva por boot. `PumpController` passou a descartar `src` diferente do
+  reservatório. Branch `feature/auth-replay`, a partir da `develop`. Testes:
+  68/68 no QEMU (SipHash com vetores oficiais, MAC, chave errada, replay,
+  retransmissão, `src` errado). Firmware compila no v6.1 (0x35f10 B, 79% livre).
+  **Não validado em hardware.**
+
+- **LED de RSSI (2026-11-02, issue #17):** `core::RssiIndicator` pisca um LED conforme o RSSI do
+  último pacote **válido** (após CRC, MAC e anti-replay, via `LinkEvent::kRxValid`), nos dois nós;
+  apaga sem pacote por `kLinkLostTimeoutMs`. Pinos alinhados à PCB hw-v0.2: RSSI no GPIO0, bomba no
+  GPIO1. `appendRssi` ligado (regravar os dois nós). Testes: 76/76 no QEMU (8 novos). Firmware
+  compila no v6.1 (0x37a60 B, 78% livre). **Não validado em hardware**: roteiro nos passos 11–13 de
+  `bancada.md`; os limiares de RSSI são valores de partida (`TODO(hw)`).
 
 ## Em andamento
 
-- Nada em aberto no build; próximo passo é a bancada.
+- Diagnóstico do "não comunica" na bancada: forte suspeita de saturação do RX
+  (par T30D a curta distância, mínimo 21 dBm) e/ou brownout na TX. Confirmar
+  pelos novos logs (`ACK` com rtt vs. `TIMEOUT`; `CRC inválido` = satura).
+- Próximo passo continua sendo a bancada.
 
 ## Foco atual: protótipo de bancada
 
-Branch `feature/prototipo-bancada`. ESP32-C3, ESP-IDF, par T22D. Sem água, sem
+Branch `feature/prototipo-bancada`. ESP32-C3, ESP-IDF, par T30D. Sem água, sem
 bomba e sem carga AC: chave no lugar da boia, LED no lugar do contator, bateria
 stubada e tempos curtos. Montagem e roteiro em [`bancada.md`](bancada.md).
 
 ## Próximos passos
 
-1. Montar a bancada e rodar o roteiro de [`bancada.md`](bancada.md), em especial
-   o teste de failsafe.
+1. Montar a bancada e rodar o roteiro de [`bancada.md`](bancada.md): o teste de
+   failsafe de enlace e o do tempo máximo de bombeamento (passos 7 a 10).
 2. Só depois: boias reais, subsistema de energia e contator.
-3. Teste de campo, comparando o par T22D com o par T30D.
+3. Teste de campo com o par T30D, usando o par T22D como comparação. A 30 dBm
+   com o E220 em canal fixo, o teste fica fora da conformidade ANATEL: vale
+   como medição de engenharia.
 
 ## Para o produto (depois do protótipo)
 
@@ -65,5 +126,6 @@ stubada e tempos curtos. Montagem e roteiro em [`bancada.md`](bancada.md).
   e opções em [`hardware.md`](hardware.md#regulatório-anatel-faixa-e-potência).
   Afeta canal, escolha do rádio e o SKU T30D.
 
-- Pinagem e modelo exato dos módulos ainda não confirmados.
-- Par de módulos do protótipo em aberto (quantidade disponível de cada modelo).
+- Pinagem ainda não confirmada no hardware.
+- Alimentação do T30D pelo VBUS do devkit ainda não testada: pode exigir fonte
+  de 5 V externa.

@@ -31,6 +31,25 @@ struct LevelStatusPayload {
 // ---- BATERIA_STATUS -------------------------------------------------------
 // Reaproveita hw::BatteryTelemetry como conteudo logico.
 
+// ---- BOMBA_STATUS ---------------------------------------------------------
+// Estado do no da bomba visto pelo fio. Espelha core::PumpController::State de
+// proposito: protocol/ nao pode depender de core/, entao a conversao fica na
+// core/. Mudar um dos dois exige mudar o outro.
+enum class PumpNodeState : uint8_t {
+    kBoot     = 0,
+    kIdle     = 1,
+    kPumping  = 2,
+    kLinkLost = 3,
+    kOverrun  = 4,  // bloqueada por tempo maximo de bombeamento
+};
+
+struct PumpStatusPayload {
+    PumpNodeState state = PumpNodeState::kBoot;
+    bool overrunLatched = false;  // bloqueio travado; so um OFF rearma
+    bool outputOn       = false;  // estado real da saida (rele/LED)
+    uint16_t runSeconds = 0;      // tempo ligada no ciclo atual
+};
+
 // ===== Builders (preenchem um Packet) ======================================
 
 inline Packet makeCommand(uint8_t src, uint8_t dst, uint8_t seq, PumpCommand cmd) {
@@ -86,6 +105,21 @@ inline Packet makeBatteryStatus(uint8_t src, uint8_t dst, uint8_t seq,
     return p;
 }
 
+inline Packet makePumpStatus(uint8_t src, uint8_t dst, uint8_t seq,
+                             const PumpStatusPayload& s) {
+    Packet p;
+    p.src = src; p.dst = dst; p.seq = seq;
+    p.type = MessageType::kBombaStatus;
+    // Informativo: nao pede ACK. O laco do atuador nao pode esperar confirmacao.
+    p.payload[0] = static_cast<uint8_t>(s.state);
+    p.payload[1] = static_cast<uint8_t>((s.overrunLatched ? 0x01 : 0x00) |
+                                        (s.outputOn ? 0x02 : 0x00));
+    p.payload[2] = static_cast<uint8_t>(s.runSeconds >> 8);
+    p.payload[3] = static_cast<uint8_t>(s.runSeconds & 0xFF);
+    p.payloadLen = 4;
+    return p;
+}
+
 // ===== Parsers =============================================================
 
 inline bool parseCommand(const Packet& p, PumpCommand& cmdOut) {
@@ -99,6 +133,15 @@ inline bool parseLevelStatus(const Packet& p, LevelStatusPayload& out) {
     out.level = static_cast<hw::LevelState>(p.payload[0]);
     out.percentValid = (p.payload[1] != 0xFF);
     out.percent = out.percentValid ? p.payload[1] : 0;
+    return true;
+}
+
+inline bool parsePumpStatus(const Packet& p, PumpStatusPayload& out) {
+    if (p.type != MessageType::kBombaStatus || p.payloadLen < 4) return false;
+    out.state          = static_cast<PumpNodeState>(p.payload[0]);
+    out.overrunLatched = (p.payload[1] & 0x01) != 0;
+    out.outputOn       = (p.payload[1] & 0x02) != 0;
+    out.runSeconds     = static_cast<uint16_t>((p.payload[2] << 8) | p.payload[3]);
     return true;
 }
 

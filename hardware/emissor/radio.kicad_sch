@@ -1,0 +1,672 @@
+(kicad_sch
+	(version 20250114)
+	(generator "eeschema")
+	(generator_version "9.0")
+	(uuid "7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f802102")
+	(paper "A3")
+	(title_block
+		(title "Radio - E220-900T30D")
+		(date "2026-11-02")
+		(rev "0.2")
+		(company "gilsonfiho")
+	)
+	(lib_symbols
+		(symbol "lora-pump:E220-900TxxD"
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(in_pos_files yes)
+			(duplicate_pin_numbers_are_jumpers no)
+			(property "Reference" "U"
+				(at 0 15.24 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Value" "E220-900T30D"
+				(at 0 -15.24 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" "lora-pump:E220-900T30D"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Datasheet" ""
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Description" "Modulo LoRa EBYTE E220-900T22D/T30D (LLCC68), UART TTL 3,3 V"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(symbol "E220-900TxxD_0_1"
+				(rectangle
+					(start -7.62 12.7)
+					(end 7.62 -12.7)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type background)
+					)
+				)
+			)
+			(symbol "E220-900TxxD_1_1"
+				(pin input line
+					(at -12.7 5.08 0)
+					(length 5.08)
+					(name "M0"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin input line
+					(at -12.7 2.54 0)
+					(length 5.08)
+					(name "M1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin input line
+					(at -12.7 0 0)
+					(length 5.08)
+					(name "RXD"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "3"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin tri_state line
+					(at -12.7 -2.54 0)
+					(length 5.08)
+					(name "TXD"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "4"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin tri_state line
+					(at -12.7 -5.08 0)
+					(length 5.08)
+					(name "AUX"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "5"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin power_in line
+					(at 0 17.78 270)
+					(length 5.08)
+					(name "VCC"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "6"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin power_in line
+					(at 0 -17.78 90)
+					(length 5.08)
+					(name "GND"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "7"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
+		(symbol "power:+5V"
+			(power global)
+			(pin_numbers
+				(hide yes)
+			)
+			(pin_names
+				(offset 0)
+				(hide yes)
+			)
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(in_pos_files yes)
+			(duplicate_pin_numbers_are_jumpers no)
+			(property "Reference" "#PWR"
+				(at 0 -3.81 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Value" "+5V"
+				(at 0 3.556 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" ""
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Datasheet" ""
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Description" "Power symbol creates a global label with name \"+5V\""
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "ki_keywords" "global power"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(symbol "+5V_0_1"
+				(polyline
+					(pts
+						(xy -0.762 1.27)
+						(xy 0 2.54)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 0 2.54)
+						(xy 0.762 1.27)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 0 0)
+						(xy 0 2.54)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+			)
+			(symbol "+5V_1_1"
+				(pin power_in line
+					(at 0 0 90)
+					(length 0)
+					(name ""
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
+		(symbol "power:GND"
+			(power global)
+			(pin_numbers
+				(hide yes)
+			)
+			(pin_names
+				(offset 0)
+				(hide yes)
+			)
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(in_pos_files yes)
+			(duplicate_pin_numbers_are_jumpers no)
+			(property "Reference" "#PWR"
+				(at 0 -6.35 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Value" "GND"
+				(at 0 -3.81 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" ""
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Datasheet" ""
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "ki_keywords" "global power"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(symbol "GND_0_1"
+				(polyline
+					(pts
+						(xy 0 0)
+						(xy 0 -1.27)
+						(xy 1.27 -1.27)
+						(xy 0 -2.54)
+						(xy -1.27 -1.27)
+						(xy 0 -1.27)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+			)
+			(symbol "GND_1_1"
+				(pin power_in line
+					(at 0 0 270)
+					(length 0)
+					(name ""
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
+		(symbol "Device:C"
+			(pin_numbers
+				(hide yes)
+			)
+			(pin_names
+				(offset 0.254)
+			)
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(in_pos_files yes)
+			(duplicate_pin_numbers_are_jumpers no)
+			(property "Reference" "C"
+				(at 0.635 2.54 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(justify left)
+				)
+			)
+			(property "Value" "C"
+				(at 0.635 -2.54 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(justify left)
+				)
+			)
+			(property "Footprint" ""
+				(at 0.9652 -3.81 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Datasheet" ""
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Description" "Unpolarized capacitor"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "ki_keywords" "cap capacitor"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "ki_fp_filters" "C_*"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(symbol "C_0_1"
+				(polyline
+					(pts
+						(xy -2.032 0.762)
+						(xy 2.032 0.762)
+					)
+					(stroke
+						(width 0.508)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy -2.032 -0.762)
+						(xy 2.032 -0.762)
+					)
+					(stroke
+						(width 0.508)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+			)
+			(symbol "C_1_1"
+				(pin passive line
+					(at 0 3.81 270)
+					(length 2.794)
+					(name ""
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at 0 -3.81 90)
+					(length 2.794)
+					(name ""
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
+	)
+	(text "RADIO - EBYTE E220-900T30D (par do prototipo)" (exclude_from_sim no) (at 15 12 0) (effects (font (size 2.5 2.5)) (justify left top)) (uuid "65782451-6a83-4909-8280-16ab15df3c32"))
+	(text "!! O E220 TRANSMITE LOGO NO BOOT: NUNCA ENERGIZAR SEM ANTENA NO SMA DO MODULO !!\nA antena e o SMA-K do proprio modulo (Manual T30D, Tabela 2-2, p.5): nao ha SMA na PCB.\nPinos (Tabela 3-1, p.6): 1 M0, 2 M1, 3 RXD, 4 TXD, 5 AUX, 6 VCC, 7 GND; 8-11 furos de fixacao.\nUART/M0/M1/AUX em 3,3 V. VCC em 5 V (>= 5,0 V para potencia plena): 620 mA de pico em TX.\nEntrada maxima do RX: +10 dBm (nos a >= 3 m na bancada).\nSem pull-ups em TXD/AUX: so sao necessarios para MCU de 5 V (Tabela 4-1, p.7); aqui o MCU e de 3,3 V." (exclude_from_sim no) (at 15 22 0) (effects (font (size 1.27 1.27)) (justify left top)) (uuid "5fc1f051-a351-43e0-843e-deb0b5d5f7dd"))
+	(symbol (lib_id "lora-pump:E220-900TxxD") (at 109.22 129.54 0) (unit 1) (exclude_from_sim no) (in_bom yes) (on_board yes) (dnp no) (uuid "4ee994c1-e584-42dd-a700-0b03aebd5808") (property "Reference" "U2" (at 109.22 123.54 0) (effects (font (size 1.27 1.27)))) (property "Value" "E220-900T30D" (at 109.22 135.54 0) (effects (font (size 1.27 1.27)))) (property "Footprint" "lora-pump:E220-900T30D" (at 109.22 129.54 0) (effects (font (size 1.27 1.27)) hide)) (property "Datasheet" "" (at 109.22 129.54 0) (effects (font (size 1.27 1.27)) hide)) (property "MPN" "E220-900T30D" (at 109.22 129.54 0) (effects (font (size 1.27 1.27)) hide)) (pin "1" (uuid "7547398a-9332-48bc-bbb8-2e3a39adcbb2")) (pin "2" (uuid "079f241f-c128-4a52-8acd-2e877ee3c217")) (pin "3" (uuid "3170ef56-3ce3-4bfc-9b30-542159158140")) (pin "4" (uuid "747de833-e306-480e-ba01-12c92dec9110")) (pin "5" (uuid "321bba3f-e2a7-4737-95e1-967a602e6de2")) (pin "6" (uuid "f9e9116a-2c06-4e58-ab3a-30649b3e2f2a")) (pin "7" (uuid "2e948143-43fc-415c-8525-ec037553fb60")) (instances (project "lora-pump" (path "/7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f802001/7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f802102" (reference "U2") (unit 1)))))
+	(wire (pts (xy 96.52 124.46) (xy 91.44 124.46)) (stroke (width 0) (type default)) (uuid "6e8da564-8e1e-499e-97e4-692e3e77054b"))
+	(global_label "E220_M0" (shape bidirectional) (at 91.44 124.46 180) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right bottom)) (uuid "5d1f5e80-45ff-4cae-bd18-1542262c7f55") (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 91.44 124.46 0) (effects (font (size 1.27 1.27)) hide)))
+	(wire (pts (xy 96.52 127.00) (xy 91.44 127.00)) (stroke (width 0) (type default)) (uuid "a9d9f5ad-70b7-4902-bb79-819ff26841f3"))
+	(global_label "E220_M1" (shape bidirectional) (at 91.44 127.00 180) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right bottom)) (uuid "85d213b2-198c-4661-9b28-1ab3e332adf1") (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 91.44 127.00 0) (effects (font (size 1.27 1.27)) hide)))
+	(wire (pts (xy 96.52 129.54) (xy 91.44 129.54)) (stroke (width 0) (type default)) (uuid "b45031cd-f971-4092-a038-745d80911d29"))
+	(global_label "E220_RXD" (shape bidirectional) (at 91.44 129.54 180) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right bottom)) (uuid "b3f80336-7c91-45e8-bd88-a52102994183") (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 91.44 129.54 0) (effects (font (size 1.27 1.27)) hide)))
+	(wire (pts (xy 96.52 132.08) (xy 91.44 132.08)) (stroke (width 0) (type default)) (uuid "48143aed-eb77-49d8-b69a-09fff9f2c9a1"))
+	(global_label "E220_TXD" (shape bidirectional) (at 91.44 132.08 180) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right bottom)) (uuid "af7c3b53-bdf3-410d-bf7c-0e60abab42ac") (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 91.44 132.08 0) (effects (font (size 1.27 1.27)) hide)))
+	(wire (pts (xy 96.52 134.62) (xy 91.44 134.62)) (stroke (width 0) (type default)) (uuid "1b6d7ef4-b012-43a3-bfe4-c7e232f2ac54"))
+	(global_label "E220_AUX" (shape bidirectional) (at 91.44 134.62 180) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right bottom)) (uuid "93d85599-d955-439e-831c-e6c209946c7d") (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 91.44 134.62 0) (effects (font (size 1.27 1.27)) hide)))
+	(wire (pts (xy 109.22 111.76) (xy 109.22 106.68)) (stroke (width 0) (type default)) (uuid "216fcc6e-49f9-44b6-b0ba-aee6c669b727"))
+	(symbol (lib_id "power:+5V") (at 109.22 106.68 0) (unit 1) (exclude_from_sim no) (in_bom no) (on_board no) (dnp no) (uuid "6b88b58b-e755-4959-9293-4004d9cdaaea") (property "Reference" "#PWR20" (at 109.22 106.68 0) (effects (font (size 1.27 1.27)) hide)) (property "Value" "+5V" (at 109.22 103.68 0) (effects (font (size 1.27 1.27)))) (pin "1" (uuid "fe230219-b526-42fa-adec-7162bfcda819")) (instances (project "lora-pump" (path "/7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f802001/7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f802102" (reference "#PWR20") (unit 1)))))
+	(wire (pts (xy 109.22 147.32) (xy 109.22 152.40)) (stroke (width 0) (type default)) (uuid "9be9b1a9-fb53-49d2-b6cd-366f6974b56c"))
+	(symbol (lib_id "power:GND") (at 109.22 152.40 0) (unit 1) (exclude_from_sim no) (in_bom no) (on_board no) (dnp no) (uuid "d6a4fd28-4b4c-4dd3-8509-83258317e436") (property "Reference" "#PWR21" (at 109.22 152.40 0) (effects (font (size 1.27 1.27)) hide)) (property "Value" "GND" (at 109.22 155.40 0) (effects (font (size 1.27 1.27)))) (pin "1" (uuid "925b2f25-fa3f-4b25-a4db-b75030b7a82a")) (instances (project "lora-pump" (path "/7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f802001/7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f802102" (reference "#PWR21") (unit 1)))))
+	(symbol (lib_id "Device:C") (at 190.50 129.54 0) (unit 1) (exclude_from_sim no) (in_bom yes) (on_board yes) (dnp no) (uuid "b8c215af-d0f7-4dc6-8293-10b4f3124c76") (property "Reference" "C4" (at 190.50 123.54 0) (effects (font (size 1.27 1.27)))) (property "Value" "47uF/10V" (at 190.50 135.54 0) (effects (font (size 1.27 1.27)))) (property "Footprint" "Capacitor_SMD:C_1210_3225Metric" (at 190.50 129.54 0) (effects (font (size 1.27 1.27)) hide)) (property "Datasheet" "" (at 190.50 129.54 0) (effects (font (size 1.27 1.27)) hide)) (property "MPN" "CL32A476MPVNNNE" (at 190.50 129.54 0) (effects (font (size 1.27 1.27)) hide)) (pin "1" (uuid "535a7007-efea-44b5-821d-aa5df332ed84")) (pin "2" (uuid "47974f4b-1ce4-4f7c-9e4d-585b7f47c173")) (instances (project "lora-pump" (path "/7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f802001/7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f802102" (reference "C4") (unit 1)))))
+	(wire (pts (xy 190.50 125.73) (xy 190.50 120.65)) (stroke (width 0) (type default)) (uuid "76b05322-31ce-4701-87c0-1a8fbb5c899b"))
+	(symbol (lib_id "power:+5V") (at 190.50 120.65 0) (unit 1) (exclude_from_sim no) (in_bom no) (on_board no) (dnp no) (uuid "813d40ba-f3e7-4b24-a36b-63a7154a998b") (property "Reference" "#PWR22" (at 190.50 120.65 0) (effects (font (size 1.27 1.27)) hide)) (property "Value" "+5V" (at 190.50 117.65 0) (effects (font (size 1.27 1.27)))) (pin "1" (uuid "deaad10b-1b38-4b29-8fd7-732da41cb758")) (instances (project "lora-pump" (path "/7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f802001/7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f802102" (reference "#PWR22") (unit 1)))))
+	(wire (pts (xy 190.50 133.35) (xy 190.50 138.43)) (stroke (width 0) (type default)) (uuid "e3380303-5228-4c0f-a049-46cf3cff2009"))
+	(symbol (lib_id "power:GND") (at 190.50 138.43 0) (unit 1) (exclude_from_sim no) (in_bom no) (on_board no) (dnp no) (uuid "29f87b0e-f914-4b9b-9dfc-5d1f8a817043") (property "Reference" "#PWR23" (at 190.50 138.43 0) (effects (font (size 1.27 1.27)) hide)) (property "Value" "GND" (at 190.50 141.43 0) (effects (font (size 1.27 1.27)))) (pin "1" (uuid "b9fb0b1a-0d68-4edf-9198-58641c2f55aa")) (instances (project "lora-pump" (path "/7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f802001/7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f802102" (reference "#PWR23") (unit 1)))))
+	(symbol (lib_id "Device:C") (at 210.82 129.54 0) (unit 1) (exclude_from_sim no) (in_bom yes) (on_board yes) (dnp no) (uuid "d30030d8-5ce3-4767-a779-73639845fc17") (property "Reference" "C11" (at 210.82 123.54 0) (effects (font (size 1.27 1.27)))) (property "Value" "47uF/10V" (at 210.82 135.54 0) (effects (font (size 1.27 1.27)))) (property "Footprint" "Capacitor_SMD:C_1210_3225Metric" (at 210.82 129.54 0) (effects (font (size 1.27 1.27)) hide)) (property "Datasheet" "" (at 210.82 129.54 0) (effects (font (size 1.27 1.27)) hide)) (property "MPN" "CL32A476MPVNNNE" (at 210.82 129.54 0) (effects (font (size 1.27 1.27)) hide)) (pin "1" (uuid "41d8d0cb-71bf-457b-8204-03a474775aeb")) (pin "2" (uuid "ac8d77cd-78fb-4991-b4ec-2b14c7f66fc8")) (instances (project "lora-pump" (path "/7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f802001/7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f802102" (reference "C11") (unit 1)))))
+	(wire (pts (xy 210.82 125.73) (xy 210.82 120.65)) (stroke (width 0) (type default)) (uuid "ff3333b5-4d8f-49b9-9619-0581bc0a7252"))
+	(symbol (lib_id "power:+5V") (at 210.82 120.65 0) (unit 1) (exclude_from_sim no) (in_bom no) (on_board no) (dnp no) (uuid "57330316-923b-4f1f-b9f3-ea5f29c445c1") (property "Reference" "#PWR24" (at 210.82 120.65 0) (effects (font (size 1.27 1.27)) hide)) (property "Value" "+5V" (at 210.82 117.65 0) (effects (font (size 1.27 1.27)))) (pin "1" (uuid "3c092dc8-b594-45fe-87fd-0c76feda7b59")) (instances (project "lora-pump" (path "/7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f802001/7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f802102" (reference "#PWR24") (unit 1)))))
+	(wire (pts (xy 210.82 133.35) (xy 210.82 138.43)) (stroke (width 0) (type default)) (uuid "84f640f6-0f61-4bad-ad31-3ebc0b554503"))
+	(symbol (lib_id "power:GND") (at 210.82 138.43 0) (unit 1) (exclude_from_sim no) (in_bom no) (on_board no) (dnp no) (uuid "7a84e911-3ab3-4281-872c-933b4b9d758b") (property "Reference" "#PWR25" (at 210.82 138.43 0) (effects (font (size 1.27 1.27)) hide)) (property "Value" "GND" (at 210.82 141.43 0) (effects (font (size 1.27 1.27)))) (pin "1" (uuid "1e70bebb-834d-43d1-89d9-3f7d017cacb5")) (instances (project "lora-pump" (path "/7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f802001/7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f802102" (reference "#PWR25") (unit 1)))))
+	(symbol (lib_id "Device:C") (at 231.14 129.54 0) (unit 1) (exclude_from_sim no) (in_bom yes) (on_board yes) (dnp no) (uuid "0e5c59ec-3898-478b-bd3d-ebe507d385c0") (property "Reference" "C5" (at 231.14 123.54 0) (effects (font (size 1.27 1.27)))) (property "Value" "100nF" (at 231.14 135.54 0) (effects (font (size 1.27 1.27)))) (property "Footprint" "Capacitor_SMD:C_0603_1608Metric" (at 231.14 129.54 0) (effects (font (size 1.27 1.27)) hide)) (property "Datasheet" "" (at 231.14 129.54 0) (effects (font (size 1.27 1.27)) hide)) (property "MPN" "CL10B104KB8NNNC" (at 231.14 129.54 0) (effects (font (size 1.27 1.27)) hide)) (pin "1" (uuid "8a7731c7-bff2-4c6f-8d8e-b14addd8c4aa")) (pin "2" (uuid "bf4602fe-1786-4780-b4f5-72ab7f81bdab")) (instances (project "lora-pump" (path "/7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f802001/7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f802102" (reference "C5") (unit 1)))))
+	(wire (pts (xy 231.14 125.73) (xy 231.14 120.65)) (stroke (width 0) (type default)) (uuid "d9aad459-1243-4378-826b-aa500be01f5c"))
+	(symbol (lib_id "power:+5V") (at 231.14 120.65 0) (unit 1) (exclude_from_sim no) (in_bom no) (on_board no) (dnp no) (uuid "9e3512dc-d542-4ec0-915e-84d6c53e4f86") (property "Reference" "#PWR26" (at 231.14 120.65 0) (effects (font (size 1.27 1.27)) hide)) (property "Value" "+5V" (at 231.14 117.65 0) (effects (font (size 1.27 1.27)))) (pin "1" (uuid "b6731cfb-e5c6-411c-8d96-5fb45c7e3ec1")) (instances (project "lora-pump" (path "/7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f802001/7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f802102" (reference "#PWR26") (unit 1)))))
+	(wire (pts (xy 231.14 133.35) (xy 231.14 138.43)) (stroke (width 0) (type default)) (uuid "ba9ebd46-c9b2-4665-9678-a540beceff89"))
+	(symbol (lib_id "power:GND") (at 231.14 138.43 0) (unit 1) (exclude_from_sim no) (in_bom no) (on_board no) (dnp no) (uuid "47e48950-8ff4-4926-90b6-93bde094dbee") (property "Reference" "#PWR27" (at 231.14 138.43 0) (effects (font (size 1.27 1.27)) hide)) (property "Value" "GND" (at 231.14 141.43 0) (effects (font (size 1.27 1.27)))) (pin "1" (uuid "11547278-684a-40f0-ad16-ec90086b6bd4")) (instances (project "lora-pump" (path "/7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f802001/7f0c2b1e-5a3d-4c8e-9b1a-2d4e6f802102" (reference "#PWR27") (unit 1)))))
+	(sheet_instances
+		(path "/" (page "1"))
+	)
+	(embedded_fonts no)
+)
