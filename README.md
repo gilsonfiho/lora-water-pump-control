@@ -75,6 +75,20 @@ LoRa, o nó da bomba na captação — com confirmação (ACK), retransmissão e
 > Esquemático completo, pinagem detalhada e notas de projeto:
 > [`assets/schematic.md`](assets/schematic.md).
 
+### Placas (PCB)
+
+Duas placas em KiCad 10 (`hardware/`), ESP32-C3-MINI-1 + soquete para o E220,
+2 camadas. Versão atual: `hw-v0.2` (inclui o LED de RSSI).
+
+| Emissor (reservatório) | Receptor (bomba) |
+|:----------------------:|:----------------:|
+| ![PCB do emissor, vista 3D](hardware/fab/emissor/emissor_iso.png) | ![PCB do receptor, vista 3D](hardware/fab/receptor/receptor_iso.png) |
+| [topo](hardware/fab/emissor/emissor_top.png) · [fundo](hardware/fab/emissor/emissor_bottom.png) · [STEP](hardware/fab/emissor/emissor.step) | [topo](hardware/fab/receptor/receptor_top.png) · [fundo](hardware/fab/receptor/receptor_bottom.png) · [STEP](hardware/fab/receptor/receptor.step) |
+
+> Decisões de projeto, regras de layout e como abrir os projetos:
+> [`hardware/README.md`](hardware/README.md) e
+> [`hardware/docs/decisoes.md`](hardware/docs/decisoes.md).
+
 ## Estrutura do repositório
 
 ```
