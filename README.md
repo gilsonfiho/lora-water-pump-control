@@ -83,9 +83,6 @@ Duas placas em KiCad 10 (`hardware/`), ESP32-C3-MINI-1 + soquete para o E220,
 | Emissor (reservatório) | Receptor (bomba) |
 |:----------------------:|:----------------:|
 | ![Vista 3D isométrica do emissor](hardware/fab/emissor/emissor_iso.png) | ![Vista 3D isométrica do receptor](hardware/fab/receptor/receptor_iso.png) |
-| ![Vista 3D pelo outro lado do emissor](hardware/fab/emissor/emissor_iso2.png) | ![Vista 3D pelo outro lado do receptor](hardware/fab/receptor/receptor_iso2.png) |
-| ![Vista frontal do emissor](hardware/fab/emissor/emissor_front.png) | ![Vista frontal do receptor](hardware/fab/receptor/receptor_front.png) |
-| ![Vista lateral do emissor](hardware/fab/emissor/emissor_left.png) | ![Vista lateral do receptor](hardware/fab/receptor/receptor_left.png) |
 | ![Face superior do emissor](hardware/fab/emissor/emissor_top.png) | ![Face superior do receptor](hardware/fab/receptor/receptor_top.png) |
 | ![Face inferior do emissor](hardware/fab/emissor/emissor_bottom.png) | ![Face inferior do receptor](hardware/fab/receptor/receptor_bottom.png) |
 | [STEP](hardware/fab/emissor/emissor.step) | [STEP](hardware/fab/receptor/receptor.step) |
